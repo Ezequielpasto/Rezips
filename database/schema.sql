@@ -22,6 +22,19 @@ CREATE TABLE receta(
     id_categoria INT REFERENCES categoria(id_categoria) NOT NULL
 );
 
+CREATE TABLE ingrediente(
+    id_ingrediente SERIAL PRIMARY KEY,
+    nombre VARCHAR(20) UNIQUE NOT NULL 
+);
+
+CREATE TABLE ingrediente_receta(
+    id_ingrediente INT REFERENCES ingrediente(id_ingrediente),
+    id_receta INT REFERENCES receta(id_receta),
+    PRIMARY KEY (id_ingrediente, id_receta),
+    cantidad DECIMAL(10,2) CHECK (cantidad > 0) NOT NULL,
+    unidad VARCHAR(10)
+);
+
 CREATE TABLE paso(
     id_paso SERIAL PRIMARY KEY,
     descripcion TEXT NOT NULL,
@@ -38,11 +51,6 @@ CREATE TABLE comentario(
     id_receta INT REFERENCES receta(id_receta) NOT NULL
 );
 
-CREATE TABLE ingrediente(
-    id_ingrediente SERIAL PRIMARY KEY,
-    nombre VARCHAR(20) UNIQUE NOT NULL 
-);
-
 CREATE TABLE me_gusta(
     id_usuario INT REFERENCES usuario(id_usuario),
     id_receta INT REFERENCES receta(id_receta),
@@ -54,14 +62,6 @@ CREATE TABLE calificacion(
     id_receta INT REFERENCES receta(id_receta),
     PRIMARY KEY (id_usuario, id_receta),
     valor INT CHECK (valor BETWEEN 1 AND 5) NOT NULL
-);
-
-CREATE TABLE ingrediente_receta(
-    id_ingrediente INT REFERENCES ingrediente(id_ingrediente),
-    id_receta INT REFERENCES receta(id_receta),
-    PRIMARY KEY (id_ingrediente, id_receta),
-    cantidad DECIMAL(10,2) CHECK (cantidad > 0) NOT NULL,
-    unidad VARCHAR(10)
 );
 
 CREATE TABLE receta_guardada(
