@@ -10,84 +10,84 @@ http://localhost:xxxx/api/v1
 #### Recetas
 
 GET /recetas
-- Obtiene todas las recetas ya creadas
+- Obtiene todas las recetas ya creadas.
 
 GET /recetas/:id
-- Obtiene una receta por id
+- Obtiene una receta por id.
 
 POST /recetas
-- Crea una nueva receta
+- Crea una nueva receta.
 
 PUT /recetas/:id
-- Actualiza una receta especifica
+- Actualiza una receta especifica.
 
 DELETE /recetas/:id
-- Elimina una receta especifica
+- Elimina una receta especifica.
 
 ### Ingrediente
 
 GET /ingredientes
-- Obtiene todos los ingredientes ya creados
+- Obtiene todos los ingredientes ya creados.
 
 GET /ingredientes/:id
-- Obtiene un ingrediente por id
+- Obtiene un ingrediente por id.
 
 POST /ingredientes
-- Crear un ingrediente
+- Crear un ingrediente.
 
 ### Categorías
 
 GET /categorias
-- Obtiene todas las categorias
+- Obtiene todas las categorias.
 
 GET /categorias/:id
-- Obtiene una categoria especifica
+- Obtiene una categoria especifica.
 
 ### Usuarios
 
 POST /auth/registro
-- Registra un nuevo usuario
+- Registra un nuevo usuario.
 
 POST /auth/login
-- Inicia sesión un usuario
+- Inicia sesión un usuario.
 
 GET /usuarios/:id
-- Obtiene un usuario por id
+- Obtiene un usuario por id.
 
 DELETE /usuarios/:id
-- Elimina a un usuario por id
+- Elimina a un usuario por id.
 
 ### Me gusta
 
 POST /recetas/:id/me-gusta
-- Le inserta un me gusta a una receta
+- Le inserta un me gusta a una receta.
 
 DELETE /recetas/:id/me-gusta
-- Le elimina un me gusta a una receta
+- Le elimina un me gusta a una receta.
 
 ### Guardar recetas
 
 POST /recetas/:id/guardar
-- Guarda una receta
+- Guarda una receta.
 
 DELETE /recetas/:id/guardar
-- Elimina una receta guardada
+- Elimina una receta guardada.
 
 ### Calificaciones
 
 POST /recetas/:id/calificacion
-- Califica una receta
+- Califica una receta.
 
 DELETE /recetas/:id/calificacion
-- Elimina la calificacion de una receta
+- Elimina la calificacion de una receta.
 
 ### Comentarios
 
 GET /recetas/:id/comentarios
-- Obtiene los comentarios de una receta
+- Obtiene los comentarios de una receta.
 
 POST /recetas/:id/comentarios
-- Crea un comentario a una receta
+- Crea un comentario a una receta.
 
 DELETE /comentarios/:id
-- Elimina un comentario
+- Elimina un comentario.
