@@ -5,7 +5,7 @@ INSERT INTO categoria(nombre)
 VALUES ('panaderia');
 
 INSERT INTO receta(nombre, duracion, cantidad_porciones, imagen, id_usuario, id_categoria)
-VALUES ('Pizza', 100, 8, NULL, 1, 1);
+VALUES ('Pizza', 100, 8, NULL, 1, 16);
 
 INSERT INTO ingrediente(nombre)
 VALUES 
