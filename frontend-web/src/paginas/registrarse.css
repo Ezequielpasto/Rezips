@@ -1,0 +1,44 @@
+.registro{
+    background-color: bisque;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+
+}
+
+.formRegistro{
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.formRegistro div{
+    width: 100%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 10px;
+}
+
+.formRegistro .nombreApellido div{
+    display: flex;
+    flex-direction: row;
+}
+
+.formRegistro input{
+    height: 30px;
+    width: 70%;
+    padding-left: 10px;
+}
+
+.nombreApellido input{
+   margin-right:10px;
+   align-items: center; 
+   height: 30px;
+   width: 40%;
+}
