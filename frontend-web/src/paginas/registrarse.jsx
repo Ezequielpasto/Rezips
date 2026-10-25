@@ -11,7 +11,6 @@ function Registrarse(){
                     <input type="text" placeholder="Nombre" />
                     <input type="text" placeholder="Apellido" />
                     </div>
-                    
                 </div>
                 <div className="cumpleaños">
                     <p>Ingresa tu fecha de nacimiento</p>
@@ -27,6 +26,7 @@ function Registrarse(){
                 </div>
                 <button>Crear cuenta</button>
             </form>
+            <p>¿Ya tienes una cuenta? <a href="#">Iniciá sesión</a></p>
         </div>
     )
 }
