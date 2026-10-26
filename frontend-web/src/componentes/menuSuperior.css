@@ -1,6 +1,9 @@
 .superior{
     background-color: bisque;
+    position: fixed;
+    width: 100%;
     height: 100px;
+    z-index: 10;
 }
 
 .superior ul{
@@ -10,5 +13,33 @@
     justify-content: space-between;
     align-items: center;
     list-style: none;
-    margin: 0 30px;
+    margin: 0 50px;
+}
+
+.logo{
+    font-size: 40px;
+}
+
+.buscador{
+    background-color: aquamarine;
+    width: 400px;
+}
+
+.buscador input{
+    width: 100%;
+    height: 30px;
+    padding: 5px;
+}
+
+.perfil{
+    display: block;
+    text-decoration: none;
+    background-color: rgb(195, 194, 194);
+    border-radius: 100%;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
 }

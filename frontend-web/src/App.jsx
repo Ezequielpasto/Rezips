@@ -7,7 +7,7 @@ function App() {
 
   return (
     <>
-    <Registrarse></Registrarse>
+    <Principal></Principal>
     </>
   )
 }

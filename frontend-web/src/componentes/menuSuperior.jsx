@@ -5,13 +5,13 @@ function MenuSuperior(){
         <div className="superior">
             <ul>
                 <li>
-                    <h2>Rezips</h2>
+                    <h2 className='logo'>Rezips</h2>
+                </li>
+                <li className='buscador'>
+                    <input type="search" placeholder='Buscar...'/>
                 </li>
                 <li>
-                    <input type="search" />
-                </li>
-                <li>
-                    <a href="">EP</a>
+                    <a href="" className='perfil'>EP</a>
                 </li>
             </ul>
         </div>

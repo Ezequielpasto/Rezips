@@ -1,0 +1,54 @@
+.lateral{
+    background-color: bisque;
+    min-height: 86vh;
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 100px;
+    position: fixed;
+    z-index: 5;
+}
+
+.enlaces{
+    list-style: none;
+    width: 95%;
+    text-align: center;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.crear{
+    margin: 10px;
+}
+
+.crear .crearReceta{
+    display: block;
+    background-color: coral;
+    width: 100%;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.crear .crearReceta:hover{
+    background-color: brown;
+}
+
+.enlaces a{
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
+}
+
+.enlaces a:hover{
+    background-color: antiquewhite;
+}
