@@ -1,0 +1,36 @@
+.receta{
+    background-color: burlywood;
+    width: 100%;
+    height: 250px;
+    display: flex;
+    flex-direction: row;
+    border: black 2px solid ;
+}
+
+.receta .imagen{
+    background-color: gold;
+    width: 70%;
+    height: 100%;
+}
+
+.imagen img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.receta .informacion{
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 10px;
+}
+
+.receta .informacion h5{
+    font-size: 40px;
+    margin-bottom: 5px;
+}
+

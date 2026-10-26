@@ -1,6 +1,7 @@
-.recetas{
+.principal{
     height: 100vh;
+    width: 80%;
     position: relative;
     top: 100px;
-    left: 300px;
+    left: 20%;
 }

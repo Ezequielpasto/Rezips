@@ -1,7 +1,7 @@
 .lateral{
     background-color: bisque;
     min-height: 86vh;
-    width: 300px;
+    width: 20%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -17,7 +17,7 @@
     margin-top: 10px;
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    gap: 15px;
 }
 
 .crear{
