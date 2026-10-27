@@ -1,13 +1,17 @@
 .lateral{
     background-color: bisque;
-    min-height: 86vh;
+    min-height: 100vh;
     width: 20%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 100px;
     position: fixed;
     z-index: 5;
+}
+
+.logo{
+    font-size: 40px;
+    margin: 20px;
 }
 
 .enlaces{

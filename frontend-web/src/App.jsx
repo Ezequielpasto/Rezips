@@ -4,12 +4,14 @@ import Registrarse from './paginas/Registrarse'
 import Principal from './paginas/principal'
 import MeGusta from './paginas/meGusta'
 import Guardado from './paginas/guardado'
+import Perfil from './paginas/perfil'
+import CrearReceta from './paginas/crearReceta'
 
 function App() {
 
   return (
     <>
-      <Guardado></Guardado>
+      <CrearReceta></CrearReceta>
     </>
   )
 }

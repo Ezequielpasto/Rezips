@@ -4,9 +4,6 @@ function MenuSuperior(){
     return(
         <div className="superior">
             <ul>
-                <li>
-                    <h2 className='logo'>Rezips</h2>
-                </li>
                 <li className='buscador'>
                     <input type="search" placeholder='Buscar...'/>
                 </li>
