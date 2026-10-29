@@ -10,14 +10,26 @@ function CrearReceta(){
             <MenuLateral></MenuLateral>
             <section className='nuevaReceta'>
                 <h1>Crea una nueva receta</h1>
-                <form action="">
-                    <input type='text' placeholder='Nombre de la receta' />
-                    <input type='number' placeholder='Duración'/>
-                    <input type='number' placeholder='Cantidad de porciones' />
-                    <input type='file' id='imagen' accept='image/*' />
-
+                <form action="" className='formNuevaReceta'>
+                    <div className='nombReceta'>
+                        <p>Ingresa elnombre de la receta</p>
+                        <input type='text' placeholder='Nombre de la receta' />
+                    </div>
+                    <div className='durReceta'>
+                        <p>Ingresa una duración aproximada (en minutos)</p>
+                        <input type='number' placeholder='Duración'/>
+                    </div>
+                    <div className='cantReceta'>
+                        <p>Ingresa la cantidad de porciones que rinde</p>
+                        <input type='number' placeholder='Cantidad de porciones' />
+                    </div>
+                    <div className='imgReceta'>
+                        <p>Selecciona una imagen de muestra</p>
+                        <input type='file' id='imagen' accept='image/*' />
+                    </div>
                     <div className='agregarIngredientes'>
-                        <p>Ingredientes</p>
+                        <h5>Ingredientes</h5>
+                        <p>Ingresa el nombre, la cantidad y la unidad por cada ingrediente</p>
                         {ingredientes.map((ingrediente, indice) => (
                         <div className="ingrediente" key={indice}>
                             <input
@@ -58,10 +70,11 @@ function CrearReceta(){
                             </select>
                         </div> 
                         ))}
-                        <button type='button' onClick={() => setIngredientes([...ingredientes, ''])}>+</button>
+                        <button type='button' onClick={() => setIngredientes([...ingredientes, ''])}>+ Agregar ingrediente</button>
                     </div>
                     <div className="agregarPasos">
-                        <p>Pasos</p>
+                        <h5>Pasos</h5>
+                        <p>Ingresa la descripcion de cada paso</p>
                         {pasos.map((paso, indice) => (
                             <div className='paso' key={indice}>
                                 <p>Paso {indice + 1}</p>
@@ -72,13 +85,14 @@ function CrearReceta(){
                                 onChange={(event) => {
                                     const nuevosPasos = [...pasos];
                                     nuevosPasos[indice] = event.target.value;
-                                    setpasos(nuevosPasos);
+                                    setPasos(nuevosPasos);
                                 }}
                             />
                             </div>
                         ))}
-                        <button type='button' onClick={() => setPasos([...pasos, ''])}>+</button>
+                        <button type='button' onClick={() => setPasos([...pasos, ''])}>+ Agregar paso</button>
                     </div>
+                    <button className='btnCrearReceta'>Crear y publicar receta</button>
                 </form>
             </section>        
         </div>

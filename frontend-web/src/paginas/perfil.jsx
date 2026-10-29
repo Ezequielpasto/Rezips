@@ -4,7 +4,7 @@ import ListaRecetas from '../componentes/listaRecetas'
 
 function Perfil(){
     return(
-        <div>
+        <section>
           <MenuLateral></MenuLateral>  
           <main className="miCuenta">
             <div className="datos">
@@ -15,7 +15,7 @@ function Perfil(){
                 <ListaRecetas></ListaRecetas>
             </div>          
           </main>
-        </div>
+        </section>
     )
 }
 export default Perfil

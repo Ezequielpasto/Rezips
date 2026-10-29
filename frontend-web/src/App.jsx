@@ -6,12 +6,13 @@ import MeGusta from './paginas/meGusta'
 import Guardado from './paginas/guardado'
 import Perfil from './paginas/perfil'
 import CrearReceta from './paginas/crearReceta'
+import DetallesReceta from './paginas/detallesReceta'
 
 function App() {
 
   return (
     <>
-      <CrearReceta></CrearReceta>
+      <DetallesReceta></DetallesReceta>
     </>
   )
 }

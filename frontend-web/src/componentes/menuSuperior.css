@@ -1,6 +1,7 @@
 .superior{
     background-color: bisque;
     position: fixed;
+    top: 0;
     width: 80%;
     height: 100px;
     z-index: 10;
