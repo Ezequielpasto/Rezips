@@ -7,9 +7,6 @@ function MenuSuperior(){
                 <li className='buscador'>
                     <input type="search" placeholder='Buscar...'/>
                 </li>
-                <li>
-                    <a href="" className='perfil'>EP</a>
-                </li>
             </ul>
         </div>
     )

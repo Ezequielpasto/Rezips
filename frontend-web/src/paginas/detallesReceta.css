@@ -2,13 +2,12 @@
     min-height: 100vh;
     width: 80%;
     margin-left: 20%;
-    background-color: rgb(78, 60, 39);
     display: flex;
     flex-direction: row;
+    padding-bottom: 10px;
 }
 
 .infoReceta{
-    background-color: aqua;
     width: 65%;
     display: flex;
     flex-direction: column;
@@ -18,6 +17,7 @@
 
 .imgSup{
     height: 350px;
+    border: 2px black solid;
 }
 
 .imgSup img{
@@ -27,7 +27,6 @@
 }
 
 .descripcion{
-   background-color: blue;
    display: flex;
    flex-direction: column;
    gap: 15px;
@@ -53,7 +52,28 @@
 }
 
 .comentarios{
-    background-color: brown;
     width: 35%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    border-left: 2px black solid;
+}
+
+.crearComentario{
+    display: flex;
+    flex-direction: column;
+    width: 95%;
+}
+
+.crearComentario textarea{
+    resize: none;
+    width: 100%;
+    height: 50px;
+}
+
+.todosLosComentarios{
+    align-self: self-start;
+    margin-left: 5px;
 }
 

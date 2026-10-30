@@ -1,19 +1,18 @@
 import './receta.css'
-import pizza from './OIP.jpg'
 
-function Receta(){
+function Receta(nuevaReceta){
     return(
         <article className='receta'>
             <div className='imagen'>
-                <img src={pizza} alt="Pizza"/>
+                <img src={nuevaReceta.imagen} alt="Pizza"/>
             </div>
             <div className='informacion'>
-                <h5>Pizza</h5>
-                <p>promedio 5 estrellas</p>
-                <p>Postres</p>
-                <p>6 ingredientes</p>
-                <p>100 minutos</p>
-                <p>8 porciones</p>
+                <h5>{nuevaReceta.nombre}</h5>
+                <p>{nuevaReceta.calificacion}</p>
+                <p>{nuevaReceta.categoria}</p>
+                <p>{nuevaReceta.cantIngredientes}</p>
+                <p>{nuevaReceta.duracion}</p>
+                <p>{nuevaReceta.porciones}</p>
                 <a href="#">Ver detalles</a>
             </div> 
         </article>

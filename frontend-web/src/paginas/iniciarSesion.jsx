@@ -1,4 +1,5 @@
 import './iniciarSesion.css'
+import { Link } from 'react-router-dom'
 
 function IniciarSesion(){
     return(
@@ -9,7 +10,8 @@ function IniciarSesion(){
                 <input type="password" placeholder="Contraseña" />
                 <button>Iniciar sesión</button>
             </form>
-            <p>¿No tienes una cuanta? <a href="#">Create una cuenta</a></p>
+            <p>¿No tienes una cuanta? <Link to="/registro">Create una cuenta</Link></p>
+            <Link to="/principal">Probar</Link>
         </div>
     )
 }
