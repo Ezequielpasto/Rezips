@@ -1,4 +1,5 @@
 import './receta.css'
+import { Link } from 'react-router-dom'
 
 function Receta(nuevaReceta){
     return(
@@ -13,7 +14,7 @@ function Receta(nuevaReceta){
                 <p>{nuevaReceta.cantIngredientes}</p>
                 <p>{nuevaReceta.duracion}</p>
                 <p>{nuevaReceta.porciones}</p>
-                <a href="#">Ver detalles</a>
+                <Link to={`/receta/${nuevaReceta.id}`}>Ver detalles</Link>
             </div> 
         </article>
     )

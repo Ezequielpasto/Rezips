@@ -10,7 +10,7 @@ function IniciarSesion(){
                 <input type="password" placeholder="Contraseña" />
                 <button>Iniciar sesión</button>
             </form>
-            <p>¿No tienes una cuanta? <Link to="/registro">Create una cuenta</Link></p>
+            <p>¿No tienes una cuenta? <Link to="/registro">Create una cuenta</Link></p>
             <Link to="/principal">Probar</Link>
         </div>
     )

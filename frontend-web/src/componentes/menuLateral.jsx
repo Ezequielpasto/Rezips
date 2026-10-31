@@ -5,7 +5,7 @@ function MenuLateral(){
     return(
         <nav className="lateral">
             <ul className='enlaces'>
-                <li className='logo'>Recips</li>
+                <li className='logo'><Link to="/principal">Recips</Link></li>
                 <li className='crear'><Link to="/crearReceta" className='crearReceta'>Crear receta</Link></li>
                 <li><Link to="/principal">Página principal</Link></li>
                 <li><Link to="/meGusta">Me gusta</Link></li>
