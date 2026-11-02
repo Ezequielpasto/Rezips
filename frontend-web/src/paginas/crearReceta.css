@@ -19,6 +19,7 @@
 
 .formNuevaReceta div{
     width: 45%;
+    background-color:aqua ;
 }
 
 .formNuevaReceta input{
@@ -27,6 +28,10 @@
 
 .nombReceta input{
     width: 100%;
+}
+
+.catReceta select{
+    height: 35px;
 }
 
 .formNuevaReceta h5{

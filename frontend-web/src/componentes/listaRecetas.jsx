@@ -1,11 +1,21 @@
 import './listaRecetas.css'
 import Receta from './receta'
 
-function ListaRecetas(){
+function ListaRecetas({recetas}){
     return(
         <section className='lista'>
-            <Receta id={1} nombre="Pizza" calificacion="5" categoria="Panaderia" cantIngredientes="6" duracion="100" porciones="8"></Receta>
-            <Receta id={2} nombre="Panqueques" calificacion="5" categoria="Panaderia" cantIngredientes="6" duracion="15" porciones="8"></Receta>
+            {recetas.map((receta) => (
+                <Receta 
+                    key={receta.id}
+                    id={receta.id}
+                    imagen={receta.imagen}
+                    nombre={receta.nombre}
+                    categoria={receta.categoria || 'Sin categoría'}
+                    cantIngredientes={receta.ingredientes.length}
+                    duracion={receta.duracion}
+                    porciones={receta.cantidadPorciones}
+                />
+            ))}
         </section>
     )
 }

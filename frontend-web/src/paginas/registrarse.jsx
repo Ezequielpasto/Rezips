@@ -51,6 +51,15 @@ function Registrarse(){
 
         console.log("Se ejecutó EnviarRegistro")
         if(ValidarRegistro()){
+            const usuario = {
+                nombre,
+                apellido,
+                fechaNacimiento,
+                correo,
+                contraseña
+            }
+            localStorage.setItem('usuario', JSON.stringify(usuario))
+            console.log("usuario guardado:", usuario)
             alert("Formulario completado correctamente")
             navegar('/')
         }
