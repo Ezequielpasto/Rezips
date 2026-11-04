@@ -1,30 +1,13 @@
-function ListaPasos(){
+function ListaPasos({pasos}){
     return(
         <div>
-            <p>Paso 1</p>
-            <p>Paso 2</p>
-            <p>Paso 3</p>
-            <p>Paso 1</p>
-            <p>Paso 2</p>
-            <p>Paso 3</p>
-            <p>Paso 1</p>
-            <p>Paso 2</p>
-            <p>Paso 3</p>
-            <p>Paso 1</p>
-            <p>Paso 2</p>
-            <p>Paso 3</p>
-            <p>Paso 1</p>
-            <p>Paso 2</p>
-            <p>Paso 3</p>
-            <p>Paso 1</p>
-            <p>Paso 2</p>
-            <p>Paso 3</p>
-            <p>Paso 1</p>
-            <p>Paso 2</p>
-            <p>Paso 3</p>
-            <p>Paso 1</p>
-            <p>Paso 2</p>
-            <p>Paso 1</p>
+            {pasos.map((paso) => (
+                <div key={paso.numero}>
+                    <h4>Paso {paso.numero}</h4>
+                    <p>{paso.descripcion}</p>
+                    <br />
+                </div>
+            ))}
         </div>
     )
 }

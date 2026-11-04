@@ -15,7 +15,28 @@
     gap: 10px;
 }
 
+.imgEInfo{
+    display: flex;
+    flex-direction: row;
+}
+
+.duracionPorciones{
+    display: flex;
+    flex-direction: column;
+    width: 20%;
+    align-items: center;
+    justify-content: start;
+    gap: 25px;
+    padding-top: 20px;
+    
+}
+
+.duracionPorciones p{
+    font-size: 40px;
+}
+
 .imgSup{
+    width: 80%;
     height: 350px;
     border: 2px black solid;
 }
@@ -26,13 +47,18 @@
     object-fit: cover;
 }
 
-.descripcion{
+.interaccion{
    display: flex;
-   flex-direction: column;
+   flex-direction: row;
    gap: 15px;
 }
 
-.descripcion .tituloEstrellas{
+.interaccion button{
+    background: none;
+    border: none;
+}
+
+.tituloEstrellas{
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -40,15 +66,36 @@
     padding: 0 10px;
 }
 
-.descripcion .restoInfo{
+.promedio{
+    display: flex;    
+}
+
+.restoInfo{
     display: flex;
     flex-direction: row;
     justify-content: space-around;
     gap: 20px;
 }       
 
-.descripcion .titulo{
+.titulo{
     font-size: 50px;
+}
+
+.propietario{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+}
+
+.propietario button{
+    background-color: gray;
+    border: 1px black solid;
+    height: 30px;
+    border-radius: 4px;
+    padding: 5px;
+    margin-top: 10px;
+
 }
 
 .comentarios{
@@ -75,5 +122,28 @@
 .todosLosComentarios{
     align-self: self-start;
     margin-left: 5px;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+
+.usuarioComentario{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
 }
 
+.comentarioFecha{
+    padding-top: 2px;
+    padding-left: 10px;
+    padding-bottom: 12px;
+}
+
+.circulo{
+    background-color: grey;
+    border-radius: 100%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

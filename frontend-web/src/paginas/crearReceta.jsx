@@ -1,6 +1,9 @@
 import './crearReceta.css'
 import MenuLateral from '../componentes/menuLateral'
 import { useState } from 'react'
+import unidades from '../datos/unidades'
+import categorias from '../datos/categorias'
+import { useNavigate } from 'react-router-dom'
 
 function CrearReceta(){
     const [nombre, setNombre] = useState("")
@@ -11,6 +14,20 @@ function CrearReceta(){
 
     const [ingredientes, setIngredientes] = useState([{nombre: '', cantidad: '', unidad: ''}])
     const [pasos, setPasos] = useState([{numero: 1, descripcion: ''}])
+
+    const usuario = JSON.parse(localStorage.getItem('usuario'))
+
+    const navegar = useNavigate()
+
+    function EliminarIngrediente(indice){
+        const nuevosIngredientes = ingredientes.filter((_, i) => i !== indice)
+        setIngredientes(nuevosIngredientes)
+    }
+
+    function EliminarPaso(indice){
+        const nuevosPasos = pasos.filter((_, i) => i !== indice).map((paso, i) => ({...paso, numero: i + 1}))
+        setPasos(nuevosPasos)
+    }
 
     function ValidarReceta(){
         if(nombre.trim() === ''){
@@ -34,8 +51,17 @@ function CrearReceta(){
         }
 
         for(const ingrediente of ingredientes){
-            if(ingrediente.nombre.trim() === '' || ingrediente.cantidad.trim() === '' || ingrediente.unidad === '' || ingrediente.unidad === 'seleccionarUnidad'){
+            const unidad = unidades.find(
+                u => u.valor == ingrediente.unidad
+            );
+
+            if(ingrediente.nombre.trim() === '' || !unidad.sinCantidad && ingrediente.cantidad.trim() === '' || ingrediente.unidad === ''){
                 alert("Debes completar todos los datos de los ingredientes")
+                return false
+            }
+
+            if(Number(ingrediente.cantidad) && !unidad.sinCantidad <= 0){
+                alert("La cantidad de los ingredientes deben ser mayor a 0")
                 return false
             }
         }
@@ -84,7 +110,12 @@ function CrearReceta(){
             cantidadPorciones: Number(cantidadPorciones),
             imagen: imagenBase64,
             ingredientes: ingredientes,
-            pasos: pasos
+            pasos: pasos,
+            correoUsuario: usuario.correo,
+            meGusta: [],
+            guardados: [],
+            comentarios: [],
+            calificaciones: []
         }
 
         const recetasCreadas = JSON.parse(localStorage.getItem('recetas')) || [];
@@ -92,6 +123,7 @@ function CrearReceta(){
 
         localStorage.setItem('recetas', JSON.stringify(recetasCreadas));
         alert("Receta creada correctamente")
+        navegar('/principal')
     }
 
     return(
@@ -101,14 +133,16 @@ function CrearReceta(){
                 <h1>Crea una nueva receta</h1>
                 <form onSubmit={CrearReceta} className='formNuevaReceta'>
                     <div className='nombReceta'>
-                        <p>Ingresa elnombre de la receta</p>
+                        <p>Ingresa el nombre de la receta</p>
                         <input type='text' placeholder='Nombre de la receta' value={nombre} onChange={(event) => setNombre(event.target.value)}/>
                     </div>
                     <div className="catReceta">
                         <p>Seleccione una categoría</p>
                         <select value={categoria} onChange={(event) => setCategoria(event.target.value)}>
                             <option value="">Seleccionar categoria</option>
-                            <option value="">Postres</option>
+                            {categorias.map((categoria) => (
+                                        <option key={categoria.valor} value={categoria.valor}> {categoria.opcion}</option>
+                                    ))}
                         </select>
                     </div>
                     <div className='durReceta'>
@@ -141,7 +175,8 @@ function CrearReceta(){
                                 }}
                             />
                             <input
-                                type='text'
+                                type='number'
+                                step="any"
                                 placeholder="Cantidad"
                                 value={ingrediente.cantidad}
                                 onChange={(event) => {
@@ -162,9 +197,18 @@ function CrearReceta(){
                                     setIngredientes(nuevosIngredientes)
                                 }}>
                                     <option value="">Seleccionar unidad</option>
-                                    <option value="gramos">gr</option>
-                                    <option value="kiloGramos">kg</option>
+                                    {unidades.map((unidad) => (
+                                        <option key={unidad.valor} value={unidad.valor}>{unidad.singular} / {unidad.plural}
+                                        </option>
+                                    ))}
                             </select>
+                            <button
+                                type='button'
+                                onClick={() => EliminarIngrediente(indice)}
+                                disabled={ingredientes.length === 1}
+                            >
+                                Eliminar
+                            </button>
                         </div> 
                         ))}
                         <button type='button' onClick={() => setIngredientes([...ingredientes, { nombre: '', cantidad: '', unidad: '' }])}>+ Agregar ingrediente</button>
@@ -175,16 +219,25 @@ function CrearReceta(){
                         {pasos.map((paso, indice) => (
                             <div className='paso' key={indice}>
                                 <p>Paso {paso.numero}</p>
-                                <textarea
-                                type='text'
-                                placeholder="Nuevo paso"
-                                value={paso.descripcion}
-                                onChange={(event) => {
-                                    const nuevosPasos = [...pasos];
-                                    nuevosPasos[indice] = {...paso, descripcion: event.target.value};
-                                    setPasos(nuevosPasos);
-                                }}
-                            />
+                                <div className="interaccion">
+                                    <textarea
+                                    type='text'
+                                    placeholder="Nuevo paso"
+                                    value={paso.descripcion}
+                                    onChange={(event) => {
+                                        const nuevosPasos = [...pasos];
+                                        nuevosPasos[indice] = {...paso, descripcion: event.target.value};
+                                        setPasos(nuevosPasos);
+                                    }}
+                                    /> 
+                                    <button
+                                        type='button'
+                                        onClick={() => EliminarPaso(indice)}
+                                        disabled={pasos.length === 1}
+                                    >
+                                        Eliminar
+                                    </button>
+                                </div>
                             </div>
                         ))}
                         <button type='button' onClick={() => setPasos([...pasos, {numero: pasos.length + 1, descripcion: ''}])}>+ Agregar paso</button>

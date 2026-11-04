@@ -1,13 +1,9 @@
 import './menuSuperior.css'
 
-function MenuSuperior(){
+function MenuSuperior({busqueda, setBusqueda}){
     return(
         <div className="superior">
-            <ul>
-                <li className='buscador'>
-                    <input type="search" placeholder='Buscar...'/>
-                </li>
-            </ul>
+            <input type="search" placeholder='Buscar por nombre o por ingredientes' value={busqueda} onChange={(event) => setBusqueda(event.target.value)}/>
         </div>
     )
 }

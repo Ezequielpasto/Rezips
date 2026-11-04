@@ -6,9 +6,13 @@
     flex-direction: column;
     min-height: 100vh;
     box-sizing: border-box;
+
+}
+
+.nuevaReceta h1{
+    padding: 20px 0 30px 60px;
 }
     
-
 .formNuevaReceta{
     padding-bottom: 30px;
     display: flex;
@@ -19,7 +23,6 @@
 
 .formNuevaReceta div{
     width: 45%;
-    background-color:aqua ;
 }
 
 .formNuevaReceta input{
@@ -48,6 +51,17 @@
 
 .formNuevaReceta .agregarPasos{
     width: 100%;
+}
+
+.formNuevaReceta .paso .interaccion{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 10px;
+}
+
+.formNuevaReceta .paso button{
+    height: 30px;
 }
 
 .formNuevaReceta textarea{

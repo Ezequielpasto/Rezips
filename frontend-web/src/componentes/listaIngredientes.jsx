@@ -1,9 +1,22 @@
-function ListaIngredientes(){
+import unidades from "../datos/unidades"
+
+function ListaIngredientes({ingredientes}){
     return(
         <div>
-            <p>Ingrediente 1</p>
-            <p>Ingrediente 2</p>
-            <p>Ingrediente 3</p>
+            {ingredientes.map((ingrediente, indice) => {
+                const unidad = unidades.find(
+                    u => u.valor === ingrediente.unidad
+                );
+                
+                const textoUnidad = unidad.sinCanidad ? unidad.singular : `${ingrediente.cantidad} 
+                    ${Number(ingrediente.cantidad) === 1 ? unidad.singular : unidad.plural
+                    }`;
+            return(
+                <div key={indice}>
+                    <p>{ingrediente.nombre} - {textoUnidad}</p>
+                </div>
+                );
+            })}
         </div>
     )
 }

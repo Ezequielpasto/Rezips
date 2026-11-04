@@ -9,6 +9,7 @@ import Guardado from './paginas/guardado'
 import Perfil from './paginas/perfil'
 import CrearReceta from './paginas/crearReceta'
 import DetallesReceta from './paginas/detallesReceta'
+import EditarReceta from './paginas/editarReceta'
 
 function App() {
 
@@ -29,6 +30,8 @@ function App() {
 
           {/* Receta especifica detalles */}
           <Route path="/receta/:id" element={<DetallesReceta/>}/>
+
+          <Route path="/editarReceta/:id" element={<EditarReceta />} />
         </Routes>
       </BrowserRouter>
     </>
