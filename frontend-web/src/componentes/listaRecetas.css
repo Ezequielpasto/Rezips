@@ -1,0 +1,10 @@
+.lista{
+    position: relative;
+    top: 50px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    row-gap: 15px;
+    column-gap: 30px;
+    padding: 10px;
+    padding-bottom: 20px;
+}

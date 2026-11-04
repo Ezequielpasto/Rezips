@@ -1,0 +1,37 @@
+.inicio{
+    background-color: bisque;
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+}
+
+.formulario{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+}
+
+.formulario input{
+    width: 180%;
+    height: 35px;
+    padding-left: 10px;
+}
+
+.formulario button{
+    background-color: coral;
+    border: none;
+    padding: 10px;
+    width: 186%;
+}
+
+.formulario button:hover{
+    background-color: brown;
+}
+
+
+

@@ -1,0 +1,44 @@
+.miCuenta{
+    min-height: 100vh;
+    width: 80%;
+    margin-left: 20%;
+}
+
+.datos{
+    background-color: aliceblue;
+    width: 80%;
+    height: 200px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    z-index: 5;
+}
+
+.contenido{
+    padding-top: 150px;
+}
+
+.nombreCirculo{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.circuloPerfil{
+    background-color: grey;
+    width: 150px;
+    height: 150px;
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 60px;
+}
+
+.nombreCirculo h4{
+    font-size: 50px;
+}
+
