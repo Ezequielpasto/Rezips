@@ -4,7 +4,14 @@
     height: 300px;
     display: flex;
     flex-direction: row;
-    border: black 2px solid ;
+    border: black 2px solid;
+    cursor: pointer;
+
+}
+
+.verDetalles{
+    text-decoration: none;
+    color: black;
 }
 
 .receta .imagen{

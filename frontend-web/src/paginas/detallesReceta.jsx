@@ -4,7 +4,7 @@ import ListaIngredientes from '../componentes/listaIngredientes'
 import ListaPasos from '../componentes/listaPasos'
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Star, Heart, Bookmark, Timer, Utensils } from 'lucide-react'
+import { Star, Heart, Bookmark, Timer, Utensils, MessageCircle} from 'lucide-react'
 
 function DetallesReceta(){
     const[comentDescripcion, setComentDescripcion] = useState("")
@@ -260,7 +260,7 @@ function DetallesReceta(){
                     </div>  
                 </section>
                 <section className='comentarios'>
-                    <h4>Comentarios</h4>
+                    <h4><MessageCircle />Comentarios</h4>
                     <div className='crearComentario'>
                         <textarea placeholder='Escribe un comentario' value={comentDescripcion} onChange={(event) => setComentDescripcion(event.target.value)}/>
                         <button onClick={NuevoComentario}>Enviar</button>

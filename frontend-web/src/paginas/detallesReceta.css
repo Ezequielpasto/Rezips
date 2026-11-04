@@ -107,6 +107,11 @@
     border-left: 2px black solid;
 }
 
+.comentarios h4{
+    display: flex;
+    align-items: center;
+}
+
 .crearComentario{
     display: flex;
     flex-direction: column;

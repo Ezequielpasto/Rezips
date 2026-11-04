@@ -1,5 +1,5 @@
 import './receta.css'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 import { Star, Heart, Bookmark } from 'lucide-react'
 
@@ -9,6 +9,8 @@ function Receta({id, imagen, nombre, categoria, cantIngredientes, duracion, porc
     const usuario = JSON.parse(localStorage.getItem('usuario'))
     const usuarioDioMeGusta = listaMeGusta.includes(usuario?.correo)
     const usuarioGuardo = listaGuardados.includes(usuario?.correo)
+
+    const navegar = useNavigate()
 
     const promedio = calificaciones.length > 0
         ? calificaciones.reduce((total, calificacion) => total + calificacion.valor, 0) / calificaciones.length
@@ -82,34 +84,37 @@ function Receta({id, imagen, nombre, categoria, cantIngredientes, duracion, porc
     }
 
     return(
-        <article className='receta'>
-            <div className='imagen'>
-                <img src={imagen} alt="Pizza"/>
-            </div>
-            <div className='informacion'>
-                <h5 ref={tituloRef}>{nombre}</h5>
-                <div className="estrellas">
-                    {promedio === 0 ? 
-                    <p>Sin calificar</p> :
-                    [1, 2, 3, 4, 5].map((estrella) => (
-                        <Star
-                            key={estrella}
-                            color={estrella <= Math.round(promedio) ? "gold" : "gray"}
-                            fill={estrella <= Math.round(promedio) ? "gold" : "none"}
-                        />
-                    ))}
+        <article className='receta' onClick={() => navegar(`/receta/${id}`)}>
+                <div className='imagen'>
+                    <img src={imagen} alt="Pizza"/>
                 </div>
-                <p>{categoria}</p>
-                <p>{cantIngredientes} ingredientes</p>
-                <p>{duracion} minutos</p>
-                <p>{porciones} porciones</p>
-                <div className='acciones'>
-                    <button type='button' onClick={AlternarMeGusta}><Heart color={usuarioDioMeGusta ? "red" : "black"} fill={usuarioDioMeGusta ? "red" : "none"}/> {listaMeGusta.length}</button>
-                    <button type='button' onClick={AlternarGuardados}><Bookmark color={usuarioGuardo ? "yellow" : "black"} fill={usuarioGuardo ? "yellow" : "none"}/> {listaGuardados.length}</button>
-                </div>
-                <Link to={`/receta/${id}`}>Ver detalles</Link>
-            </div> 
-        </article>
+                <div className='informacion'>
+                    <h5 ref={tituloRef}>{nombre}</h5>
+                    <div className="estrellas">
+                        {promedio === 0 ? 
+                        <p>Sin calificar</p> :
+                        [1, 2, 3, 4, 5].map((estrella) => (
+                            <Star
+                                key={estrella}
+                                color={estrella <= Math.round(promedio) ? "gold" : "gray"}
+                                fill={estrella <= Math.round(promedio) ? "gold" : "none"}
+                            />
+                        ))}
+                    </div>
+                    <p>{categoria}</p>
+                    <p>{cantIngredientes} ingredientes</p>
+                    <p>{duracion} minutos</p>
+                    <p>{porciones} porciones</p>
+                    <div className='acciones'>
+                        <button type='button' onClick={(event) => {event.stopPropagation()
+                            AlternarMeGusta()}}><Heart color={usuarioDioMeGusta ? "red" : "black"} fill={usuarioDioMeGusta ? "red" : "none"}/> {listaMeGusta.length}
+                            </button>
+                        <button type='button' onClick={(event) => {event.stopPropagation() 
+                            AlternarGuardados()}}><Bookmark color={usuarioGuardo ? "yellow" : "black"} fill={usuarioGuardo ? "yellow" : "none"}/> {listaGuardados.length}
+                        </button>
+                    </div>
+                </div> 
+            </article>
     )
 }
 export default Receta

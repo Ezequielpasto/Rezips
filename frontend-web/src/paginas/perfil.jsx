@@ -29,7 +29,10 @@ function Perfil(){
           <MenuLateral></MenuLateral>  
           <main className="miCuenta">
             <div className="datos">
-                <h4>{usuario?.nombre} {usuario?.apellido}</h4>
+                <div className='nombreCirculo'>
+                    <p className='circuloPerfil'>{usuario?.nombre[0]}{usuario?.apellido[0]}</p>
+                    <h4>{usuario?.nombre} {usuario?.apellido}</h4>
+                </div>   
                 <p>{recetas.length} recetas creadas</p>
             </div>
             <div className='contenido'>
