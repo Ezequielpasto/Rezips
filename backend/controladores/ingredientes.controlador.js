@@ -79,6 +79,49 @@ async function AgregarIngrediente(req, res){
     }
 }
 
+async function ObtenerIngredientes(req, res){
+    try {
+        const resultado = await pool.query(
+            'SELECT * FROM ingrediente'
+        )
+
+        res.json(resultado.rows);
+    } catch(error){
+        console.error(error);
+
+        res.status(500).json({
+            mensaje: 'Error al obtener los ingredientes'
+        })
+    }
+}
+
+async function ObtenerIngredientePorId(req, res){
+    const { id } = req.params
+
+    try{
+        const resultado = await pool.query(
+            'SELECT * FROM ingrediente WHERE id_ingrediente = $1',
+            [id]
+        )
+
+        if(resultado.rows.length === 0){
+            return res.status(404).json({
+                mensaje: 'Ingrediente no encontrado'
+            })
+        }
+
+        res.json(resultado.rows[0])
+    } catch(error){
+        console.error(error);
+
+        res.status(500).json({
+            mensaje: 'Error al obtener el ingrediente'
+        });
+    }
+}
+
 module.exports = {
-    AgregarIngrediente
+    AgregarIngrediente,
+    ObtenerIngredientes,
+    ObtenerIngredientePorId
 }

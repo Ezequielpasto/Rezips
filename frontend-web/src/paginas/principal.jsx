@@ -59,4 +59,4 @@ function Principal(){
         </div>        
     )
 }
-export default Principal
+export default Principal 
