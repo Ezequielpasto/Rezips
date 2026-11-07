@@ -1,10 +1,10 @@
-const pool = require('../config/baseDatos');
+const pool = require('../config/baseDatos')
 
 async function ObtenerRecetas(req, res){
     
     try{
-        const resultado = await pool.query('SELECT * FROM receta');
-        res.json(resultado.rows);
+        const resultado = await pool.query('SELECT * FROM receta')
+        res.json(resultado.rows)
     }
     catch(error){
         res.status(500).json({
@@ -26,7 +26,7 @@ async function ObtenerRecetaPorId(req, res){
         
         res.json(resultado.rows[0])
     } catch(error){
-        onsole.error(error);
+        onsole.error(error)
 
         res.status(500).json({
             mensaje: 'Error al obtener la receta'
@@ -52,15 +52,15 @@ async function CrearReceta(req, res){
             [nombre, duracion, cantidadPorciones, imagen || null, id_usuario, id_categoria]
 
             
-        );
+        )
 
         res.status(201).json({
             mensaje: 'Receta creada correctamente',
             receta: resultado.rows[0]
-        });
+        })
 
     }catch(error){
-        console.error(error);
+        console.error(error)
 
         res.status(500).json({
             mensaje: 'Error al crear la receta'
@@ -71,7 +71,7 @@ async function CrearReceta(req, res){
 async function ModificarReceta(req, res){
     const id = Number(req.params.id)
 
-    const { nombre, duracion, cantidadPorciones, imagen, id_usuario, id_categoria } = req.body;
+    const { nombre, duracion, cantidadPorciones, imagen, id_usuario, id_categoria } = req.body
 
     try {
         const resultado = await pool.query(
@@ -132,11 +132,36 @@ async function EliminarReceta(req, res){
     }
 }
 
+async function ObtenerIngredientesReceta(req, res){
+    const { id } = req.params
+
+    try {
+        const resultado = await pool.query(
+            `SELECT i.id_ingrediente, i.nombre,
+                    ir.cantidad, ir.unidad
+             FROM ingrediente_receta ir
+             JOIN ingrediente i ON ir.id_ingrediente = i.id_ingrediente
+             WHERE ir.id_receta = $1`,
+            [id]
+        )
+
+        res.json(resultado.rows)
+
+    } catch(error){
+        console.error(error)
+
+        res.status(500).json({
+            mensaje: 'Error al obtener los ingredientes de la receta'
+        })
+    }
+}
+
 
 module.exports = {
     ObtenerRecetas,
     ObtenerRecetaPorId,
     CrearReceta,
     ModificarReceta,
-    EliminarReceta
+    EliminarReceta,
+    ObtenerIngredientesReceta
 }

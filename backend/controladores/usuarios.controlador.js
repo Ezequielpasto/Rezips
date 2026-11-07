@@ -115,7 +115,7 @@ async function ObtenerUsuarios(req, res){
         const resultado = await pool.query(
             `SELECT id_usuario, nombre, apellido, correo, fecha_nacimiento
              FROM usuario`
-        );
+        )
 
         res.json(resultado.rows)
 
@@ -184,10 +184,58 @@ async function EliminarUsuario(req, res){
     }
 }
 
+async function ObtenerRecetasGuardadas(req, res){
+    const { id } = req.params
+
+    try {
+        const resultado = await pool.query(
+            `SELECT r.*
+             FROM receta_guardada rg
+             JOIN receta r ON rg.id_receta = r.id_receta
+             WHERE rg.id_usuario = $1`,
+            [id]
+        )
+
+        res.json(resultado.rows)
+
+    } catch(error){
+        console.error(error)
+
+        res.status(500).json({
+            mensaje: 'Error al obtener las recetas guardadas'
+        })
+    }
+}
+
+async function ObtenerRecetasMeGusta(req, res){
+    const { id } = req.params
+
+    try {
+        const resultado = await pool.query(
+            `SELECT r.*
+             FROM me_gusta mg
+             JOIN receta r ON mg.id_receta = r.id_receta
+             WHERE mg.id_usuario = $1`,
+            [id]
+        )
+
+        res.json(resultado.rows)
+
+    } catch(error){
+        console.error(error)
+
+        res.status(500).json({
+            mensaje: 'Error al obtener las recetas con me gusta'
+        })
+    }
+}
+
 module.exports = {
     RegistrarUsuario,
     IniciarSesion,
     ObtenerUsuarios,
     ObtenerUsuarioPorId,
-    EliminarUsuario
+    EliminarUsuario,
+    ObtenerRecetasMeGusta,
+    ObtenerRecetasGuardadas
 }

@@ -1,10 +1,10 @@
-const pool = require('../config/baseDatos');
+const pool = require('../config/baseDatos')
 
 async function ObtenerCategorias(req, res){
     try {
         const resultado = await pool.query(
             'SELECT * FROM categoria'
-        );
+        )
 
         res.json(resultado.rows)
 
