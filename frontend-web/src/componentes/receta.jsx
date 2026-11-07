@@ -1,7 +1,7 @@
 import './receta.css'
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
-import { Star, Heart, Bookmark } from 'lucide-react'
+import { Star, Heart, Bookmark, Carrot, Timer, Utensils } from 'lucide-react'
 
 function Receta({id, imagen, nombre, categoria, cantIngredientes, duracion, porciones, meGusta, guardados, calificaciones = []}){
     const [listaMeGusta, setListaMeGusta] = useState(meGusta || [])
@@ -15,25 +15,6 @@ function Receta({id, imagen, nombre, categoria, cantIngredientes, duracion, porc
     const promedio = calificaciones.length > 0
         ? calificaciones.reduce((total, calificacion) => total + calificacion.valor, 0) / calificaciones.length
         : 0
-
-    const tituloRef = useRef(null)
-
-    useEffect(() => {
-        const titulo = tituloRef.current
-        if (!titulo) return
-
-        let tamanio = 24
-
-        titulo.style.fontSize = `${tamanio}px`
-
-        while (
-            titulo.scrollHeight > titulo.clientHeight &&
-            tamanio > 12
-        ) {
-            tamanio--
-            titulo.style.fontSize = `${tamanio}px`
-        }
-    }, [nombre])
 
     function AlternarMeGusta(){
         const usuario = JSON.parse(localStorage.getItem('usuario'))
@@ -83,38 +64,67 @@ function Receta({id, imagen, nombre, categoria, cantIngredientes, duracion, porc
          setListaGuardados(actualizados)
     }
 
-    return(
+    return (
         <article className='receta' onClick={() => navegar(`/receta/${id}`)}>
-                <div className='imagen'>
-                    <img src={imagen} alt="Pizza"/>
+
+            <div className='imagen'>
+                <div className='encabezadoReceta'>
+                    <h2>{nombre}</h2>
+                    <p>{categoria}</p>
                 </div>
-                <div className='informacion'>
-                    <h5 ref={tituloRef}>{nombre}</h5>
-                    <div className="estrellas">
-                        {promedio === 0 ? 
+                <div className='creadorReceta'>
+                    <p>{usuario.nombre} {usuario.apellido}</p>
+                </div>
+                <img src={imagen} alt={nombre}/>
+            </div>
+            <div className='informacion'>
+
+                <div className="estrellas">
+                    {promedio === 0 ?
                         <p>Sin calificar</p> :
                         [1, 2, 3, 4, 5].map((estrella) => (
                             <Star
                                 key={estrella}
+                                size={18}
                                 color={estrella <= Math.round(promedio) ? "gold" : "gray"}
                                 fill={estrella <= Math.round(promedio) ? "gold" : "none"}
                             />
-                        ))}
-                    </div>
-                    <p>{categoria}</p>
-                    <p>{cantIngredientes} ingredientes</p>
-                    <p>{duracion} minutos</p>
-                    <p>{porciones} porciones</p>
-                    <div className='acciones'>
-                        <button type='button' onClick={(event) => {event.stopPropagation()
-                            AlternarMeGusta()}}><Heart color={usuarioDioMeGusta ? "red" : "black"} fill={usuarioDioMeGusta ? "red" : "none"}/> {listaMeGusta.length}
-                            </button>
-                        <button type='button' onClick={(event) => {event.stopPropagation() 
-                            AlternarGuardados()}}><Bookmark color={usuarioGuardo ? "yellow" : "black"} fill={usuarioGuardo ? "yellow" : "none"}/> {listaGuardados.length}
-                        </button>
-                    </div>
-                </div> 
-            </article>
+                        ))
+                    }
+                </div>
+                <p><Carrot size={30} /> {cantIngredientes}</p>
+                <p><Timer size={30} /> {duracion}</p>
+                <p><Utensils size={30} /> {porciones}</p>
+                <div className='acciones'>
+                    <button
+                        type='button'
+                        onClick={(event) => {
+                            event.stopPropagation()
+                            AlternarMeGusta()
+                        }}
+                    >
+                        <Heart
+                            color={usuarioDioMeGusta ? "red" : "black"}
+                            fill={usuarioDioMeGusta ? "red" : "none"}
+                        />
+                        {listaMeGusta.length}
+                    </button>
+                    <button
+                        type='button'
+                        onClick={(event) => {
+                            event.stopPropagation()
+                            AlternarGuardados()
+                        }}
+                    >
+                        <Bookmark
+                            color={usuarioGuardo ? "yellow" : "black"}
+                            fill={usuarioGuardo ? "yellow" : "none"}
+                        />
+                        {listaGuardados.length}
+                    </button>
+                </div>
+            </div>
+        </article>
     )
 }
 export default Receta
