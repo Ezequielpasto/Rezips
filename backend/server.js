@@ -10,7 +10,7 @@ const rutasIngredientes = require('./rutas/ingredientes.rutas');
 const rutasPasos = require('./rutas/pasos.rutas');
 const rutasCategorias = require('./rutas/categorias.rutas');
 const rutasUsuarios = require('./rutas/usuarios.rutas');
-const rutasComentarios = require('./rutas/comentarios.rutas')
+const rutasComentarios = require('./rutas/comentarios.rutas');
 
 app.use('/recetas', rutasRecetas);
 app.use('/ingredientes', rutasIngredientes);
