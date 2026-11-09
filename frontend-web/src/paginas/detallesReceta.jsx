@@ -1,90 +1,183 @@
-import './detallesReceta.css'
+import '../estilos/detallesReceta.css'
 import MenuLateral from '../componentes/menuLateral'
 import ListaIngredientes from '../componentes/listaIngredientes'
 import ListaPasos from '../componentes/listaPasos'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Star, Heart, Bookmark, Timer, Utensils, MessageCircle} from 'lucide-react'
+import { Star, Heart, Bookmark, Timer, Utensils, MessageCircle } from 'lucide-react'
 
 function DetallesReceta(){
-    const[comentDescripcion, setComentDescripcion] = useState("")
-
     const {id} = useParams()
-    const recetasExistentes = JSON.parse(localStorage.getItem('recetas')) || []
-    const receta = recetasExistentes.find((receta) => receta.id === Number(id))
-    const [listaMeGusta, setListaMeGusta] = useState(receta?.meGusta || [])
-    const [listaGuardados, setListaGuardados] = useState(receta?.guardados || [])
-    const [comentarios, setComentarios] = useState(receta?.comentarios || [])
-    const [calificaciones, setCalificaciones] = useState(receta?.calificaciones || [])
-    const usuario = JSON.parse(localStorage.getItem('usuario'))
-
     const navegar = useNavigate()
 
-    const esPropietario = usuario && usuario.correo === receta.correoUsuario
-    const usuarioDioMeGusta = listaMeGusta.includes(usuario?.correo)
-    const usuarioGuardo = listaGuardados.includes(usuario?.correo)
+    const usuario = JSON.parse(localStorage.getItem('usuario'))
+
+    const [receta, setReceta] = useState(null)
+    const [ingredientes, setIngredientes] = useState([])
+    const [pasos, setPasos] = useState([])
+    const [comentarios, setComentarios] = useState([])
+    const [calificaciones, setCalificaciones] = useState([])
+    const [listaMeGusta, setListaMeGusta] = useState([])
+    const [listaGuardados, setListaGuardados] = useState([])
+    const [comentDescripcion, setComentDescripcion] = useState("")
+    const [cargando, setCargando] = useState(true)
+
+    useEffect(() => {
+        async function ObtenerDatos(){
+            try{
+                const respuesta = await fetch(`http://localhost:3000/recetas/${id}`)
+                if(!respuesta.ok) throw new Error('Error al obtener receta')
+                const datos = await respuesta.json()
+                console.log(datos)
+                setReceta(datos)
+
+                const respuestaPasos = await fetch(`http://localhost:3000/recetas/${id}/pasos`)
+                if(!respuestaPasos.ok) throw new Error('Error al obtener pasos')
+                setPasos(await respuestaPasos.json())
+
+                const respuestaComentarios = await fetch(`http://localhost:3000/recetas/${id}/comentarios`)
+                if(!respuestaComentarios.ok) throw new Error('Error al obtener comentarios')
+                setComentarios(await respuestaComentarios.json())
+
+                const respuestaIngredientes = await fetch(`http://localhost:3000/recetas/${id}/ingredientes`)
+                if(!respuestaIngredientes.ok) throw new Error('Error al obtener ingredientes')
+                setIngredientes(await respuestaIngredientes.json())
+
+                const respuestaMeGusta = await fetch(`http://localhost:3000/recetas/${id}/me-gusta`)
+                if(!respuestaMeGusta.ok){
+                    throw new Error('Error al obtener me gusta')
+                }
+                setListaMeGusta(await respuestaMeGusta.json())
+
+                const respuestaGuardados = await fetch(`http://localhost:3000/recetas/${id}/guardar`)
+                if(!respuestaGuardados.ok){
+                    throw new Error('Error al obtener los guardados')
+                }
+                setListaGuardados(await respuestaGuardados.json())
+
+                const respuestaCalificaciones = await fetch(`http://localhost:3000/recetas/${id}/calificacion`)
+                if(!respuestaCalificaciones.ok){
+                    throw new Error('Error al obtener las calificaciones')
+                }
+                setCalificaciones(await respuestaCalificaciones.json())
+
+            }catch(error){
+                console.error(error)
+                alert('No se pudieron obtener los datos de la receta')
+            }finally{
+                setCargando(false)
+            }
+        }
+
+        ObtenerDatos()
+    }, [id])
+
+    const esPropietario = usuario && usuario.id_usuario === receta?.id_usuario
+
+    const usuarioDioMeGusta = listaMeGusta.some(
+        (meGusta) => meGusta.id_usuario === usuario?.id_usuario
+    )
+
+    const usuarioGuardo = listaGuardados.some(
+        (guardado) => guardado.id_usuario === usuario?.id_usuario
+    )
+
+    if(cargando){
+        return <h2>Cargando receta...</h2>
+    }
 
     if(!receta){
         return <h2>No se pudo encontrar la receta</h2>
     }
 
     const miCalificacion = calificaciones.find(
-        (c) => c.correoUsuario === usuario?.correo
-        )?.valor || 0
-    
+        (c) => Number(c.id_usuario) === Number(usuario?.id_usuario)
+    )?.valor || 0
+
     const promedio = calificaciones.length > 0
-        ? calificaciones.reduce((total, calificacion) => total + calificacion.valor, 0) / calificaciones.length
+        ? calificaciones.reduce(
+            (total, calificacion) => total + Number(calificacion.valor), 0
+        ) / calificaciones.length
         : 0
 
-    function AlternarMeGusta(){
+    async function AlternarMeGusta(){
         if(!usuario){
             alert("Debes iniciar sesión")
             return
         }
 
-        const recetas = JSON.parse(localStorage.getItem('recetas')) || []
-        const recetaActual = recetas.find((receta) => receta.id === Number(id))
-        if(!recetaActual)
-            return
+        try {
+            const respuesta = await fetch(
+                `http://localhost:3000/recetas/${id}/me-gusta`,
+                {
+                    method: usuarioDioMeGusta ? 'DELETE' : 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id_usuario: usuario.id_usuario
+                    })
+                }
+            )
 
-        const usuarios = recetaActual.meGusta || []
-        let actualizados
-        if(usuarios.includes(usuario.correo)){
-            actualizados = usuarios.filter((correo) => correo !== usuario.correo)
-        }else{
-            actualizados = [...usuarios, usuario.correo]
+            if(!respuesta.ok){
+                throw new Error('Error al modificar me gusta')
+            }
+
+            const respuestaMeGusta = await fetch(
+                `http://localhost:3000/recetas/${id}/me-gusta`
+            )
+
+            if(!respuestaMeGusta.ok){
+                throw new Error('Error al actualizar me gusta')
+            }
+
+            setListaMeGusta(await respuestaMeGusta.json())
+
+        } catch(error){
+            console.error(error)
+            alert("No se pudo modificar el me gusta")
         }
-        recetaActual.meGusta = actualizados
-        localStorage.setItem('recetas', JSON.stringify(recetas))
-         setListaMeGusta(actualizados)
     }
 
-    function AlternarGuardados(){
-
+    async function AlternarGuardados(){
         if(!usuario){
             alert("Debes iniciar sesión")
             return
         }
 
-        const recetas = JSON.parse(localStorage.getItem('recetas')) || []
-        const recetaActual = recetas.find((receta) => receta.id === Number(id))
-        if(!recetaActual)
-            return
+        try {
+            const respuesta = await fetch(`http://localhost:3000/recetas/${id}/guardar`,{
+                method: usuarioGuardo ? 'DELETE' : 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id_usuario: usuario.id_usuario
+                })
+            })
 
-        const usuarios = recetaActual.guardados || []
-        let actualizados
-        if(usuarios.includes(usuario.correo)){
-            actualizados = usuarios.filter((correo) => correo !== usuario.correo)
-        }else{
-            actualizados = [...usuarios, usuario.correo]
+            if(!respuesta.ok){
+                throw new Error('Error al modificar guardados')
+            }
+
+            const respuestaGuardados = await fetch(
+                `http://localhost:3000/recetas/${id}/guardar`
+            )
+
+            if(!respuestaGuardados.ok){
+                throw new Error('Error al actualizar guardados')
+            }
+
+            setListaGuardados(await respuestaGuardados.json())
+
+        } catch(error){
+            console.error(error)
+            alert("No se pudo modificar el guardado")
         }
-        recetaActual.guardados = actualizados
-        localStorage.setItem('recetas', JSON.stringify(recetas))
-         setListaGuardados(actualizados)
     }
 
-
-    function NuevoComentario(event){
+    async function NuevoComentario(event){
         event.preventDefault()
 
         if(!usuario){
@@ -97,92 +190,130 @@ function DetallesReceta(){
             return
         }
 
-        const nuevoComentario = {
-            id: Date.now(),
-            nombreUsuario: usuario.nombre,
-            apellidoUsuario: usuario.apellido,
-            correoUsuario: usuario.correo,
-            descripcion: comentDescripcion.trim(),
-            fecha: new Date().toLocaleDateString()
+        try {
+            const respuesta = await fetch(`http://localhost:3000/recetas/${id}/comentarios`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id_usuario: usuario.id_usuario,
+                    descripcion: comentDescripcion.trim()
+                })
+            })
+
+            if(!respuesta.ok){
+                throw new Error('Error al enviar el comentario')
+            }
+
+            await respuesta.json()
+
+            const respuestaComentarios = await fetch(`http://localhost:3000/recetas/${id}/comentarios`)
+
+            if(!respuestaComentarios.ok){
+                throw new Error('Error al actualizar los comentarios')
+            }
+
+            const comentariosActualizados = await respuestaComentarios.json()
+
+            setComentarios(comentariosActualizados)
+            setComentDescripcion("")
+
+        } catch(error) {
+            console.error(error)
+            alert("No se pudo enviar el comentario")
         }
+    }
 
-        const recetas = JSON.parse(localStorage.getItem('recetas')) || []
-        const recetaActual = recetas.find((r) => r.id === Number(id))
+    async function EliminarComentario(idComentario){
+        const confirmar = window.confirm("¿Estás seguro de que deseas eliminar este comentario?")
 
-        if(!recetaActual){
+        if(!confirmar){
             return
         }
 
-        const comentariosActualizados = [...(recetaActual.comentarios || []), nuevoComentario]
-        recetaActual.comentarios = comentariosActualizados
+        try {
+            const respuesta = await fetch(`http://localhost:3000/comentarios/${idComentario}`, {
+                method: 'DELETE'
+            })
 
-        localStorage.setItem('recetas', JSON.stringify(recetas))
+            if(!respuesta.ok){
+                throw new Error('Error al eliminar el comentario')
+            }
 
-        setComentarios(comentariosActualizados)
-        setComentDescripcion("")
-    }
+            setComentarios((comentariosActuales) =>
+                comentariosActuales.filter(
+                    (comentario) => comentario.id_comentario !== idComentario
+                )
+            )
 
-    function EliminarComentario(idComentario){
-        const recetas = JSON.parse(localStorage.getItem('recetas')) || []
-
-        const recetaActual = recetas.find((r) => r.id === Number(id))
-
-        if(!recetaActual){
-            return
+        }catch(error) {
+            console.error(error)
+            alert("No se pudo eliminar el comentario")
         }
-        
-        const comentariosActualizados = recetaActual.comentarios.filter(
-            (comentario) => comentario.id !== idComentario
-        )
-
-        recetaActual.comentarios = comentariosActualizados
-
-        localStorage.setItem('recetas', JSON.stringify(recetas))
-
-        setComentarios(comentariosActualizados)
     }
 
-    function CalificarReceta(valor){
+    async function CalificarReceta(valor){
         if (!usuario) {
             alert("Debes iniciar sesión para calificar")
             return
         }
 
-        const recetas = JSON.parse(localStorage.getItem('recetas')) || []
-        const recetaActual = recetas.find((r) => r.id === Number(id))
+        try {
+            const respuesta = await fetch(`http://localhost:3000/recetas/${id}/calificacion`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id_usuario: usuario.id_usuario,
+                        valor: valor
+                    })
+                }
+            )
 
-        if(!recetaActual){
-            return
+            if(!respuesta.ok){
+                throw new Error('Error al guardar la calificación')
+            }
+
+            const respuestaCalificaciones = await fetch(`http://localhost:3000/recetas/${id}/calificacion`)
+
+            if(!respuestaCalificaciones.ok){
+                throw new Error('Error al actualizar las calificaciones')
+            }
+
+            setCalificaciones(await respuestaCalificaciones.json())
+
+        } catch(error) {
+            console.error(error)
+            alert("No se pudo guardar la calificación")
         }
-
-        const calificacionesActualizadas = [...(recetaActual.calificaciones || []).filter(
-                (c) => c.correoUsuario !== usuario.correo), {
-                    correoUsuario: usuario.correo,
-                    valor: valor
-                }]
-
-        recetaActual.calificaciones = calificacionesActualizadas
-
-        localStorage.setItem('recetas', JSON.stringify(recetas))
-        setCalificaciones(calificacionesActualizadas)
     }
 
-    function EliminarReceta() {
+    async function EliminarReceta(){
         const confirmar = window.confirm("¿Estás seguro de que deseas eliminar esta receta?")
 
-        if (!confirmar){
+        if(!confirmar){
             return
         }
 
-        const recetasActuales = JSON.parse(localStorage.getItem('recetas')) || []
+        try {
+            const respuesta = await fetch(`http://localhost:3000/recetas/${id}`, {
+                method: 'DELETE'
+            })
 
-        const recetasActualizadas = recetasActuales.filter(
-            (r) => r.id !== Number(id)
-        )
+            if(!respuesta.ok){
+                throw new Error('Error al eliminar la receta')
+            }
 
-        localStorage.setItem('recetas', JSON.stringify(recetasActualizadas))
-        alert("Receta eliminada correctamente")
-        navegar('/principal')
+            alert("Receta eliminada correctamente")
+            navegar('/principal')
+
+        } catch(error) {
+            console.error(error)
+            alert("No se pudo eliminar la receta")
+        }
     }
 
     return(
@@ -197,27 +328,28 @@ function DetallesReceta(){
                         </div>
                         <div className="promedio">
                             {promedio === 0 ?
-                            <p>Sin calificar</p> :
-                            [1, 2, 3, 4, 5].map((estrella) => (
-                                <Star
-                                    key={estrella}
-                                    size={30}
-                                    color={estrella <= Math.round(promedio) ? "gold" : "gray"}
-                                    fill={estrella <= Math.round(promedio) ? "gold" : "none"}
-                                />
+                                <p>Sin calificar</p> :
+                                [1, 2, 3, 4, 5].map((estrella) => (
+                                    <Star
+                                        key={estrella}
+                                        size={30}
+                                        color={estrella <= Math.round(promedio) ? "gold" : "gray"}
+                                        fill={estrella <= Math.round(promedio) ? "gold" : "none"}
+                                    />
                                 ))}
-                            </div>
                         </div>
+                    </div>
+
                     <div className='imgEInfo'>
                         <div className='imgSup'>
                             <img src={receta.imagen} alt={receta.nombre} />
                         </div>
                         <div className='duracionPorciones'>
                             <p><Timer size={40}/>{receta.duracion}</p>
-                            <p><Utensils size={40}/>{receta.cantidadPorciones}</p>
+                            <p><Utensils size={40}/>{receta.cantidad_porciones}</p>
                         </div>
                     </div>
-                    
+
                     <div className='interaccion'>
                         <button type='button' onClick={AlternarMeGusta}>
                             <Heart color={usuarioDioMeGusta ? "red" : "black"} fill={usuarioDioMeGusta ? "red" : "none"}/> {listaMeGusta.length}
@@ -230,22 +362,27 @@ function DetallesReceta(){
                                 <button
                                     key={estrella}
                                     type='button'
-                                    onClick={() => CalificarReceta(estrella)}                                             
+                                    onClick={() => CalificarReceta(estrella)}
                                 >
-                                    <Star color={estrella <= miCalificacion ? "black" : "gray"} 
-                                    fill={estrella <= miCalificacion ? "black" : "none"}/>
+                                    <Star
+                                        color={estrella <= miCalificacion ? "black" : "gray"}
+                                        fill={estrella <= miCalificacion ? "black" : "none"}
+                                    />
                                 </button>
                             ))}
                         </div>
                     </div>
+
                     <div className='susIngredientes'>
                         <h3>Ingredientes</h3>
-                        <ListaIngredientes ingredientes={receta.ingredientes}></ListaIngredientes>
+                        <ListaIngredientes ingredientes={ingredientes}></ListaIngredientes>
                     </div>
+
                     <div className="susPasos">
                         <h3>Pasos</h3>
-                        <ListaPasos pasos={receta.pasos}></ListaPasos>
+                        <ListaPasos pasos={pasos}></ListaPasos>
                     </div>
+
                     <div className="propietario">
                         {esPropietario && (
                             <button type="button" onClick={() => navegar(`/editarReceta/${id}`)}>
@@ -256,23 +393,29 @@ function DetallesReceta(){
                             <button type="button" onClick={EliminarReceta}>
                                 Eliminar receta
                             </button>
-                        )}                
-                    </div>  
+                        )}
+                    </div>
                 </section>
+
                 <section className='comentarios'>
                     <h4><MessageCircle />Comentarios</h4>
                     <div className='crearComentario'>
-                        <textarea placeholder='Escribe un comentario' value={comentDescripcion} onChange={(event) => setComentDescripcion(event.target.value)}/>
+                        <textarea
+                            placeholder='Escribe un comentario'
+                            value={comentDescripcion}
+                            onChange={(event) => setComentDescripcion(event.target.value)}
+                        />
                         <button onClick={NuevoComentario}>Enviar</button>
                     </div>
+
                     <div className='todosLosComentarios'>
                         {comentarios.map((comentario) => (
-                            <div key={comentario.id}>
+                            <div key={comentario.id_comentario}>
                                 <div className='usuarioComentario'>
-                                    <p className='circulo'>{comentario.nombreUsuario[0]}{comentario.apellidoUsuario[0]}</p>
-                                    <h5>{comentario.nombreUsuario} {comentario.apellidoUsuario}</h5>
-                                    {usuario && usuario.correo === comentario.correoUsuario && (
-                                        <button type="button" onClick={() => EliminarComentario(comentario.id)}>Eliminar</button>
+                                    <p className='circulo'>{comentario.nombre[0]}{comentario.apellido[0]}</p>
+                                    <h5>{comentario.nombre} {comentario.apellido}</h5>
+                                    {usuario && usuario.id_usuario === comentario.id_usuario && (
+                                        <button type="button" onClick={() => EliminarComentario(comentario.id_comentario)}>Eliminar</button>
                                     )}
                                 </div>
                                 <div className='comentarioFecha'>
@@ -287,4 +430,5 @@ function DetallesReceta(){
         </div>
     )
 }
+
 export default DetallesReceta

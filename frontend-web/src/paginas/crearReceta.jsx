@@ -1,8 +1,7 @@
-import './crearReceta.css'
+import '../estilos/crearReceta.css'
 import MenuLateral from '../componentes/menuLateral'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import unidades from '../datos/unidades'
-import categorias from '../datos/categorias'
 import { useNavigate } from 'react-router-dom'
 
 function CrearReceta(){
@@ -17,7 +16,23 @@ function CrearReceta(){
 
     const usuario = JSON.parse(localStorage.getItem('usuario'))
 
+    const [categorias, setCategorias] = useState([])
+
     const navegar = useNavigate()
+
+    useEffect(() => {
+        async function ObtenerCategorias(){
+            try {
+                const respuesta = await fetch('http://localhost:3000/categorias')
+                const datos = await respuesta.json()
+
+                setCategorias(datos)
+            } catch(error) {
+                console.error('Error al obtener las categorías:', error)
+            }
+        }
+        ObtenerCategorias()
+    }, [])
 
     function EliminarIngrediente(indice){
         const nuevosIngredientes = ingredientes.filter((_, i) => i !== indice)
@@ -60,8 +75,8 @@ function CrearReceta(){
                 return false
             }
 
-            if(Number(ingrediente.cantidad) && !unidad.sinCantidad <= 0){
-                alert("La cantidad de los ingredientes deben ser mayor a 0")
+            if(!unidad.sinCantidad && Number(ingrediente.cantidad) <= 0){
+                alert("La cantidad de los ingredientes debe ser mayor a 0")
                 return false
             }
         }
@@ -72,8 +87,18 @@ function CrearReceta(){
                 return false
             }
         }
-
         return true
+    }
+
+    function ConvertirImagen(archivo) {
+        return new Promise((resolve, reject) => {
+            const lector = new FileReader()
+
+            lector.onload = () => resolve(lector.result)
+            lector.onerror = () => reject(lector.error)
+
+            lector.readAsDataURL(archivo)
+        })
     }
     
     async function CrearReceta(event){
@@ -82,48 +107,81 @@ function CrearReceta(){
         if(!ValidarReceta()){
             return
         }
-        
-        const imagenBase64 = await ConvertirImagen(imagen)
 
-        // Convierte un archivo de imagen a formato Base64 para poder almacenarlo en localStorage.
-        function ConvertirImagen(archivo){
-            return new Promise((resolve, reject) => {
-                // Crea un lector para leer el archivo seleccionado.
-                const lector = new FileReader();
+        try{
+            const imagenBase64 = imagen ? await ConvertirImagen(imagen) : null
 
-                // Cuando termina de leer el archivo, devuelve el resultado.
-                lector.onload = () => resolve(lector.result);
+            // Crear receta
+            const respuesta = await fetch('http://localhost:3000/recetas', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    nombre,
+                    duracion: Number(duracion),
+                    cantidad_porciones: Number(cantidadPorciones),
+                    imagen: imagenBase64,
+                    id_usuario: usuario.id_usuario,
+                    id_categoria: Number(categoria)
+                })
+            })
 
-                // Si ocurre un error durante la lectura, devuelve el error.
-                lector.onerror = () => reject(lector.error);
+            const datos = await respuesta.json()
 
-                // Lee el archivo y lo convierte a una URL de datos.
-                lector.readAsDataURL(archivo);
-            }); 
+            if(!respuesta.ok){
+                alert(datos.mensaje || 'Error al crear la receta')
+                return
+            }
+
+            const idReceta = datos.receta.id_receta
+
+            // Guardar ingredientes
+            for(const ingrediente of ingredientes){
+                const unidadSeleccionada = unidades.find(u => u.valor == ingrediente.unidad)
+                const respuestaIngrediente = await fetch('http://localhost:3000/ingredientes', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id_receta: idReceta,
+                        nombre: ingrediente.nombre,
+                        cantidad: unidadSeleccionada.sinCantidad ? 1 : Number(ingrediente.cantidad),
+                        unidad: ingrediente.unidad
+                    })
+                })
+            
+                if(!respuestaIngrediente.ok){
+                    throw new Error('Error al guardar los ingredientes')
+                }
+            }
+
+            // Guardar pasos
+            for(const paso of pasos){
+                const respuestaPaso = await fetch(`http://localhost:3000/recetas/${idReceta}/pasos`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        numero: paso.numero,
+                        descripcion: paso.descripcion
+                    })
+                })
+
+                if(!respuestaPaso.ok){
+                    throw new Error('Error al guardar los pasos')
+                }
+            }
+
+            alert('Receta creada correctamente')
+                navegar('/principal')
+
+        } catch(error){
+            console.error('Error:', error)
+            alert('Ocurrió un error al crear la receta')
         }
-
-        const nuevaReceta = {
-            id: Date.now(),
-            nombre: nombre,
-            categoria: categoria,
-            duracion: Number(duracion),
-            cantidadPorciones: Number(cantidadPorciones),
-            imagen: imagenBase64,
-            ingredientes: ingredientes,
-            pasos: pasos,
-            correoUsuario: usuario.correo,
-            meGusta: [],
-            guardados: [],
-            comentarios: [],
-            calificaciones: []
-        }
-
-        const recetasCreadas = JSON.parse(localStorage.getItem('recetas')) || [];
-        recetasCreadas.push(nuevaReceta);
-
-        localStorage.setItem('recetas', JSON.stringify(recetasCreadas));
-        alert("Receta creada correctamente")
-        navegar('/principal')
     }
 
     return(
@@ -141,7 +199,7 @@ function CrearReceta(){
                         <select value={categoria} onChange={(event) => setCategoria(event.target.value)}>
                             <option value="">Seleccionar categoria</option>
                             {categorias.map((categoria) => (
-                                        <option key={categoria.valor} value={categoria.valor}> {categoria.opcion}</option>
+                                        <option key={categoria.id_categoria} value={categoria.id_categoria}> {categoria.nombre}</option>
                                     ))}
                         </select>
                     </div>

@@ -1,4 +1,4 @@
-import './registrarse.css'
+import '../estilos/registrarse.css'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 
@@ -46,22 +46,38 @@ function Registrarse(){
         return true
     }
 
-    function EnviarRegistro(event){
+    async function EnviarRegistro(event){
         event.preventDefault()
 
-        console.log("Se ejecutó EnviarRegistro")
         if(ValidarRegistro()){
-            const usuario = {
-                nombre,
-                apellido,
-                fechaNacimiento,
-                correo,
-                contraseña
+            try{
+                const respuesta = await fetch('http://localhost:3000/auth/registro', {
+                    method: 'POST',
+                    headers: {
+                    'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        nombre,
+                        apellido,
+                        fecha_nacimiento: fechaNacimiento,
+                        correo,
+                        contrasena: contraseña
+                    })
+                })
+
+                const datos = await respuesta.json()
+
+                if(!respuesta.ok){
+                    alert(datos.mensaje || 'Error al registrar el usuario')
+                    return
+                }
+
+                alert('Cuenta creada correctamente')
+                navegar('/')
+            } catch(error){
+                console.error('Error:', error)
+                alert('No se pudo conectar con el servidor')
             }
-            localStorage.setItem('usuario', JSON.stringify(usuario))
-            console.log("usuario guardado:", usuario)
-            alert("Formulario completado correctamente")
-            navegar('/')
         }
     }
 

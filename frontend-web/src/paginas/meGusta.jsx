@@ -11,18 +11,26 @@ function MeGusta(){
     const [calificacionSeleccionada, setCalificacionSeleccionada] = useState("")
 
     useEffect(() => {
+    async function ObtenerDatos() {
         const usuario = JSON.parse(localStorage.getItem('usuario'))
-        const recetasExistentes = JSON.parse(localStorage.getItem('recetas')) || []
 
-        if(!usuario){
-            return
+        if (!usuario) return
+        try {
+            const respuesta = await fetch(`http://localhost:3000/recetas/usuario/${usuario.id_usuario}/me-gusta`)
+            if (!respuesta.ok) {
+                throw new Error('Error al obtener los me gusta')
+            }
+
+            const datos = await respuesta.json()
+            setRecetas(datos)
+
+        } catch (error) {
+            console.error(error)
         }
+    }
 
-        const recetasMeGusta = recetasExistentes.filter(
-            (receta => (receta.meGusta || []).includes(usuario.correo))
-        )
-        setRecetas(recetasMeGusta)
-    }, [])
+    ObtenerDatos()
+}, [])
 
     const recetasFiltradas = recetas.filter((receta) => {
         const texto = busqueda.toLowerCase().trim()

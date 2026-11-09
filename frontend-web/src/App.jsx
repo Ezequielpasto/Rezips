@@ -1,4 +1,4 @@
-import './App.css'
+import './estilos/App.css'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 import IniciarSesion from './paginas/iniciarSesion'

@@ -1,8 +1,7 @@
-import './crearReceta.css'
+import '../estilos/crearReceta.css'
 import MenuLateral from '../componentes/menuLateral'
 import { useState, useEffect } from 'react'
 import unidades from '../datos/unidades'
-import categorias from '../datos/categorias'
 import { useNavigate, useParams } from 'react-router-dom'
 
 function EditarReceta(){
@@ -10,6 +9,7 @@ function EditarReceta(){
     const { id } = useParams()
     const [nombre, setNombre] = useState("")
     const [categoria, setCategoria] = useState("")
+    const [categorias, setCategorias] = useState([])
     const [duracion, setDuracion] = useState("")
     const [cantidadPorciones, setCantidadPorciones] = useState("")
     const [imagen, setImagen] = useState("")
@@ -18,23 +18,48 @@ function EditarReceta(){
     const [ingredientes, setIngredientes] = useState([])
     const [pasos, setPasos] = useState([])
 
-    const recetas = JSON.parse(localStorage.getItem('recetas')) || []
-    const receta = recetas.find((r) => r.id === Number(id))
-
     const navegar = useNavigate()
 
     useEffect(() => {
-        if(!receta){
-            return
+        async function ObtenerReceta(){
+            try {
+                const respuestaReceta = await fetch(`http://localhost:3000/recetas/${id}`)
+                const respuestaCategorias = await fetch('http://localhost:3000/categorias')
+                const respuestaIngredientes = await fetch(`http://localhost:3000/recetas/${id}/ingredientes`)
+                const respuestaPasos = await fetch(`http://localhost:3000/recetas/${id}/pasos`)
+
+                if(!respuestaReceta.ok || !respuestaCategorias.ok || !respuestaIngredientes.ok || !respuestaPasos.ok){
+                    throw new Error('Error al obtener los datos')
+                }
+
+                const receta = await respuestaReceta.json()
+                const datosCategorias = await respuestaCategorias.json()
+                const datosIngredientes = await respuestaIngredientes.json()
+                const datosPasos = await respuestaPasos.json()
+
+                setCategorias(datosCategorias)
+
+                setNombre(receta.nombre)
+                setCategoria(String(receta.id_categoria))
+                setDuracion(receta.duracion)
+                setCantidadPorciones(receta.cantidad_porciones)
+                setImagen(receta.imagen || "")
+
+                setIngredientes(datosIngredientes.map(ingrediente => ({
+                    nombre: ingrediente.nombre,
+                    cantidad: String(ingrediente.cantidad),
+                    unidad: ingrediente.unidad || ""
+                })))
+
+                setPasos(datosPasos)
+
+            } catch(error){
+                console.error(error)
+                alert('No se pudo cargar la receta')
+            }
         }
 
-        setNombre(receta.nombre)
-        setCategoria(receta.categoria)
-        setDuracion(receta.duracion)
-        setCantidadPorciones(receta.cantidadPorciones)
-        setImagen(receta.imagen)
-        setIngredientes(receta.ingredientes)
-        setPasos(receta.pasos)
+        ObtenerReceta()
 
     }, [id])
 
@@ -56,11 +81,6 @@ function EditarReceta(){
 
         if(!usuario){
             alert("Debes iniciar sesión")
-            return
-        }
-
-        if(!receta || receta.correoUsuario !== usuario.correo){
-            alert("No puedes editar esta receta")
             return
         }
 
@@ -116,31 +136,54 @@ function EditarReceta(){
             imagenActualizada = await ConvertirImagen(archivoImagen)
         }
 
-        // Buscar nuevamente las recetas guardadas
-        const recetasActuales = JSON.parse(localStorage.getItem('recetas')) || []
+        try {
 
-        const indice = recetasActuales.findIndex(
-            (r) => r.id === Number(id)
-        )
+            const ingredientesActualizados = ingredientes.map(ingrediente => {
 
-        if(indice === -1){
-            alert("No se encontró la receta")
-            return
+                const unidad = unidades.find(
+                    u => u.valor === ingrediente.unidad
+                )
+
+                return {
+                    nombre: ingrediente.nombre.trim(),
+                    cantidad: unidad.sinCantidad ? 1 : Number(ingrediente.cantidad),
+                    unidad: ingrediente.unidad
+                }
+            })
+
+            const pasosActualizados = pasos.map((paso, indice) => ({
+                numero: indice + 1,
+                descripcion: paso.descripcion.trim()
+            }))
+
+            const respuesta = await fetch(`http://localhost:3000/recetas/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    nombre,
+                    duracion: Number(duracion),
+                    cantidad_porciones: Number(cantidadPorciones),
+                    imagen: imagenActualizada,
+                    id_usuario: usuario.id_usuario,
+                    id_categoria: Number(categoria),
+                    ingredientes: ingredientesActualizados,
+                    pasos: pasosActualizados
+                })
+            })
+
+            const datos = await respuesta.json()
+
+            if(!respuesta.ok){
+                throw new Error(datos.mensaje)
+            }
+
+
+        } catch(error){
+            console.error(error)
+            alert(error.message || 'Error al modificar la receta')
         }
-
-        // Actualizar los datos sin perder los demás atributos
-        recetasActuales[indice] = {
-            ...recetasActuales[indice],
-            nombre,
-            categoria,
-            duracion: Number(duracion),
-            cantidadPorciones: Number(cantidadPorciones),
-            imagen: imagenActualizada,
-            ingredientes,
-            pasos
-        }
-
-        localStorage.setItem('recetas', JSON.stringify(recetasActuales))
 
         alert("Receta actualizada correctamente")
         navegar(`/receta/${id}`)
@@ -154,10 +197,6 @@ function EditarReceta(){
     function EliminarPaso(indice){
         const nuevosPasos = pasos.filter((_, i) => i !== indice).map((paso, i) => ({...paso, numero: i + 1}))
         setPasos(nuevosPasos)
-    }
-
-    if (!receta) {
-        return <h2>No se encontró la receta</h2>
     }
 
     return(
@@ -175,7 +214,7 @@ function EditarReceta(){
                         <select value={categoria} onChange={(event) => setCategoria(event.target.value)}>
                             <option value="">Seleccionar categoria</option>
                             {categorias.map((categoria) => (
-                                        <option key={categoria.valor} value={categoria.valor}> {categoria.opcion}</option>
+                                        <option key={categoria.id_categoria} value={categoria.id_categoria}> {categoria.nombre}</option>
                                     ))}
                         </select>
                     </div>
