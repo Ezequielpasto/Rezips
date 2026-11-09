@@ -1,5 +1,27 @@
 const pool = require('../config/baseDatos')
 
+async function ObtenerCalificaciones(req, res){
+    const { id } = req.params
+
+    try {
+        const resultado = await pool.query(
+            `SELECT id_usuario, id_receta, valor
+             FROM calificacion
+             WHERE id_receta = $1`,
+            [id]
+        )
+
+        res.json(resultado.rows)
+
+    } catch(error){
+        console.error(error)
+
+        res.status(500).json({
+            mensaje: 'Error al obtener las calificaciones'
+        })
+    }
+}
+
 async function AgregarCalificacion(req, res){
     const { id } = req.params
     const { id_usuario, valor } = req.body
@@ -86,6 +108,7 @@ async function EliminarCalificacion(req, res){
 }
 
 module.exports = {
+    ObtenerCalificaciones,
     AgregarCalificacion,
     EliminarCalificacion
 }

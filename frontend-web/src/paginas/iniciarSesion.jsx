@@ -1,4 +1,4 @@
-import './iniciarSesion.css'
+import '../estilos/iniciarSesion.css'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 
@@ -9,26 +9,47 @@ function IniciarSesion(){
     const navegar = useNavigate()
 
     function ValidarInicioSesion(){
-        const usuarioGuardado = JSON.parse(localStorage.getItem('usuario')) 
-
-        if(usuarioGuardado === null){
-            alert("No hay ningun usuario registrado")
+        if(correo.trim() === '' || contraseña === ''){
+            alert("Todos los campos son obligatorios")
             return false
         }
 
-        if(correo !== usuarioGuardado.correo || contraseña !== usuarioGuardado.contraseña){
-            alert("Correo y/o contraseña incorrectos")
-            return false
-        }
         return true
     }
 
-    function IniciarSesionUsuario(event){
+    async function IniciarSesionUsuario(event){
         event.preventDefault()
 
         if(ValidarInicioSesion()){
-            alert("Inicio de sesión exitoso")
-            navegar('/principal')
+             try{
+                const respuesta = await fetch('http://localhost:3000/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        correo,
+                        contrasena: contraseña
+                    })
+                })
+
+                const datos = await respuesta.json()
+
+                if(!respuesta.ok){
+                    alert(datos.mensaje || 'Correo y/o contraseña incorrectos')
+                    return
+                }
+
+                localStorage.setItem('usuario', JSON.stringify(datos.usuario))
+
+                alert("Inicio de sesión exitoso")
+                navegar('/principal')
+
+            } catch(error){
+                console.error('Error:', error)
+                alert('No se pudo conectar con el servidor')
+            }
+       
         }
     }
 
@@ -41,7 +62,6 @@ function IniciarSesion(){
                 <button type='submit'>Iniciar sesión</button>
             </form>
             <p>¿No tienes una cuenta? <Link to="/registro">Create una cuenta</Link></p>
-            <Link to="/principal">Probar</Link>
         </div>
     )
 }

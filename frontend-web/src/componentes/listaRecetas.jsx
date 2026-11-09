@@ -1,19 +1,20 @@
-import './listaRecetas.css'
+import '../estilos/listaRecetas.css'
 import Receta from './receta'
 
-function ListaRecetas({recetas = []}){
+function ListaRecetas({ recetas = [] }){
     return(
         <section className='lista'>
             {recetas.map((receta) => (
-                <Receta 
-                    key={receta.id}
-                    id={receta.id}
+                <Receta
+                    key={receta.id_receta}
+                    id={receta.id_receta}
                     imagen={receta.imagen}
                     nombre={receta.nombre}
                     categoria={receta.categoria}
-                    cantIngredientes={receta.ingredientes.length}
+                    creador={receta.creador}
+                    cantIngredientes={(receta.ingredientes || []).length}
                     duracion={receta.duracion}
-                    porciones={receta.cantidadPorciones}
+                    porciones={receta.cantidad_porciones}
                     meGusta={receta.meGusta || []}
                     guardados={receta.guardados || []}
                     calificaciones={receta.calificaciones || []}
@@ -22,4 +23,5 @@ function ListaRecetas({recetas = []}){
         </section>
     )
 }
+
 export default ListaRecetas

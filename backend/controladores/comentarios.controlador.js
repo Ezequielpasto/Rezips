@@ -4,13 +4,13 @@ async function ObtenerComentarios(req, res){
     const { id } = req.params
 
     try {
-        const resultado = await pool.query(
-            `SELECT c.id_comentario, c.descripcion, c.fecha,
-                    c.id_usuario, u.nombre, u.apellido
-             FROM comentario c
-             JOIN usuario u ON c.id_usuario = u.id_usuario
-             WHERE c.id_receta = $1
-             ORDER BY c.fecha DESC`,
+        const resultado = await pool.query(`
+            SELECT c.id_comentario, c.descripcion, c.fecha,
+            c.id_usuario, u.nombre, u.apellido, u.correo
+            FROM comentario c
+            JOIN usuario u ON c.id_usuario = u.id_usuario
+            WHERE c.id_receta = $1
+            ORDER BY c.fecha DESC`,
             [id]
         )
 
@@ -36,11 +36,20 @@ async function AgregarComentario(req, res){
     }
 
     try {
-        const resultado = await pool.query(
+            const resultado = await pool.query(
             `INSERT INTO comentario (descripcion, id_usuario, id_receta)
-             VALUES ($1, $2, $3)
-             RETURNING *`,
+            VALUES ($1, $2, $3)
+            RETURNING id_comentario, descripcion, fecha, id_usuario`,
             [descripcion.trim(), id_usuario, id]
+        )
+
+        const comentario = await pool.query(
+            `SELECT c.id_comentario, c.descripcion, c.fecha,
+                    c.id_usuario, u.nombre, u.apellido, u.correo
+            FROM comentario c
+            JOIN usuario u ON c.id_usuario = u.id_usuario
+            WHERE c.id_comentario = $1`,
+            [resultado.rows[0].id_comentario]
         )
 
         res.status(201).json(resultado.rows[0])

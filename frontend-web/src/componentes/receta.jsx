@@ -1,84 +1,107 @@
-import './receta.css'
+import '../estilos/receta.css'
 import { useNavigate } from 'react-router-dom'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { Star, Heart, Bookmark, Carrot, Timer, Utensils } from 'lucide-react'
 
-function Receta({id, imagen, nombre, categoria, cantIngredientes, duracion, porciones, meGusta, guardados, calificaciones = []}){
-    const [listaMeGusta, setListaMeGusta] = useState(meGusta || [])
-    const [listaGuardados, setListaGuardados] = useState(guardados|| [])
+function Receta({ id, imagen, nombre, categoria, creador, cantIngredientes, duracion, porciones, meGusta = [], guardados = [], calificaciones = []
+}){
+    const [listaMeGusta, setListaMeGusta] = useState(meGusta)
+    const [listaGuardados, setListaGuardados] = useState(guardados)
+
     const usuario = JSON.parse(localStorage.getItem('usuario'))
+    const navegar = useNavigate()
+
+    useEffect(() => {
+        setListaMeGusta(meGusta)
+        setListaGuardados(guardados)
+    }, [meGusta, guardados])
+
     const usuarioDioMeGusta = listaMeGusta.includes(usuario?.correo)
     const usuarioGuardo = listaGuardados.includes(usuario?.correo)
 
-    const navegar = useNavigate()
+    const promedio = calificaciones.length > 0 ? calificaciones.reduce((total, calificacion) => total + Number(calificacion.valor), 0) / calificaciones.length : 0
 
-    const promedio = calificaciones.length > 0
-        ? calificaciones.reduce((total, calificacion) => total + calificacion.valor, 0) / calificaciones.length
-        : 0
-
-    function AlternarMeGusta(){
-        const usuario = JSON.parse(localStorage.getItem('usuario'))
+    async function AlternarMeGusta(){
         if(!usuario){
             alert("Debes iniciar sesión")
             return
         }
 
-        const recetas = JSON.parse(localStorage.getItem('recetas')) || []
-        const recetaActual = recetas.find((receta) => receta.id === id)
-        if(!recetaActual)
-            return
+        try {
+            const respuesta = await fetch(`http://localhost:3000/recetas/${id}/me-gusta`,{
+                    method: usuarioDioMeGusta ? 'DELETE' : 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id_usuario: usuario.id_usuario
+                    })
+                }
+            )
 
-        const usuarios = recetaActual.meGusta || []
-        let actualizados
-        if(usuarios.includes(usuario.correo)){
-            actualizados = usuarios.filter((correo) => correo !== usuario.correo)
-        }else{
-            actualizados = [...usuarios, usuario.correo]
+            if(!respuesta.ok){
+                throw new Error('No se pudo actualizar el me gusta')
+            }
+
+            setListaMeGusta(actuales => usuarioDioMeGusta ? actuales.filter(correo => correo !== usuario.correo) : [...actuales, usuario.correo]
+            )
+
+        } catch(error) {
+            console.error(error)
+            alert('No se pudo actualizar el me gusta')
         }
-        recetaActual.meGusta = actualizados
-        localStorage.setItem('recetas', JSON.stringify(recetas))
-         setListaMeGusta(actualizados)
     }
 
-    function AlternarGuardados(){
-        const usuario = JSON.parse(localStorage.getItem('usuario'))
+    async function AlternarGuardados(){
         if(!usuario){
             alert("Debes iniciar sesión")
             return
         }
 
-        const recetas = JSON.parse(localStorage.getItem('recetas')) || []
-        const recetaActual = recetas.find((receta) => receta.id === id)
-        if(!recetaActual)
-            return
+        try {
+            const respuesta = await fetch(`http://localhost:3000/recetas/${id}/guardar`, {
+                    method: usuarioGuardo ? 'DELETE' : 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id_usuario: usuario.id_usuario
+                    })
+                }
+            )
 
-        const usuarios = recetaActual.guardados || []
-        let actualizados
-        if(usuarios.includes(usuario.correo)){
-            actualizados = usuarios.filter((correo) => correo !== usuario.correo)
-        }else{
-            actualizados = [...usuarios, usuario.correo]
+            if(!respuesta.ok){
+                throw new Error('No se pudo actualizar el guardado')
+            }
+
+            setListaGuardados(actuales =>
+                usuarioGuardo
+                    ? actuales.filter(correo => correo !== usuario.correo)
+                    : [...actuales, usuario.correo]
+            )
+
+        } catch(error) {
+            console.error(error)
+            alert('No se pudo actualizar el guardado')
         }
-        recetaActual.guardados = actualizados
-        localStorage.setItem('recetas', JSON.stringify(recetas))
-         setListaGuardados(actualizados)
     }
 
     return (
         <article className='receta' onClick={() => navegar(`/receta/${id}`)}>
-
             <div className='imagen'>
                 <div className='encabezadoReceta'>
                     <h2>{nombre}</h2>
                     <p>{categoria}</p>
                 </div>
+
                 <div className='creadorReceta'>
-                    <p>{usuario.nombre} {usuario.apellido}</p>
+                    <p> {creador?.nombre} {creador?.apellido} </p>
                 </div>
+
                 <img src={imagen} alt={nombre}/>
             </div>
-            <div className='informacion'>
 
+            <div className='informacion'>
                 <div className="estrellas">
                     {promedio === 0 ?
                         <p>Sin calificar</p> :
@@ -92,15 +115,15 @@ function Receta({id, imagen, nombre, categoria, cantIngredientes, duracion, porc
                         ))
                     }
                 </div>
+
                 <p><Carrot size={30} /> {cantIngredientes}</p>
                 <p><Timer size={30} /> {duracion}</p>
                 <p><Utensils size={30} /> {porciones}</p>
+
                 <div className='acciones'>
-                    <button
-                        type='button'
-                        onClick={(event) => {
-                            event.stopPropagation()
-                            AlternarMeGusta()
+                    <button type='button' onClick={(event) => {
+                        event.stopPropagation()
+                        AlternarMeGusta()
                         }}
                     >
                         <Heart
@@ -109,9 +132,8 @@ function Receta({id, imagen, nombre, categoria, cantIngredientes, duracion, porc
                         />
                         {listaMeGusta.length}
                     </button>
-                    <button
-                        type='button'
-                        onClick={(event) => {
+
+                    <button type='button' onClick={(event) => {
                             event.stopPropagation()
                             AlternarGuardados()
                         }}
@@ -127,4 +149,5 @@ function Receta({id, imagen, nombre, categoria, cantIngredientes, duracion, porc
         </article>
     )
 }
+
 export default Receta
