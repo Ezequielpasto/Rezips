@@ -1,4 +1,4 @@
-import './perfil.css'
+import '../estilos/perfil.css'
 import MenuLateral from '../componentes/menuLateral'
 import ListaRecetas from '../componentes/listaRecetas'
 import { useState, useEffect } from 'react'
@@ -8,20 +8,29 @@ function Perfil(){
     const [recetas, setRecetas] = useState([])
 
     useEffect(() => {
-        const usuarioActual = JSON.parse(localStorage.getItem('usuario'))
-        const recetasExistentes = JSON.parse(localStorage.getItem('recetas')) || []
-        console.log(recetasExistentes)
-        console.log(usuarioActual)
+        async function ObtenerDatos(){
+            const usuarioActual = JSON.parse(localStorage.getItem('usuario'))
 
-        setUsuario(usuarioActual)
+            setUsuario(usuarioActual)
 
-        if(usuarioActual){
-            const recetasUsuario = recetasExistentes.filter(
-                (receta) => receta.correoUsuario === usuarioActual.correo
-            )
+            if(usuarioActual) {
+                try {
+                    const respuesta = await fetch(`http://localhost:3000/recetas?id_usuario=${usuarioActual.id_usuario}`)
+                    
+                    if (!respuesta.ok) {
+                        throw new Error('Error al obtener las recetas')
+                    }
 
-            setRecetas(recetasUsuario)
+                    const datos = await respuesta.json()
+                    setRecetas(datos)
+
+                } catch (error) {
+                    console.error(error)
+                }
+            }
         }
+
+        ObtenerDatos()
     }, [])
 
     return(

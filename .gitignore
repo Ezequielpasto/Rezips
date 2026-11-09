@@ -1,3 +1,5 @@
+feature/frontend-web
+backend/.env
 .env
 .env.*
 node_modules/

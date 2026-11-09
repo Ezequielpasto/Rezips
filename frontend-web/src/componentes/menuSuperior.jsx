@@ -1,4 +1,4 @@
-import './menuSuperior.css'
+import '../estilos/menuSuperior.css'
 
 function MenuSuperior({busqueda, setBusqueda}){
     return(

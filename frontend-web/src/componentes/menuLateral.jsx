@@ -1,7 +1,9 @@
-import './menuLateral.css'
+import '../estilos/menuLateral.css'
 import { Link } from 'react-router-dom'
 
 function MenuLateral(){
+    const usuarioActual = JSON.parse(localStorage.getItem('usuario'))
+
     return(
         <nav className="lateral">
             <ul className='enlaces'>
@@ -12,7 +14,7 @@ function MenuLateral(){
                 <li><Link to="/guardados">Guardado</Link></li>
                 <li><Link>Configuración</Link></li>
             </ul>
-            <Link to="/perfil" className='perfil'>EP</Link>
+            <Link to="/perfil" className='perfil'>{usuarioActual.nombre[0]}{usuarioActual.apellido[0]}</Link>
         </nav>
     )
 }
