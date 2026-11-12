@@ -176,7 +176,7 @@ function CrearReceta(){
             }
 
             alert('Receta creada correctamente')
-                navegar('/principal')
+            navegar('/principal')
 
         } catch(error){
             console.error('Error:', error)

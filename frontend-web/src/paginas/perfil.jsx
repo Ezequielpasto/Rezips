@@ -2,36 +2,46 @@ import '../estilos/perfil.css'
 import MenuLateral from '../componentes/menuLateral'
 import ListaRecetas from '../componentes/listaRecetas'
 import { useState, useEffect } from 'react'
+import { useFocusEffect } from 'expo-router';
+import { useCallback } from 'react';
 
 function Perfil(){
     const [usuario, setUsuario] = useState(null)
     const [recetas, setRecetas] = useState([])
 
-    useEffect(() => {
-        async function ObtenerDatos(){
-            const usuarioActual = JSON.parse(localStorage.getItem('usuario'))
-
-            setUsuario(usuarioActual)
-
-            if(usuarioActual) {
+    useFocusEffect(
+        useCallback(() => {
+            async function ObtenerDatos() {
                 try {
-                    const respuesta = await fetch(`http://localhost:3000/recetas?id_usuario=${usuarioActual.id_usuario}`)
-                    
+                    const usuarioJSON = await AsyncStorage.getItem('usuario');
+
+                    if (!usuarioJSON) return;
+
+                    const usuarioActual = JSON.parse(usuarioJSON);
+                    setUsuario(usuarioActual);
+
+                    const respuesta = await fetch(`${API}/recetas`);
+
                     if (!respuesta.ok) {
-                        throw new Error('Error al obtener las recetas')
+                        throw new Error('No se pudieron obtener las recetas');
                     }
 
-                    const datos = await respuesta.json()
-                    setRecetas(datos)
+                    const datos = await respuesta.json();
+
+                    const recetasUsuario = datos.filter(
+                        receta => Number(receta.id_usuario) === Number(usuarioActual.id_usuario)
+                    );
+
+                    setRecetas(recetasUsuario);
 
                 } catch (error) {
-                    console.error(error)
+                    console.error('Error al actualizar el perfil:', error);
                 }
             }
-        }
 
-        ObtenerDatos()
-    }, [])
+            ObtenerDatos();
+        }, [])
+    );
 
     return(
         <section>
