@@ -1,8 +1,10 @@
+
 import { View, Text, StyleSheet, Pressable, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { UserRound, Mail, Lock, LogOut, ChevronRight} from 'lucide-react-native';
+import { UserRound, Mail, Lock, LogOut, Trash2, ChevronRight } from 'lucide-react-native';
 import MenuInferior from '../componentes/menuInferior';
+import API from '../config/api';
 
 export default function Configuracion() {
     const router = useRouter();
@@ -22,7 +24,7 @@ export default function Configuracion() {
                     onPress: async () => {
                         try {
                             await AsyncStorage.removeItem('usuario');
-                            router.replace('/iniciarSesion');
+                            router.replace('/');
                         } catch (error) {
                             console.error('Error al cerrar sesión:', error);
                             Alert.alert('Error', 'No se pudo cerrar la sesión');
@@ -31,6 +33,68 @@ export default function Configuracion() {
                 }
             ]
         );
+    }
+
+    function EliminarCuenta() {
+        Alert.alert(
+            'Eliminar cuenta',
+            '¿Estás seguro de que querés eliminar tu cuenta? Se eliminarán tus recetas y todos tus datos. Esta acción no se puede deshacer.',
+            [
+                {
+                    text: 'Cancelar',
+                    style: 'cancel'
+                },
+                {
+                    text: 'Eliminar',
+                    style: 'destructive',
+                    onPress: ConfirmarEliminacion
+                }
+            ]
+        );
+    }
+
+    async function ConfirmarEliminacion() {
+        try {
+            const usuarioJSON = await AsyncStorage.getItem('usuario');
+
+            if (!usuarioJSON) {
+                throw new Error('No se encontró el usuario');
+            }
+
+            const usuario = JSON.parse(usuarioJSON);
+
+            const respuesta = await fetch(
+                `${API}/usuarios/${usuario.id_usuario}`,
+                {
+                    method: 'DELETE'
+                }
+            );
+
+            const datos = await respuesta.json();
+
+            if (!respuesta.ok) {
+                throw new Error(
+                    datos.mensaje || 'No se pudo eliminar la cuenta'
+                );
+            }
+
+            await AsyncStorage.removeItem('usuario');
+
+            Alert.alert(
+                'Cuenta eliminada',
+                'Tu cuenta se eliminó correctamente.',
+                [
+                    {
+                        text: 'Aceptar',
+                        onPress: () => router.replace('/')
+                    }
+                ]
+            );
+
+        } catch (error) {
+            console.error('Error al eliminar la cuenta:', error);
+            Alert.alert('Error', error.message);
+        }
     }
 
     function Opcion({ icono: Icono, titulo, descripcion, onPress, peligro }) {
@@ -104,6 +168,18 @@ export default function Configuracion() {
                         descripcion="Salir de tu cuenta de Recips"
                         peligro
                         onPress={CerrarSesion}
+                    />
+                </View>
+
+                <Text style={estilos.seccion}>ZONA DE PELIGRO</Text>
+
+                <View style={estilos.contenedorOpciones}>
+                    <Opcion
+                        icono={Trash2}
+                        titulo="Eliminar cuenta"
+                        descripcion="Eliminar permanentemente tu cuenta"
+                        peligro
+                        onPress={EliminarCuenta}
                     />
                 </View>
             </View>
