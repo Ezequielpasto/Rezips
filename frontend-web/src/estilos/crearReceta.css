@@ -1,76 +1,233 @@
-.nuevaReceta{
-    background-color: rgb(219, 238, 238);
-    width: 80%;
-    margin-left: 20%;
-    display: flex;
-    flex-direction: column;
+
+.nuevaReceta {
+    background-color: #ffffff;
+    width: calc(100% - 250px);
     min-height: 100vh;
-    box-sizing: border-box;
-
-}
-
-.nuevaReceta h1{
-    padding: 20px 0 30px 60px;
-}
-    
-.formNuevaReceta{
-    padding-bottom: 30px;
+    margin-left: 250px;
     display: flex;
     flex-direction: column;
-    margin-left: 60px;
-    gap: 20px;
+    box-sizing: border-box;
+    padding: 30px 40px;
 }
 
-.formNuevaReceta div{
-    width: 45%;
+.nuevaReceta h1 {
+    font-size: 26px;
+    margin: 0 0 10px;
 }
 
-.formNuevaReceta input{
-    height: 30px;
+.formNuevaReceta {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    padding-bottom: 40px;
 }
 
-.nombReceta input{
+/* Campos principales */
+.formNuevaReceta > div:not(.agregarIngredientes):not(.agregarPasos) {
+    width: 100%;
+    max-width: 700px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.formNuevaReceta p {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.formNuevaReceta input,
+.formNuevaReceta select,
+.formNuevaReceta textarea {
+    border: 1px solid #dddddd;
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 15px;
+    box-sizing: border-box;
+    background-color: #ffffff;
+}
+
+.formNuevaReceta input,
+.formNuevaReceta select {
+    min-height: 42px;
+}
+
+.nombReceta input {
     width: 100%;
 }
 
-.catReceta select{
-    height: 35px;
+.catReceta select {
+    width: 100%;
+    max-width: 350px;
 }
 
-.formNuevaReceta h5{
-    font-size: 20px;
-    margin-bottom: 5px;
+.durReceta input,
+.cantReceta input {
+    width: 100%;
+    max-width: 250px;
 }
 
-.agregarIngredientes .ingrediente{
+.imgReceta input {
+    width: 100%;
+    max-width: 450px;
+}
+
+/* Secciones */
+.formNuevaReceta h5 {
+    font-size: 21px;
+    margin: 0;
+}
+
+.agregarIngredientes,
+.formNuevaReceta .agregarPasos {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.agregarIngredientes .ingrediente {
+    width: 100%;
+    max-width: 850px;
     display: flex;
     flex-direction: row;
-    gap: 10px;
-    margin-bottom: 6px;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    border: 1px solid #eeeeee;
+    border-radius: 10px;
+    box-sizing: border-box;
 }
 
-.formNuevaReceta .agregarPasos{
+.ingrediente input {
+    flex: 1;
+    min-width: 0;
+}
+
+.ingrediente select {
+    flex: 1;
+    min-width: 0;
+}
+
+.formNuevaReceta button {
+    cursor: pointer;
+}
+
+.formNuevaReceta button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* Botones secundarios */
+.agregarIngredientes > button,
+.agregarPasos > button {
+    width: fit-content;
+    padding: 12px 14px;
+    border: none;
+    border-radius: 10px;
+    background-color: #eeeeee;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.ingrediente button,
+.paso button {
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    background-color: #ffdddd;
+    color: #bb2222;
+}
+
+/* Pasos */
+.formNuevaReceta .paso {
     width: 100%;
+    max-width: 850px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 14px;
+    border: 1px solid #eeeeee;
+    border-radius: 10px;
+    box-sizing: border-box;
 }
 
-.formNuevaReceta .paso .interaccion{
+.formNuevaReceta .paso .interaccion {
     display: flex;
     flex-direction: row;
+    align-items: flex-start;
     width: 100%;
-    gap: 10px;
+    gap: 12px;
 }
 
-.formNuevaReceta .paso button{
-    height: 30px;
-}
-
-.formNuevaReceta textarea{
-    resize: none;
+.formNuevaReceta textarea {
     width: 100%;
-    height: 200px;
+    min-height: 120px;
+    resize: vertical;
 }
 
-.formNuevaReceta .btnCrearReceta{
-    width: 15%;
-    height: 30px;
+/* Botón publicar */
+.formNuevaReceta .btnCrearReceta {
+    width: 100%;
+    max-width: 250px;
+    padding: 16px;
+    border: none;
+    border-radius: 10px;
+    background-color: #222222;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.formNuevaReceta .btnCrearReceta:hover {
+    background-color: #444444;
+}
+
+/* Tablets */
+@media (max-width: 900px) {
+    .nuevaReceta {
+        width: calc(100% - 200px);
+        margin-left: 200px;
+        padding: 25px;
+    }
+
+    .agregarIngredientes .ingrediente {
+        flex-wrap: wrap;
+    }
+}
+
+/* Celulares */
+@media (max-width: 600px) {
+    .nuevaReceta {
+        width: 100%;
+        margin-left: 0;
+        padding: 20px;
+    }
+
+    .nuevaReceta h1 {
+        font-size: 23px;
+    }
+
+    .agregarIngredientes .ingrediente {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .ingrediente input,
+    .ingrediente select {
+        width: 100%;
+    }
+
+    .formNuevaReceta .paso .interaccion {
+        flex-direction: column;
+    }
+
+    .formNuevaReceta .paso button {
+        align-self: flex-start;
+    }
+
+    .formNuevaReceta .btnCrearReceta {
+        max-width: none;
+    }
 }

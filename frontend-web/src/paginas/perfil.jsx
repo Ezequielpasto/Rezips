@@ -8,30 +8,37 @@ function Perfil(){
     const [recetas, setRecetas] = useState([])
 
     useEffect(() => {
-        async function ObtenerDatos(){
-            const usuarioActual = JSON.parse(localStorage.getItem('usuario'))
+        async function ObtenerDatos() {
+            try {
+                const usuarioJSON = localStorage.getItem('usuario');
 
-            setUsuario(usuarioActual)
+                if (!usuarioJSON) return;
 
-            if(usuarioActual) {
-                try {
-                    const respuesta = await fetch(`http://localhost:3000/recetas?id_usuario=${usuarioActual.id_usuario}`)
-                    
-                    if (!respuesta.ok) {
-                        throw new Error('Error al obtener las recetas')
-                    }
+                const usuarioActual = JSON.parse(usuarioJSON);
+                setUsuario(usuarioActual);
 
-                    const datos = await respuesta.json()
-                    setRecetas(datos)
+                const respuesta = await fetch(`http://localhost:3000/recetas`);
 
-                } catch (error) {
-                    console.error(error)
+                if (!respuesta.ok) {
+                    throw new Error('No se pudieron obtener las recetas');
                 }
+
+                const datos = await respuesta.json();
+
+                const recetasUsuario = datos.filter(
+                    receta => Number(receta.id_usuario) === Number(usuarioActual.id_usuario)
+                );
+
+                setRecetas(recetasUsuario);
+
+            } catch (error) {
+                console.error('Error al actualizar el perfil:', error);
             }
         }
 
-        ObtenerDatos()
-    }, [])
+        ObtenerDatos();
+    }, []);
+
 
     return(
         <section>

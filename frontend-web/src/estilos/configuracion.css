@@ -1,0 +1,141 @@
+
+.pantallaConfiguracion {
+    min-height: 100vh;
+    background-color: #ffffff;
+}
+
+.contenidoConfiguracion {
+    width: calc(100% - 250px);
+    min-height: 100vh;
+    margin-left: 250px;
+    padding: 35px 45px;
+    box-sizing: border-box;
+}
+
+.contenidoConfiguracion h2 {
+    font-size: 26px;
+    color: #222222;
+    margin-bottom: 30px;
+}
+
+.seccionConfiguracion {
+    margin-bottom: 30px;
+}
+
+.seccionConfiguracion h4 {
+    font-size: 13px;
+    color: #777777;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+}
+
+.opcionesConfiguracion {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #eeeeee;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.opcionConfiguracion {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    padding: 17px 18px;
+    border: none;
+    border-bottom: 1px solid #eeeeee;
+    background-color: #ffffff;
+    text-align: left;
+    cursor: pointer;
+}
+
+.opcionConfiguracion:last-child {
+    border-bottom: none;
+}
+
+.opcionConfiguracion:hover {
+    background-color: #f9f9f9;
+}
+
+.iconoConfiguracion {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    border-radius: 10px;
+    background-color: #f2f2f2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #333333;
+}
+
+.iconoConfiguracion svg {
+    width: 20px;
+    height: 20px;
+}
+
+.textoConfiguracion {
+    flex: 1;
+}
+
+.textoConfiguracion h5 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #222222;
+    margin: 0 0 5px;
+}
+
+.textoConfiguracion p {
+    font-size: 13px;
+    color: #777777;
+    margin: 0;
+}
+
+.flechaConfiguracion {
+    width: 19px;
+    height: 19px;
+    color: #999999;
+}
+
+.zonaPeligro h4 {
+    color: #bb2222;
+}
+
+.opcionEliminar .iconoEliminar {
+    background-color: #ffdddd;
+    color: #bb2222;
+}
+
+.opcionEliminar .textoConfiguracion h5 {
+    color: #bb2222;
+}
+
+@media (max-width: 900px) {
+    .contenidoConfiguracion {
+        width: calc(100% - 200px);
+        margin-left: 200px;
+        padding: 30px 25px;
+    }
+}
+
+@media (max-width: 600px) {
+    .contenidoConfiguracion {
+        width: 100%;
+        margin-left: 0;
+        padding: 25px 18px;
+    }
+
+    .contenidoConfiguracion h2 {
+        font-size: 25px;
+    }
+
+    .opcionConfiguracion {
+        padding: 15px 12px;
+        gap: 12px;
+    }
+
+    .textoConfiguracion p {
+        font-size: 12px;
+    }
+}

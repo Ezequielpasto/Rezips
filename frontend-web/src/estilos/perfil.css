@@ -1,44 +1,96 @@
-.miCuenta{
+.miCuenta {
     min-height: 100vh;
-    width: 80%;
-    margin-left: 20%;
+    width: calc(100% - 250px);
+    margin-left: 250px;
+    background-color: #ffffff;
+    box-sizing: border-box;
 }
 
-.datos{
-    background-color: aliceblue;
-    width: 80%;
-    height: 200px;
+/* Datos del perfil */
+.datos {
+    width: 100%;
     display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
-    position: fixed;
-    top: 0;
-    z-index: 5;
+    flex-direction: column;
+    gap: 15px;
+    padding: 25px 20px;
+    box-sizing: border-box;
 }
 
-.contenido{
-    padding-top: 150px;
-}
-
-.nombreCirculo{
+.nombreCirculo {
     display: flex;
     flex-direction: row;
     align-items: center;
+    gap: 12px;
 }
 
-.circuloPerfil{
-    background-color: grey;
-    width: 150px;
-    height: 150px;
-    border-radius: 100%;
+.circuloPerfil {
+    width: 95px;
+    height: 95px;
+    border-radius: 50%;
+    background-color: #eeeeee;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 60px;
+    font-size: 30px;
+    font-weight: bold;
+    color: #333333;
+    flex-shrink: 0;
 }
 
-.nombreCirculo h4{
-    font-size: 50px;
+.nombreCirculo h4 {
+    font-size: 22px;
+    font-weight: bold;
+    color: #222222;
+    margin: 0;
 }
 
+.datos > p {
+    font-size: 15px;
+    color: #666666;
+    text-align: center;
+    margin: 0;
+}
+
+.contenido {
+    width: 100%;
+    padding: 0 20px 30px;
+    box-sizing: border-box;
+}
+
+/* Tablets */
+@media (max-width: 900px) {
+    .miCuenta {
+        width: calc(100% - 200px);
+        margin-left: 200px;
+    }
+
+    .datos {
+        padding: 20px;
+    }
+}
+
+/* Celulares */
+@media (max-width: 600px) {
+    .miCuenta {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .datos {
+        padding: 20px 15px;
+    }
+
+    .circuloPerfil {
+        width: 85px;
+        height: 85px;
+        font-size: 27px;
+    }
+
+    .nombreCirculo h4 {
+        font-size: 20px;
+    }
+
+    .contenido {
+        padding: 0 10px 25px;
+    }
+}

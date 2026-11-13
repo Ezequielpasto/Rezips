@@ -1,18 +1,65 @@
-.superior{
-    background-color: bisque;
+
+.superior {
+    background-color: #ffffff;
     position: fixed;
     top: 0;
-    width: 80%;
-    height: 100px;
+    right: 0;
+    width: calc(100% - 250px);
+    height: 80px;
+    box-sizing: border-box;
     z-index: 10;
-    margin-left: 20%;
+    margin-left: 250px;
     display: flex;
     align-items: center;
+    padding: 0 30px;
+    border-bottom: 1px solid #eeeeee;
 }
 
-.superior input{
-    width: 40%;
-    height: 30px;
-    padding: 5px;
+.superior input {
+    width: 45%;
+    max-width: 550px;
+    height: 42px;
+    box-sizing: border-box;
+    padding: 0 15px;
+    border: 1px solid #dddddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    font-size: 14px;
+    outline: none;
 }
 
+.superior input:focus {
+    border-color: #bc6c16;
+    background-color: #ffffff;
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+    .superior {
+        width: calc(100% - 200px);
+        margin-left: 200px;
+        height: 70px;
+        padding: 0 20px;
+    }
+
+    .superior input {
+        width: 70%;
+    }
+}
+
+/* Celulares */
+@media (max-width: 600px) {
+    .superior {
+        position: relative;
+        width: 100%;
+        height: 65px;
+        margin-left: 0;
+        padding: 0 15px;
+    }
+
+    .superior input {
+        width: 100%;
+        max-width: none;
+        height: 40px;
+    }
+}

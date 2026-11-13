@@ -1,14 +1,26 @@
-function ListaPasos({pasos}){
-    return(
-        <div>
-            {pasos.map((paso) => (
-                <div key={paso.numero}>
-                    <h4>Paso {paso.numero}</h4>
-                    <p>{paso.descripcion}</p>
-                    <br />
+import '../estilos/listaPasos.css';
+
+function ListaPasos({ pasos }) {
+    return (
+        <div className="listaPasos">
+            {pasos.map((paso, index) => (
+                <div
+                    key={paso.id_paso ?? index}
+                    className="paso"
+                >
+                    <div className="numero">
+                        <span className="textoNumero">
+                            {paso.numero}
+                        </span>
+                    </div>
+
+                    <p className="descripcion">
+                        {paso.descripcion}
+                    </p>
                 </div>
             ))}
         </div>
-    )
+    );
 }
-export default ListaPasos
+
+export default ListaPasos;
