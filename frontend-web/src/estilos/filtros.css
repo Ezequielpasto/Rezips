@@ -1,17 +1,62 @@
-.filtros{
-    height: 50px;
+
+.filtros {
     width: 100%;
+    min-height: 65px;
+    box-sizing: border-box;
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 10px;
-    padding-left: 15px;
-    position: flex;
+    gap: 12px;
+    padding: 10px 20px;
     position: fixed;
+    top: 80px;
     z-index: 3;
+    background-color: #ffffff;
 }
 
-.filtros select{
-    width: 10%;
-    height: 30px;
+.filtros select {
+    min-width: 150px;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid #dddddd;
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: #333333;
+    font-size: 14px;
+    cursor: pointer;
+    outline: none;
+}
+
+.filtros select:focus {
+    border-color: #bc6c16;
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+    .filtros {
+        padding: 10px 15px;
+        gap: 10px;
+    }
+
+    .filtros select {
+        min-width: 130px;
+        font-size: 13px;
+    }
+}
+
+/* Celulares */
+@media (max-width: 600px) {
+    .filtros {
+        position: relative;
+        top: auto;
+        width: 100%;
+        min-height: 60px;
+        padding: 10px 15px;
+        overflow-x: auto;
+    }
+
+    .filtros select {
+        min-width: 145px;
+        flex-shrink: 0;
+    }
 }

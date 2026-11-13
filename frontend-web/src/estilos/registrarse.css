@@ -1,55 +1,145 @@
-.registro{
-    background-color: bisque;
+
+.registro {
     min-height: 100vh;
+    width: 100%;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    align-items: center;
-    padding-top: 30px;
-}
-
-.formRegistro{
-    width: 30%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
-    gap: 20px;
+    align-items: center;
+    padding: 40px 20px;
+    background-color: #ffffff;
 }
 
-.formRegistro div{
-    width: 90%;
+.registro h1 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #222222;
+    margin-bottom: 30px;
     text-align: center;
+}
+
+.formRegistro {
+    width: 100%;
+    max-width: 480px;
     display: flex;
     flex-direction: column;
-    align-items: start;
+    gap: 22px;
+}
+
+.formRegistro > div {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
     gap: 10px;
 }
 
-.formRegistro .nombreApellido div{
-    width: 100%;
+.formRegistro p {
+    font-size: 15px;
+    color: #333333;
+    margin: 0;
+}
+
+.nombreApellido > div {
     display: flex;
-    flex-direction: row;
+    gap: 10px;
+    width: 100%;
 }
 
-.nombreApellido input{
-   gap: 10px;
-   height: 30px;
-   width: 100%;
+.formRegistro input {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    height: 45px;
+    padding: 12px;
+    border: 1px solid #cccccc;
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
 }
 
-.formRegistro input{
-    height: 30px;
-    width: 99%;
+.formRegistro input:focus {
+    border-color: #bc6c16;
 }
 
-.formRegistro button{
+.formRegistro button {
+    width: 100%;
+    padding: 14px;
     border: none;
-    padding: 10px;
-    width: 90%;
-    background-color: coral;
+    border-radius: 8px;
+    background-color: #bc6c16;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 
-.formRegistro button:hover{
-    background-color: brown;
+.formRegistro button:hover {
+    background-color: #995510;
+}
+
+.registro > p {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 25px;
+    font-size: 15px;
+    color: #333333;
+    text-align: center;
+}
+
+.registro > p a {
+    color: #208AEF;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.registro > p a:hover {
+    text-decoration: underline;
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+    .registro {
+        padding: 35px 25px;
+    }
+
+    .registro h1 {
+        font-size: 25px;
+    }
+
+    .formRegistro {
+        max-width: 500px;
+    }
+}
+
+/* Celulares */
+@media (max-width: 480px) {
+    .registro {
+        justify-content: center;
+        padding: 25px 20px;
+    }
+
+    .registro h1 {
+        font-size: 23px;
+        margin-bottom: 25px;
+    }
+
+    .formRegistro {
+        gap: 20px;
+    }
+
+    .nombreApellido > div {
+        flex-direction: column;
+    }
+
+    .formRegistro input {
+        height: 44px;
+    }
+
+    .registro > p {
+        flex-wrap: wrap;
+        font-size: 14px;
+    }
 }

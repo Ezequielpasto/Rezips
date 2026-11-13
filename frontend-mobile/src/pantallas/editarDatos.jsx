@@ -1,14 +1,6 @@
 
 import { useState } from 'react';
-import {
-    View,
-    Text,
-    TextInput,
-    StyleSheet,
-    Pressable,
-    Alert,
-    ScrollView
-} from 'react-native';
+import { View, Text, TextInput, StyleSheet, Pressable, Alert, ScrollView} from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';

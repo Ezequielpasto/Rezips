@@ -1,0 +1,95 @@
+
+.pantallaEditarDatos {
+    min-height: 100vh;
+    background-color: #ffffff;
+}
+
+.contenidoEditarDatos {
+    width: calc(100% - 250px);
+    min-height: 100vh;
+    margin-left: 250px;
+    padding: 35px 45px;
+    box-sizing: border-box;
+}
+
+.contenidoEditarDatos h2 {
+    font-size: 26px;
+    color: #222222;
+    margin-bottom: 8px;
+}
+
+.descripcionEditarDatos {
+    font-size: 14px;
+    color: #777777;
+    margin-bottom: 30px;
+}
+
+.formEditarDatos {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 550px;
+}
+
+.formEditarDatos label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333333;
+}
+
+.formEditarDatos input {
+    height: 48px;
+    border: 1px solid #dddddd;
+    border-radius: 10px;
+    padding: 0 14px;
+    margin-bottom: 12px;
+    font-size: 15px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.formEditarDatos input:focus {
+    border-color: #888888;
+}
+
+.guardarEditarDatos {
+    background-color: #222222;
+    color: #ffffff;
+    height: 50px;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+.guardarEditarDatos:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.cancelarEditarDatos {
+    background-color: transparent;
+    color: #666666;
+    border: none;
+    padding: 15px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+@media (max-width: 900px) {
+    .contenidoEditarDatos {
+        width: calc(100% - 200px);
+        margin-left: 200px;
+        padding: 30px 25px;
+    }
+}
+
+@media (max-width: 600px) {
+    .contenidoEditarDatos {
+        width: 100%;
+        margin-left: 0;
+        padding: 25px 18px;
+    }
+}

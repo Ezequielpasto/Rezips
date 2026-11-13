@@ -1,0 +1,47 @@
+.listaIngredientes {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.ingrediente {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+}
+
+.nombre {
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0;
+}
+
+.cantidad {
+    font-size: 16px;
+    color: #555555;
+    margin: 0;
+}
+
+/* Tablets */
+@media (max-width: 900px) {
+    .nombre,
+    .cantidad {
+        font-size: 15px;
+    }
+}
+
+/* Celulares */
+@media (max-width: 600px) {
+    .ingrediente {
+        padding: 10px;
+    }
+
+    .nombre,
+    .cantidad {
+        font-size: 14px;
+    }
+}

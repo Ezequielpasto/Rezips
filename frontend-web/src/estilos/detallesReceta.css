@@ -1,154 +1,397 @@
-.detalles{
+
+.detalles {
     min-height: 100vh;
-    width: 80%;
-    margin-left: 20%;
+    width: calc(100% - 250px);
+    margin-left: 250px;
     display: flex;
     flex-direction: row;
-    padding-bottom: 10px;
+    align-items: stretch;
+    padding-bottom: 30px;
+    box-sizing: border-box;
+    background-color: #ffffff;
 }
 
-.infoReceta{
+/* Información de la receta */
+
+.infoReceta {
     width: 65%;
+    min-width: 0;
     display: flex;
     flex-direction: column;
-    padding: 15px;
-    gap: 10px;
+    padding: 25px;
+    gap: 20px;
+    box-sizing: border-box;
 }
 
-.imgEInfo{
+.tituloEstrellas {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
 }
 
-.duracionPorciones{
+.tituloCategoria {
     display: flex;
     flex-direction: column;
-    width: 20%;
+    gap: 5px;
+}
+
+.titulo {
+    font-size: 32px;
+    font-weight: bold;
+    color: #222222;
+    margin: 0;
+}
+
+.tituloCategoria p:not(.titulo) {
+    color: #666666;
+    margin: 0;
+    font-size: 16px;
+}
+
+.promedio {
+    display: flex;
     align-items: center;
-    justify-content: start;
-    gap: 25px;
-    padding-top: 20px;
-    
+    gap: 3px;
+    flex-shrink: 0;
 }
 
-.duracionPorciones p{
-    font-size: 40px;
+/* Imagen, duración y porciones */
+
+.imgEInfo {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    width: 100%;
 }
 
-.imgSup{
+.imgSup {
     width: 80%;
     height: 350px;
-    border: 2px black solid;
+    border-radius: 10px;
+    overflow: hidden;
+    flex: 1;
+    min-width: 0;
 }
 
-.imgSup img{
+.imgSup img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.interaccion{
-   display: flex;
-   flex-direction: row;
-   gap: 15px;
+.duracionPorciones {
+    display: flex;
+    flex-direction: column;
+    width: 20%;
+    min-width: 100px;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 25px;
+    padding-top: 20px;
+    color: #bc6c16;
 }
 
-.interaccion button{
+.duracionPorciones p {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 22px;
+    margin: 0;
+}
+
+/* Me gusta, guardados y calificación */
+
+.interaccion {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.interaccion button {
+    display: flex;
+    align-items: center;
+    gap: 5px;
     background: none;
     border: none;
+    cursor: pointer;
+    color: #333333;
+    padding: 3px;
 }
 
-.tituloEstrellas{
+.estrellas {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
     align-items: center;
-    padding: 0 10px;
+    gap: 2px;
 }
 
-.promedio{
-    display: flex;    
+.estrellas button {
+    padding: 2px;
 }
 
-.restoInfo{
+/* Ingredientes y pasos */
+
+.susIngredientes,
+.susPasos {
     display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    gap: 20px;
-}       
-
-.titulo{
-    font-size: 50px;
-}
-
-.propietario{
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
+    flex-direction: column;
     gap: 10px;
 }
 
-.propietario button{
-    background-color: gray;
-    border: 1px black solid;
-    height: 30px;
-    border-radius: 4px;
-    padding: 5px;
-    margin-top: 10px;
-
+.susIngredientes h3,
+.susPasos h3 {
+    font-size: 21px;
+    color: #222222;
+    margin: 0;
 }
 
-.comentarios{
+/* Botones del propietario */
+
+.propietario {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+
+.propietario button {
+    background-color: #bc6c16;
+    color: #ffffff;
+    border: none;
+    min-height: 40px;
+    border-radius: 8px;
+    padding: 10px 16px;
+    cursor: pointer;
+}
+
+.propietario button:hover {
+    background-color: #995510;
+}
+
+/* Comentarios */
+
+.comentarios {
     width: 35%;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 20px;
-    border-left: 2px black solid;
+    padding: 20px;
+    box-sizing: border-box;
+    border-left: 1px solid #eeeeee;
 }
 
-.comentarios h4{
+.comentarios h4 {
     display: flex;
     align-items: center;
+    gap: 8px;
+    font-size: 20px;
+    margin: 0;
+    color: #222222;
 }
 
-.crearComentario{
+.crearComentario {
     display: flex;
     flex-direction: column;
-    width: 95%;
-}
-
-.crearComentario textarea{
-    resize: none;
     width: 100%;
-    height: 50px;
+    gap: 10px;
 }
 
-.todosLosComentarios{
-    align-self: self-start;
-    margin-left: 5px;
+.crearComentario textarea {
+    box-sizing: border-box;
+    resize: vertical;
+    width: 100%;
+    min-height: 90px;
+    padding: 12px;
+    border: 1px solid #dddddd;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+}
+
+.crearComentario textarea:focus {
+    border-color: #bc6c16;
+}
+
+.crearComentario button {
+    background-color: #bc6c16;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.crearComentario button:hover {
+    background-color: #995510;
+}
+
+.todosLosComentarios {
+    align-self: stretch;
+    width: 100%;
+    box-sizing: border-box;
     overflow-wrap: anywhere;
     word-break: break-word;
+}
 
-.usuarioComentario{
+.usuarioComentario {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 5px;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
-.comentarioFecha{
-    padding-top: 2px;
-    padding-left: 10px;
-    padding-bottom: 12px;
+.usuarioComentario h5 {
+    margin: 0;
 }
 
-.circulo{
-    background-color: grey;
-    border-radius: 100%;
+.usuarioComentario button {
+    border: none;
+    background: none;
+    color: #d64545;
+    cursor: pointer;
+}
+
+.comentarioFecha {
+    padding: 5px 0 15px 10px;
+    border-bottom: 1px solid #eeeeee;
+}
+
+.comentarioFecha .comentario {
+    margin: 0 0 5px;
+}
+
+.circulo {
+    background-color: #eeeeee;
+    color: #bc6c16;
+    border-radius: 50%;
     width: 40px;
     height: 40px;
+    flex-shrink: 0;
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+/* Tablets */
+
+@media (max-width: 1000px) {
+    .detalles {
+        width: calc(100% - 200px);
+        margin-left: 200px;
+    }
+
+    .infoReceta {
+        width: 60%;
+        padding: 18px;
+    }
+
+    .comentarios {
+        width: 40%;
+        padding: 15px;
+    }
+
+    .imgSup {
+        height: 280px;
+    }
+
+    .duracionPorciones {
+        min-width: 80px;
+    }
+
+    .duracionPorciones p {
+        font-size: 18px;
+    }
+}
+
+/* Celulares */
+
+@media (max-width: 600px) {
+    .detalles {
+        width: 100%;
+        margin-left: 0;
+        flex-direction: column;
+    }
+
+    .infoReceta {
+        width: 100%;
+        padding: 20px;
+        gap: 20px;
+    }
+
+    .tituloEstrellas {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .titulo {
+        font-size: 25px;
+    }
+
+    .promedio {
+        flex-wrap: wrap;
+    }
+
+    .imgEInfo {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .imgSup {
+        width: 100%;
+        height: 250px;
+        flex: none;
+    }
+
+    .duracionPorciones {
+        width: 100%;
+        min-width: 0;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+        padding: 15px 0;
+        border-top: 1px solid #eeeeee;
+        border-bottom: 1px solid #eeeeee;
+        gap: 10px;
+    }
+
+    .duracionPorciones p {
+        font-size: 17px;
+        gap: 6px;
+    }
+
+    .duracionPorciones svg {
+        width: 25px;
+        height: 25px;
+    }
+
+    .interaccion {
+        width: 100%;
+        justify-content: flex-start;
+        gap: 12px;
+    }
+
+    .comentarios {
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid #eeeeee;
+        padding: 20px;
+    }
+
+    .propietario {
+        flex-direction: column;
+    }
+
+    .propietario button {
+        width: 100%;
+    }
 }

@@ -1,0 +1,66 @@
+.listaPasos {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.paso {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 0;
+}
+
+.numero {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    border-radius: 16px;
+    background-color: #e5e5e5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.textoNumero {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.descripcion {
+    flex: 1;
+    font-size: 16px;
+    line-height: 24px;
+    margin: 0;
+}
+
+/* Tablets */
+@media (max-width: 900px) {
+    .textoNumero,
+    .descripcion {
+        font-size: 15px;
+    }
+}
+
+/* Celulares */
+@media (max-width: 600px) {
+    .paso {
+        gap: 10px;
+    }
+
+    .numero {
+        width: 30px;
+        height: 30px;
+        min-width: 30px;
+    }
+
+    .textoNumero,
+    .descripcion {
+        font-size: 14px;
+    }
+
+    .descripcion {
+        line-height: 22px;
+    }
+}

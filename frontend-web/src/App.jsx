@@ -10,6 +10,10 @@ import Perfil from './paginas/perfil'
 import CrearReceta from './paginas/crearReceta'
 import DetallesReceta from './paginas/detallesReceta'
 import EditarReceta from './paginas/editarReceta'
+import Configuracion from './paginas/configuracion';
+import EditarDatos from './paginas/editarDatos';
+import CambiarCorreo from './paginas/cambiarCorreo'
+import CambiarContrasenia from './paginas/cambiarContrasenia';
 
 function App() {
 
@@ -27,11 +31,17 @@ function App() {
           <Route path="/meGusta" element={<MeGusta/>}/>
           <Route path="/guardados" element={<Guardado/>}/>
           <Route path="/crearReceta" element={<CrearReceta/>}/>
+          <Route path="/configuracion" element={<Configuracion />} />
 
           {/* Receta especifica detalles */}
           <Route path="/receta/:id" element={<DetallesReceta/>}/>
 
           <Route path="/editarReceta/:id" element={<EditarReceta />} />
+
+          {/* Configuraciones */}
+          <Route path="/editarDatos" element={<EditarDatos />} />
+          <Route path="/cambiarCorreo" element={<CambiarCorreo />} />
+          <Route path="/cambiarContrasenia" element={<CambiarContrasenia />}/>
         </Routes>
       </BrowserRouter>
     </>

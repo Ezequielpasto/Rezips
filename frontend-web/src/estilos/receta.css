@@ -1,17 +1,27 @@
+
 .receta {
-    background-color: rgb(245, 244, 243);
+    background-color: #f5f4f3;
     width: 100%;
-    height: 300px;
+    height: 280px;
     display: flex;
     flex-direction: row;
-    border: rgb(219, 214, 214) 1px solid;
+    border: 1px solid #eeeeee;
+    border-radius: 10px;
     cursor: pointer;
     overflow: hidden;
+    transition: box-shadow 0.2s, transform 0.2s;
+    box-sizing: border-box;
+}
+
+.receta:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+    transform: translateY(-2px);
 }
 
 .verDetalles {
     text-decoration: none;
     color: black;
+    min-width: 0;
 }
 
 .receta .imagen {
@@ -19,6 +29,7 @@
     width: 80%;
     height: 100%;
     flex-shrink: 0;
+    overflow: hidden;
 }
 
 .imagen img {
@@ -29,6 +40,8 @@
 
 .encabezadoReceta {
     position: absolute;
+    top: 0;
+    left: 0;
     z-index: 1;
     color: white;
     background: rgba(0, 0, 0, 0.5);
@@ -38,7 +51,8 @@
 
 .creadorReceta {
     position: absolute;
-    bottom: 0px;
+    bottom: 0;
+    left: 0;
     z-index: 1;
     color: white;
     background: rgba(0, 0, 0, 0.5);
@@ -48,6 +62,7 @@
 
 .informacion {
     width: 20%;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -55,12 +70,66 @@
     gap: 10px;
     padding: 10px;
     box-sizing: border-box;
-    font-size: 25px;
-    color:darkslategrey;
+    font-size: 22px;
+    color: darkslategrey;
 }
 
-.acciones button{
+.acciones {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.acciones button {
     background: none;
     border: none;
-    margin: 5px;
+    margin: 3px;
+    padding: 4px;
+    cursor: pointer;
+}
+
+/* Tablets */
+@media (max-width: 1000px) {
+    .receta {
+        height: 260px;
+    }
+
+    .informacion {
+        font-size: 19px;
+        padding: 8px;
+    }
+}
+
+/* Celulares */
+@media (max-width: 600px) {
+    .receta {
+        height: 220px;
+    }
+
+    .receta .imagen {
+        width: 70%;
+    }
+
+    .informacion {
+        width: 30%;
+        font-size: 17px;
+        padding: 8px 5px;
+        gap: 5px;
+    }
+
+    .encabezadoReceta,
+    .creadorReceta {
+        padding: 6px 8px;
+        font-size: 13px;
+    }
+
+    .acciones {
+        gap: 3px;
+    }
+
+    .acciones button {
+        margin: 0;
+        padding: 3px;
+    }
 }

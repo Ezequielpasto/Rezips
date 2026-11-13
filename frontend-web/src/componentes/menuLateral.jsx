@@ -12,7 +12,7 @@ function MenuLateral(){
                 <li><Link to="/principal">Página principal</Link></li>
                 <li><Link to="/meGusta">Me gusta</Link></li>
                 <li><Link to="/guardados">Guardado</Link></li>
-                <li><Link>Configuración</Link></li>
+                <li><Link to="/configuracion">Configuración</Link></li>
             </ul>
             <Link to="/perfil" className='perfil'>{usuarioActual.nombre[0]}{usuarioActual.apellido[0]}</Link>
         </nav>
