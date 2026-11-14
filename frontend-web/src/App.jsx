@@ -2,7 +2,7 @@ import './estilos/App.css'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 import IniciarSesion from './paginas/iniciarSesion'
-import Registrarse from './paginas/Registrarse'
+import Registrarse from './paginas/registrarse'
 import Principal from './paginas/principal'
 import MeGusta from './paginas/meGusta'
 import Guardado from './paginas/guardado'
