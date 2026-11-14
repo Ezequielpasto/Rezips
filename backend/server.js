@@ -15,6 +15,7 @@ const rutasPasos = require('./rutas/pasos.rutas');
 const rutasCategorias = require('./rutas/categorias.rutas');
 const rutasUsuarios = require('./rutas/usuarios.rutas');
 const rutasComentarios = require('./rutas/comentarios.rutas');
+const PORT = process.env.PORT || 3000;
 
 app.use('/recetas', rutasRecetas);
 app.use('/ingredientes', rutasIngredientes);
@@ -25,8 +26,8 @@ app.use('/usuarios', rutasUsuarios);
 app.use('/recetas', rutasComentarios)
 app.use('/comentarios', rutasComentarios)
 
-app.listen(3000, () => {
-    console.log('Servidor funcionando en el puerto 3000');
+app.listen(PORT, () => {
+    console.log(`Servidor funcionando en el puerto ${PORT}`);
 });
 
 pool.query('SELECT NOW()')
