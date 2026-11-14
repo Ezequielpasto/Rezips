@@ -1,3 +1,3 @@
-const API = 'http://172.27.195.188:3000';
+const API = 'https://rezips-backend.onrender.com';
 
 export default API;

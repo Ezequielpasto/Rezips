@@ -8,7 +8,8 @@
     "userInterfaceStyle": "light",
     "scheme": "recips",
     "plugins": [
-    "expo-router"],
+      "expo-router"
+    ],
     "ios": {
       "supportsTablet": true
     },
@@ -22,6 +23,16 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "f16ff9d7-b2bf-4897-abe6-013f6699e69a"
+      }
     }
   }
 }
