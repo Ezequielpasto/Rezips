@@ -16,7 +16,7 @@ export default function MenuSuperior({
 
     return (
         <View style={estilos.superior}>
-            <Text style={estilos.logo}>Recips</Text>
+            <Text style={estilos.logo}>Rezips</Text>
 
             <View style={estilos.filaBuscador}>
                 <View style={estilos.buscador}>
