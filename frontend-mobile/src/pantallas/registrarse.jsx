@@ -217,7 +217,7 @@ export default function Registrarse() {
 
     return (
         <ScrollView contentContainerStyle={estilos.contenedor}>
-            <Text style={estilos.titulo}>Crea una cuenta de Recips</Text>
+            <Text style={estilos.titulo}>Crea una cuenta de Rezips</Text>
 
             <View style={estilos.formulario}>
                 <Pressable style={estilos.contenedorFoto} onPress={ElegirImagen}>

@@ -63,7 +63,7 @@ export default function IniciarSesion() {
     return (
         <View style={estilos.contenedor}>
             <Text style={estilos.titulo}>
-                Bienvenido a Recips
+                Bienvenido a Rezips
             </Text>
 
             <View style={estilos.formulario}>
