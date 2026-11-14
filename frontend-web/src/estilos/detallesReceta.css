@@ -90,7 +90,7 @@
     justify-content: flex-start;
     gap: 25px;
     padding-top: 20px;
-    color: #bc6c16;
+    color: black;
 }
 
 .duracionPorciones p {
@@ -160,7 +160,6 @@
 }
 
 .propietario button {
-    background-color: #bc6c16;
     color: #ffffff;
     border: none;
     min-height: 40px;
@@ -169,9 +168,24 @@
     cursor: pointer;
 }
 
-.propietario button:hover {
-    background-color: #995510;
+.propietario .editarReceta{
+    background-color: #333333;
+    transition: background-color 0.2s;
 }
+
+.propietario .editarReceta:hover{
+    background-color: #575555;
+}
+
+.propietario .eliminarReceta{
+    background-color: rgb(174, 46, 46);
+    transition: background-color 0.2s;
+}
+
+.propietario .eliminarReceta:hover{
+    background-color: rgb(92, 60, 60);
+}
+
 
 /* Comentarios */
 
@@ -228,6 +242,7 @@
     padding: 12px;
     cursor: pointer;
     font-weight: bold;
+    transition: background-color 0.2s;
 }
 
 .crearComentario button:hover {
@@ -240,6 +255,10 @@
     box-sizing: border-box;
     overflow-wrap: anywhere;
     word-break: break-word;
+}
+
+.todosLosComentarios p{
+    color: #454444;
 }
 
 .usuarioComentario {
@@ -280,6 +299,22 @@
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.fotoComentario {
+    width: 45px;
+    height: 45px;
+    min-width: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.crearComentario .botonEnviar{
+    background-color: rgb(18, 92, 87);
+}
+
+.crearComentario .botonEnviar:hover{
+    background-color: rgb(35, 56, 55);
 }
 
 /* Tablets */

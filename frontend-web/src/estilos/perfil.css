@@ -6,6 +6,14 @@
     box-sizing: border-box;
 }
 
+.pantallaPerfil {
+    min-height: 100vh;
+    width: 100%;
+    background-color: #ffffff;
+    background-image: none;
+    overflow-x: hidden;
+}
+
 /* Datos del perfil */
 .datos {
     width: 100%;
@@ -16,11 +24,20 @@
     box-sizing: border-box;
 }
 
+.fotoPerfil {
+    width: 100px;
+    height: 100px;
+    min-width: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    overflow: hidden;
+    display: block;
+}
+
 .nombreCirculo {
     display: flex;
-    flex-direction: row;
     align-items: center;
-    gap: 12px;
+    gap: 15px;
 }
 
 .circuloPerfil {

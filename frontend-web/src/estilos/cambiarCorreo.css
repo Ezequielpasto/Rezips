@@ -54,6 +54,11 @@
     font-size: 15px;
 }
 
+.guardarCambiarCorreo:hover,
+.cancelarCambiarCorreo:hover{
+    background-color: #777;
+}
+
 .guardarCambiarCorreo {
     background-color: #222;
     color: white;

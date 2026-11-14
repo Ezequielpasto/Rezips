@@ -1,7 +1,8 @@
+
 const pool = require('../config/baseDatos')
 const bcrypt = require('bcrypt')
 
-async function RegistrarUsuario(req, res){
+async function RegistrarUsuario(req, res) {
     const {
         nombre,
         apellido,
@@ -10,7 +11,7 @@ async function RegistrarUsuario(req, res){
         fecha_nacimiento
     } = req.body
 
-    if(!nombre || !correo || !contrasena){
+    if (!nombre || !correo || !contrasena) {
         return res.status(400).json({
             mensaje: 'Faltan datos obligatorios'
         })
@@ -23,7 +24,7 @@ async function RegistrarUsuario(req, res){
             [correo]
         )
 
-        if(existe.rows.length > 0){
+        if (existe.rows.length > 0) {
             return res.status(409).json({
                 mensaje: 'El correo ya está registrado'
             })
@@ -37,7 +38,7 @@ async function RegistrarUsuario(req, res){
             `INSERT INTO usuario
             (nombre, apellido, correo, hash_contrasenia, fecha_nacimiento)
             VALUES ($1, $2, $3, $4, $5)
-            RETURNING id_usuario, nombre, apellido, correo, fecha_nacimiento`,
+            RETURNING id_usuario, nombre, apellido, correo, fecha_nacimiento, imagen_perfil`,
             [nombre, apellido || null, correo, hash, fecha_nacimiento || null]
         )
 
@@ -46,7 +47,7 @@ async function RegistrarUsuario(req, res){
             usuario: resultado.rows[0]
         })
 
-    } catch(error){
+    } catch (error) {
         console.error(error)
 
         res.status(500).json({
@@ -55,10 +56,10 @@ async function RegistrarUsuario(req, res){
     }
 }
 
-async function IniciarSesion(req, res){
+async function IniciarSesion(req, res) {
     const { correo, contrasena } = req.body
 
-    if(!correo || !contrasena){
+    if (!correo || !contrasena) {
         return res.status(400).json({
             mensaje: 'Faltan datos obligatorios'
         })
@@ -71,7 +72,7 @@ async function IniciarSesion(req, res){
             [correo]
         )
 
-        if(resultado.rows.length === 0){
+        if (resultado.rows.length === 0) {
             return res.status(401).json({
                 mensaje: 'Correo o contraseña incorrectos'
             })
@@ -85,7 +86,7 @@ async function IniciarSesion(req, res){
             usuario.hash_contrasenia
         )
 
-        if(!coincide){
+        if (!coincide) {
             return res.status(401).json({
                 mensaje: 'Correo o contraseña incorrectos'
             })
@@ -97,11 +98,12 @@ async function IniciarSesion(req, res){
                 id_usuario: usuario.id_usuario,
                 nombre: usuario.nombre,
                 apellido: usuario.apellido,
-                correo: usuario.correo
+                correo: usuario.correo,
+                imagen_perfil: usuario.imagen_perfil
             }
         })
 
-    } catch(error){
+    } catch (error) {
         console.error(error)
 
         res.status(500).json({
@@ -110,16 +112,16 @@ async function IniciarSesion(req, res){
     }
 }
 
-async function ObtenerUsuarios(req, res){
+async function ObtenerUsuarios(req, res) {
     try {
         const resultado = await pool.query(
-            `SELECT id_usuario, nombre, apellido, correo, fecha_nacimiento
+            `SELECT id_usuario, nombre, apellido, correo, fecha_nacimiento, imagen_perfil
              FROM usuario`
         )
 
         res.json(resultado.rows)
 
-    } catch(error){
+    } catch (error) {
         console.error(error)
 
         res.status(500).json({
@@ -128,18 +130,18 @@ async function ObtenerUsuarios(req, res){
     }
 }
 
-async function ObtenerUsuarioPorId(req, res){
+async function ObtenerUsuarioPorId(req, res) {
     const { id } = req.params
 
     try {
         const resultado = await pool.query(
-            `SELECT id_usuario, nombre, apellido, correo, fecha_nacimiento
+            `SELECT id_usuario, nombre, apellido, correo, fecha_nacimiento, imagen_perfil
              FROM usuario
              WHERE id_usuario = $1`,
             [id]
         )
 
-        if(resultado.rows.length === 0){
+        if (resultado.rows.length === 0) {
             return res.status(404).json({
                 mensaje: 'Usuario no encontrado'
             })
@@ -147,7 +149,7 @@ async function ObtenerUsuarioPorId(req, res){
 
         res.json(resultado.rows[0])
 
-    } catch(error){
+    } catch (error) {
         console.error(error)
 
         res.status(500).json({
@@ -156,13 +158,12 @@ async function ObtenerUsuarioPorId(req, res){
     }
 }
 
-
 async function EliminarUsuario(req, res) {
-    const { id } = req.params;
-    const conexion = await pool.connect();
+    const { id } = req.params
+    const conexion = await pool.connect()
 
     try {
-        await conexion.query('BEGIN');
+        await conexion.query('BEGIN')
 
         // 1. Eliminar comentarios escritos por el usuario
         // y comentarios de otros usuarios en sus recetas.
@@ -175,7 +176,7 @@ async function EliminarUsuario(req, res) {
                  WHERE id_usuario = $1
              )`,
             [id]
-        );
+        )
 
         // 2. Eliminar los me gusta del usuario
         // y los me gusta recibidos por sus recetas.
@@ -188,7 +189,7 @@ async function EliminarUsuario(req, res) {
                  WHERE id_usuario = $1
              )`,
             [id]
-        );
+        )
 
         // 3. Eliminar las recetas guardadas por el usuario
         // y las veces que otros usuarios guardaron sus recetas.
@@ -201,7 +202,7 @@ async function EliminarUsuario(req, res) {
                  WHERE id_usuario = $1
              )`,
             [id]
-        );
+        )
 
         // 4. Eliminar las calificaciones realizadas por el usuario
         // y las calificaciones recibidas por sus recetas.
@@ -214,7 +215,7 @@ async function EliminarUsuario(req, res) {
                  WHERE id_usuario = $1
              )`,
             [id]
-        );
+        )
 
         // 5. Eliminar los pasos de sus recetas.
         await conexion.query(
@@ -225,7 +226,7 @@ async function EliminarUsuario(req, res) {
                  WHERE id_usuario = $1
              )`,
             [id]
-        );
+        )
 
         // 6. Eliminar los ingredientes asociados a sus recetas.
         await conexion.query(
@@ -236,13 +237,13 @@ async function EliminarUsuario(req, res) {
                  WHERE id_usuario = $1
              )`,
             [id]
-        );
+        )
 
         // 7. Eliminar sus recetas.
         await conexion.query(
             'DELETE FROM receta WHERE id_usuario = $1',
             [id]
-        );
+        )
 
         // 8. Eliminar el usuario.
         const resultado = await conexion.query(
@@ -250,39 +251,38 @@ async function EliminarUsuario(req, res) {
              WHERE id_usuario = $1
              RETURNING id_usuario`,
             [id]
-        );
+        )
 
         if (resultado.rows.length === 0) {
-            await conexion.query('ROLLBACK');
+            await conexion.query('ROLLBACK')
 
             return res.status(404).json({
                 mensaje: 'Usuario no encontrado'
-            });
+            })
         }
 
         // Confirmar todas las eliminaciones.
-        await conexion.query('COMMIT');
+        await conexion.query('COMMIT')
 
         res.json({
             mensaje: 'Usuario y todos sus datos eliminados correctamente'
-        });
+        })
 
     } catch (error) {
-        await conexion.query('ROLLBACK');
+        await conexion.query('ROLLBACK')
 
-        console.error(error);
+        console.error(error)
 
         res.status(500).json({
             mensaje: 'Error al eliminar el usuario'
-        });
+        })
 
     } finally {
-        conexion.release();
+        conexion.release()
     }
 }
 
-
-async function ObtenerRecetasGuardadas(req, res){
+async function ObtenerRecetasGuardadas(req, res) {
     const { id } = req.params
 
     try {
@@ -296,7 +296,7 @@ async function ObtenerRecetasGuardadas(req, res){
 
         res.json(resultado.rows)
 
-    } catch(error){
+    } catch (error) {
         console.error(error)
 
         res.status(500).json({
@@ -305,7 +305,7 @@ async function ObtenerRecetasGuardadas(req, res){
     }
 }
 
-async function ObtenerRecetasMeGusta(req, res){
+async function ObtenerRecetasMeGusta(req, res) {
     const { id } = req.params
 
     try {
@@ -319,7 +319,7 @@ async function ObtenerRecetasMeGusta(req, res){
 
         res.json(resultado.rows)
 
-    } catch(error){
+    } catch (error) {
         console.error(error)
 
         res.status(500).json({
@@ -329,13 +329,13 @@ async function ObtenerRecetasMeGusta(req, res){
 }
 
 async function ModificarDatosUsuario(req, res) {
-    const { id } = req.params;
-    const { nombre, apellido, fecha_nacimiento } = req.body;
+    const { id } = req.params
+    const { nombre, apellido, fecha_nacimiento } = req.body
 
     if (!nombre) {
         return res.status(400).json({
             mensaje: 'El nombre es obligatorio'
-        });
+        })
     }
 
     try {
@@ -345,38 +345,78 @@ async function ModificarDatosUsuario(req, res) {
                  apellido = $2,
                  fecha_nacimiento = $3
              WHERE id_usuario = $4
-             RETURNING id_usuario, nombre, apellido, correo, fecha_nacimiento`,
+             RETURNING id_usuario, nombre, apellido, correo, fecha_nacimiento, imagen_perfil`,
             [nombre, apellido || null, fecha_nacimiento || null, id]
-        );
+        )
 
         if (resultado.rows.length === 0) {
             return res.status(404).json({
                 mensaje: 'Usuario no encontrado'
-            });
+            })
         }
 
         res.json({
             mensaje: 'Datos personales actualizados correctamente',
             usuario: resultado.rows[0]
-        });
+        })
 
     } catch (error) {
-        console.error(error);
+        console.error(error)
 
         res.status(500).json({
             mensaje: 'Error al modificar los datos personales'
-        });
+        })
+    }
+}
+
+// Cambiar la imagen de perfil del usuario
+async function CambiarImagenPerfil(req, res) {
+    const { id } = req.params
+    const { imagen_perfil } = req.body
+
+    if (!imagen_perfil) {
+        return res.status(400).json({
+            mensaje: 'La imagen de perfil es obligatoria'
+        })
+    }
+
+    try {
+        const resultado = await pool.query(
+            `UPDATE usuario
+             SET imagen_perfil = $1
+             WHERE id_usuario = $2
+             RETURNING id_usuario, nombre, apellido, correo, imagen_perfil`,
+            [imagen_perfil, id]
+        )
+
+        if (resultado.rows.length === 0) {
+            return res.status(404).json({
+                mensaje: 'Usuario no encontrado'
+            })
+        }
+
+        res.json({
+            mensaje: 'Imagen de perfil actualizada correctamente',
+            usuario: resultado.rows[0]
+        })
+
+    } catch (error) {
+        console.error(error)
+
+        res.status(500).json({
+            mensaje: 'Error al cambiar la imagen de perfil'
+        })
     }
 }
 
 async function CambiarCorreo(req, res) {
-    const { id } = req.params;
-    const { correo } = req.body;
+    const { id } = req.params
+    const { correo } = req.body
 
     if (!correo) {
         return res.status(400).json({
             mensaje: 'El correo es obligatorio'
-        });
+        })
     }
 
     try {
@@ -385,50 +425,50 @@ async function CambiarCorreo(req, res) {
              FROM usuario
              WHERE correo = $1 AND id_usuario != $2`,
             [correo, id]
-        );
+        )
 
         if (existe.rows.length > 0) {
             return res.status(409).json({
                 mensaje: 'El correo ya está registrado'
-            });
+            })
         }
 
         const resultado = await pool.query(
             `UPDATE usuario
              SET correo = $1
              WHERE id_usuario = $2
-             RETURNING id_usuario, nombre, apellido, correo, fecha_nacimiento`,
+             RETURNING id_usuario, nombre, apellido, correo, fecha_nacimiento, imagen_perfil`,
             [correo, id]
-        );
+        )
 
         if (resultado.rows.length === 0) {
             return res.status(404).json({
                 mensaje: 'Usuario no encontrado'
-            });
+            })
         }
 
         res.json({
             mensaje: 'Correo actualizado correctamente',
             usuario: resultado.rows[0]
-        });
+        })
 
     } catch (error) {
-        console.error(error);
+        console.error(error)
 
         res.status(500).json({
             mensaje: 'Error al cambiar el correo'
-        });
+        })
     }
 }
 
 async function CambiarContraseña(req, res) {
-    const { id } = req.params;
-    const { contrasenaActual, contrasenaNueva } = req.body;
+    const { id } = req.params
+    const { contrasenaActual, contrasenaNueva } = req.body
 
     if (!contrasenaActual || !contrasenaNueva) {
         return res.status(400).json({
             mensaje: 'Faltan datos obligatorios'
-        });
+        })
     }
 
     try {
@@ -437,47 +477,46 @@ async function CambiarContraseña(req, res) {
              FROM usuario
              WHERE id_usuario = $1`,
             [id]
-        );
+        )
 
         if (resultado.rows.length === 0) {
             return res.status(404).json({
                 mensaje: 'Usuario no encontrado'
-            });
+            })
         }
 
         const coincide = await bcrypt.compare(
             contrasenaActual,
             resultado.rows[0].hash_contrasenia
-        );
+        )
 
         if (!coincide) {
             return res.status(401).json({
                 mensaje: 'La contraseña actual es incorrecta'
-            });
+            })
         }
 
-        const hash = await bcrypt.hash(contrasenaNueva, 10);
+        const hash = await bcrypt.hash(contrasenaNueva, 10)
 
         await pool.query(
             `UPDATE usuario
              SET hash_contrasenia = $1
              WHERE id_usuario = $2`,
             [hash, id]
-        );
+        )
 
         res.json({
             mensaje: 'Contraseña actualizada correctamente'
-        });
+        })
 
     } catch (error) {
-        console.error(error);
+        console.error(error)
 
         res.status(500).json({
             mensaje: 'Error al cambiar la contraseña'
-        });
+        })
     }
 }
-
 
 module.exports = {
     RegistrarUsuario,
@@ -488,6 +527,7 @@ module.exports = {
     ObtenerRecetasMeGusta,
     ObtenerRecetasGuardadas,
     ModificarDatosUsuario,
+    CambiarImagenPerfil,
     CambiarCorreo,
     CambiarContraseña
 }

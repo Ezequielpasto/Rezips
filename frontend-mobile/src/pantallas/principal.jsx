@@ -127,7 +127,6 @@ export default function Principal() {
 
                 <ListaRecetas recetas={recetasFiltradas} />
             </View>
-
             <MenuInferior />
         </View>
     );

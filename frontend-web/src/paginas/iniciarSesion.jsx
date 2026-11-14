@@ -1,27 +1,37 @@
 import '../estilos/iniciarSesion.css'
 import { Link, useNavigate } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
+import Notificacion from '../componentes/notificacion'
 
-function IniciarSesion(){
+function IniciarSesion() {
     const [correo, setCorreo] = useState("")
     const [contraseña, setContraseña] = useState("")
+    const [notificacion, setNotificacion] = useState(null)
 
     const navegar = useNavigate()
 
-    function ValidarInicioSesion(){
-        if(correo.trim() === '' || contraseña === ''){
-            alert("Todos los campos son obligatorios")
+    const CerrarNotificacion = useCallback(() => {
+        setNotificacion(null)
+    }, [])
+
+    function MostrarNotificacion(mensaje, tipo = 'exito') {
+        setNotificacion({ mensaje, tipo })
+    }
+
+    function ValidarInicioSesion() {
+        if (correo.trim() === '' || contraseña === '') {
+            MostrarNotificacion('Todos los campos son obligatorios', 'advertencia')
             return false
         }
 
         return true
     }
 
-    async function IniciarSesionUsuario(event){
+    async function IniciarSesionUsuario(event) {
         event.preventDefault()
 
-        if(ValidarInicioSesion()){
-             try{
+        if (ValidarInicioSesion()) {
+            try {
                 const respuesta = await fetch('http://localhost:3000/auth/login', {
                     method: 'POST',
                     headers: {
@@ -35,34 +45,56 @@ function IniciarSesion(){
 
                 const datos = await respuesta.json()
 
-                if(!respuesta.ok){
-                    alert(datos.mensaje || 'Correo y/o contraseña incorrectos')
+                if (!respuesta.ok) {
+                    MostrarNotificacion(datos.mensaje || 'Correo y/o contraseña incorrectos', 'error')
                     return
                 }
 
                 localStorage.setItem('usuario', JSON.stringify(datos.usuario))
 
-                alert("Inicio de sesión exitoso")
-                navegar('/principal')
+                MostrarNotificacion('Inicio de sesión exitoso', 'exito')
 
-            } catch(error){
+                setTimeout(() => {
+                    navegar('/principal')
+                }, 1500)
+
+            } catch (error) {
                 console.error('Error:', error)
-                alert('No se pudo conectar con el servidor')
+                MostrarNotificacion('No se pudo conectar con el servidor', 'error')
             }
-       
         }
     }
 
-    return(
+    return (
         <div className='inicio'>
+            <Notificacion
+                mensaje={notificacion?.mensaje}
+                tipo={notificacion?.tipo}
+                onCerrar={CerrarNotificacion}
+            />
+
             <h1>Bienvenido a Rezips</h1>
             <form className='formulario' onSubmit={IniciarSesionUsuario}>
-                <input type="text" placeholder="Correo electrónico" value={correo} onChange={(event) => setCorreo(event.target.value)}/>
-                <input type="password" placeholder="Contraseña" value={contraseña} onChange={(event) => setContraseña(event.target.value)}/>
+                <input
+                    type="text"
+                    placeholder="Correo electrónico"
+                    value={correo}
+                    onChange={(event) => setCorreo(event.target.value)}
+                />
+
+                <input
+                    type="password"
+                    placeholder="Contraseña"
+                    value={contraseña}
+                    onChange={(event) => setContraseña(event.target.value)}
+                />
+
                 <button type='submit'>Iniciar sesión</button>
             </form>
+
             <p>¿No tienes una cuenta? <Link to="/registro">Create una cuenta</Link></p>
         </div>
     )
 }
+
 export default IniciarSesion

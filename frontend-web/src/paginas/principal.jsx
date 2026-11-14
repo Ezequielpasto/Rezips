@@ -3,30 +3,40 @@ import MenuSuperior from "../componentes/menuSuperior"
 import MenuLateral from "../componentes/menuLateral"
 import Filtros from '../componentes/filtros'
 import ListaRecetas from '../componentes/listaRecetas'
-import { useEffect, useState } from 'react'
+import Notificacion from '../componentes/notificacion'
+import { useEffect, useState, useCallback } from 'react'
 
-function Principal(){
+function Principal() {
     const [recetas, setRecetas] = useState([])
     const [busqueda, setBusqueda] = useState("")
     const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("")
     const [calificacionSeleccionada, setCalificacionSeleccionada] = useState("")
+    const [notificacion, setNotificacion] = useState(null)
+
+    const CerrarNotificacion = useCallback(() => {
+        setNotificacion(null)
+    }, [])
+
+    function MostrarNotificacion(mensaje, tipo = 'exito') {
+        setNotificacion({ mensaje, tipo })
+    }
 
     useEffect(() => {
-        async function ObtenerRecetas(){
+        async function ObtenerRecetas() {
             try {
                 const respuesta = await fetch('http://localhost:3000/recetas')
                 const datos = await respuesta.json()
 
-                if(!respuesta.ok){
-                    alert('Error al obtener las recetas')
+                if (!respuesta.ok) {
+                    MostrarNotificacion('Error al obtener las recetas', 'error')
                     return
                 }
 
                 setRecetas(datos)
 
-            } catch(error) {
+            } catch (error) {
                 console.error('Error:', error)
-                alert('No se pudieron cargar las recetas')
+                MostrarNotificacion('No se pudieron cargar las recetas', 'error')
             }
         }
 
@@ -69,8 +79,14 @@ function Principal(){
             coincideCalificacion
     })
 
-    return(
+    return (
         <div>
+            <Notificacion
+                mensaje={notificacion?.mensaje}
+                tipo={notificacion?.tipo}
+                onCerrar={CerrarNotificacion}
+            />
+
             <MenuSuperior
                 busqueda={busqueda}
                 setBusqueda={setBusqueda}
@@ -85,7 +101,7 @@ function Principal(){
                     calificacionSeleccionada={calificacionSeleccionada}
                     setCalificacionSeleccionada={setCalificacionSeleccionada}
                 />
-
+                <p className='cantidadRecetas'>{recetasFiltradas.length} recetas encontradas</p>
                 <ListaRecetas recetas={recetasFiltradas} />
             </main>
         </div>

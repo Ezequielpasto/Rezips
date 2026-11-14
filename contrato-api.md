@@ -2,7 +2,7 @@
 
 ## URL base 
 
-http://localhost:xxxx/api/v1
+http://localhost:3000
 
 
 ## Endpoints

@@ -1,11 +1,16 @@
 
-import { View, Text, StyleSheet, Pressable } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { View, StyleSheet, Pressable } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useRouter, usePathname } from 'expo-router'
+import { Home, CirclePlus, UserRound } from 'lucide-react-native'
 
 export default function MenuInferior() {
-    const insets = useSafeAreaInsets();
-    const router = useRouter();
+    const insets = useSafeAreaInsets()
+    const router = useRouter()
+    const pathname = usePathname()
+
+    const colorActivo = '#030303'
+    const colorInactivo = '#777777'
 
     return (
         <View style={[
@@ -18,26 +23,38 @@ export default function MenuInferior() {
                     style={estilos.opcion}
                     onPress={() => router.replace('/principal')}
                 >
-                    <Text style={estilos.texto}>Inicio</Text>
+                    <Home
+                        size={26}
+                        color={pathname === '/principal' ? colorActivo : colorInactivo}
+                        strokeWidth={pathname === '/principal' ? 2.5 : 2}
+                    />
                 </Pressable>
 
                 <Pressable
                     style={estilos.opcion}
                     onPress={() => router.push('/crearReceta')}
                 >
-                    <Text style={estilos.texto}>Crear receta</Text>
+                    <CirclePlus
+                        size={26}
+                        color={pathname === '/crearReceta' ? colorActivo : colorInactivo}
+                        strokeWidth={pathname === '/crearReceta' ? 2.5 : 2}
+                    />
                 </Pressable>
 
                 <Pressable
                     style={estilos.opcion}
                     onPress={() => router.push('/perfil')}
                 >
-                    <Text style={estilos.texto}>Perfil</Text>
+                    <UserRound
+                        size={26}
+                        color={pathname === '/perfil' ? colorActivo : colorInactivo}
+                        strokeWidth={pathname === '/perfil' ? 2.5 : 2}
+                    />
                 </Pressable>
 
             </View>
         </View>
-    );
+    )
 }
 
 const estilos = StyleSheet.create({
@@ -63,9 +80,5 @@ const estilos = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         height: '100%'
-    },
-    texto: {
-        fontSize: 12,
-        color: '#333333'
     }
-});
+})
