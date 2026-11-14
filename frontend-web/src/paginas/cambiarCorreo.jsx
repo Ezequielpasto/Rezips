@@ -1,69 +1,79 @@
 
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import MenuLateral from '../componentes/menuLateral';
-import '../estilos/cambiarCorreo.css';
+import { useState, useEffect, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
+import MenuLateral from '../componentes/menuLateral'
+import Notificacion from '../componentes/notificacion'
+import '../estilos/cambiarCorreo.css'
 
 function CambiarCorreo() {
-    const navegar = useNavigate();
+    const navegar = useNavigate()
 
-    const [correoActual, setCorreoActual] = useState('');
-    const [correoNuevo, setCorreoNuevo] = useState('');
-    const [cargando, setCargando] = useState(false);
+    const [correoActual, setCorreoActual] = useState('')
+    const [correoNuevo, setCorreoNuevo] = useState('')
+    const [cargando, setCargando] = useState(false)
+    const [notificacion, setNotificacion] = useState(null)
+
+    const MostrarNotificacion = (mensaje, tipo = 'exito') => {
+        setNotificacion({ mensaje, tipo })
+    }
+
+    const CerrarNotificacion = useCallback(() => {
+        setNotificacion(null)
+    }, [])
 
     useEffect(() => {
         async function ObtenerUsuario() {
             try {
-                const datos = localStorage.getItem('usuario');
+                const datos = localStorage.getItem('usuario')
 
-                if (!datos) return;
+                if (!datos) return
 
-                const usuario = JSON.parse(datos);
+                const usuario = JSON.parse(datos)
 
                 const respuesta = await fetch(
                     `http://localhost:3000/usuarios/${usuario.id_usuario}`
-                );
+                )
 
                 if (!respuesta.ok) {
-                    throw new Error('No se pudo obtener el usuario');
+                    throw new Error('No se pudo obtener el usuario')
                 }
 
-                const datosUsuario = await respuesta.json();
+                const datosUsuario = await respuesta.json()
 
-                setCorreoActual(datosUsuario.correo || '');
+                setCorreoActual(datosUsuario.correo || '')
             } catch (error) {
-                console.error(error);
-                alert('No se pudo cargar tu correo actual');
+                console.error(error)
+                MostrarNotificacion('No se pudo cargar tu correo actual', 'error')
             }
         }
 
-        ObtenerUsuario();
-    }, []);
+        ObtenerUsuario()
+    }, [])
 
     async function GuardarCambios(e) {
-        e.preventDefault();
+        e.preventDefault()
 
         if (!correoNuevo.trim()) {
-            alert('Ingresá el nuevo correo');
-            return;
+            MostrarNotificacion('Ingresá el nuevo correo', 'advertencia')
+            return
         }
 
-        const formatoCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const formatoCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
         if (!formatoCorreo.test(correoNuevo.trim())) {
-            alert('Ingresá un correo válido');
-            return;
+            MostrarNotificacion('Ingresá un correo válido', 'advertencia')
+            return
         }
 
         if (correoNuevo.trim().toLowerCase() === correoActual.toLowerCase()) {
-            alert('El nuevo correo debe ser diferente al actual');
-            return;
+            MostrarNotificacion('El nuevo correo debe ser diferente al actual', 'advertencia')
+            return
         }
 
         try {
-            setCargando(true);
+            setCargando(true)
 
-            const datos = JSON.parse(localStorage.getItem('usuario'));
+            const datos = JSON.parse(localStorage.getItem('usuario'))
 
             const respuesta = await fetch(
                 `http://localhost:3000/usuarios/${datos.id_usuario}/correo`,
@@ -76,37 +86,46 @@ function CambiarCorreo() {
                         correo: correoNuevo.trim()
                     })
                 }
-            );
+            )
 
-            const resultado = await respuesta.json();
+            const resultado = await respuesta.json()
 
             if (!respuesta.ok) {
-                throw new Error(resultado.mensaje || 'No se pudo cambiar el correo');
+                throw new Error(resultado.mensaje || 'No se pudo cambiar el correo')
             }
 
             const usuarioActualizado = {
                 ...datos,
                 correo: resultado.usuario?.correo || correoNuevo.trim()
-            };
+            }
 
             localStorage.setItem(
                 'usuario',
                 JSON.stringify(usuarioActualizado)
-            );
+            )
 
-            alert('Tu correo se actualizó correctamente');
-            navegar('/configuracion');
+            MostrarNotificacion('Tu correo se actualizó correctamente')
+
+            setTimeout(() => {
+                navegar('/configuracion')
+            }, 1500)
 
         } catch (error) {
-            console.error(error);
-            alert(error.message);
+            console.error(error)
+            MostrarNotificacion(error.message, 'error')
         } finally {
-            setCargando(false);
+            setCargando(false)
         }
     }
 
     return (
         <section className="pantallaCambiarCorreo">
+            <Notificacion
+                mensaje={notificacion?.mensaje}
+                tipo={notificacion?.tipo}
+                onCerrar={CerrarNotificacion}
+            />
+
             <MenuLateral />
 
             <main className="contenidoCambiarCorreo">
@@ -150,7 +169,7 @@ function CambiarCorreo() {
                 </form>
             </main>
         </section>
-    );
+    )
 }
 
-export default CambiarCorreo;
+export default CambiarCorreo

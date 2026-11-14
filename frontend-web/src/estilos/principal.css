@@ -8,6 +8,11 @@
     background-color: #ffffff;
 }
 
+.cantidadRecetas{
+    margin-left: 20px;
+    color: #454444;
+}
+
 /* Tablets */
 @media (max-width: 768px) {
     .principal {

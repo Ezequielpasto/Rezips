@@ -1,5 +1,5 @@
-import unidades from "../datos/unidades";
-import '../estilos/listaIngredientes.css';
+import unidades from "../datos/unidades"
+import '../estilos/listaIngredientes.css'
 
 function ListaIngredientes({ ingredientes }) {
     return (
@@ -7,15 +7,15 @@ function ListaIngredientes({ ingredientes }) {
             {ingredientes.map((ingrediente, indice) => {
                 const unidad = unidades.find(
                     u => u.valor === ingrediente.unidad
-                );
+                )
 
-                const textoUnidad = unidad.sinCanidad
+                const textoUnidad = unidad.sinCantidad
                     ? unidad.singular
                     : `${ingrediente.cantidad} ${
                         Number(ingrediente.cantidad) === 1
                             ? unidad.singular
                             : unidad.plural
-                    }`;
+                    }`
 
                 return (
                     <div
@@ -30,10 +30,10 @@ function ListaIngredientes({ ingredientes }) {
                             {textoUnidad}
                         </p>
                     </div>
-                );
+                )
             })}
         </div>
-    );
+    )
 }
 
-export default ListaIngredientes;
+export default ListaIngredientes

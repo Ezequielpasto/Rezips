@@ -202,7 +202,8 @@ const estilos = StyleSheet.create({
         backgroundColor: 'rgba(0, 0, 0, 0.55)',
         paddingHorizontal: 12,
         paddingVertical: 8,
-        borderRadius: 8,
+        borderTopLeftRadius: 8,
+        borderBottomRightRadius: 8,
         gap: 4,
     },
 
@@ -224,7 +225,7 @@ const estilos = StyleSheet.create({
         backgroundColor: 'rgba(0, 0, 0, 0.55)',
         paddingHorizontal: 12,
         paddingVertical: 8,
-        borderRadius: 8,
+        borderTopLeftRadius: 8,
     },
 
     textoCreador: {

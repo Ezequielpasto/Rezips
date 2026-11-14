@@ -1,51 +1,93 @@
-import '../estilos/configuracion.css';
-import MenuLateral from '../componentes/menuLateral';
-import { useNavigate } from 'react-router-dom';
-import { UserRound, Mail, LockKeyhole, LogOut, Trash2, ChevronRight } from 'lucide-react';
+
+import { useState, useCallback } from 'react'
+import '../estilos/configuracion.css'
+import MenuLateral from '../componentes/menuLateral'
+import Notificacion from '../componentes/notificacion'
+import Confirmacion from '../componentes/confirmacion'
+import { useNavigate } from 'react-router-dom'
+import { UserRound, Mail, LockKeyhole, LogOut, Trash2, ChevronRight } from 'lucide-react'
 
 function Configuracion() {
-    const navegar = useNavigate();
+    const navegar = useNavigate()
 
-    const usuario = JSON.parse(localStorage.getItem('usuario'));
+    const usuario = JSON.parse(localStorage.getItem('usuario'))
+
+    const [notificacion, setNotificacion] = useState(null)
+    const [confirmacion, setConfirmacion] = useState(null)
+
+    const MostrarNotificacion = (mensaje, tipo = 'exito') => {
+        setNotificacion({ mensaje, tipo })
+    }
+
+    const CerrarNotificacion = useCallback(() => {
+        setNotificacion(null)
+    }, [])
 
     function CerrarSesion() {
-        localStorage.removeItem('usuario');
-        navegar('/');
+        localStorage.removeItem('usuario')
+        navegar('/')
+    }
+
+    function SolicitarEliminarCuenta() {
+        setConfirmacion({
+            mensaje: '¿Estás seguro de que querés eliminar tu cuenta? Esta acción no se puede deshacer.',
+            onConfirmar: EliminarCuenta
+        })
     }
 
     async function EliminarCuenta() {
         if (!usuario) {
-            alert('No se encontró el usuario.');
-            return;
+            MostrarNotificacion('No se encontró el usuario.', 'error')
+            return
         }
-
-        const confirmar = window.confirm(
-            '¿Estás seguro de que querés eliminar tu cuenta? Esta acción no se puede deshacer.'
-        );
-
-        if (!confirmar) return;
 
         try {
             const respuesta = await fetch(`http://localhost:3000/usuarios/${usuario.id_usuario}`, {
                 method: 'DELETE'
-            });
+            })
 
             if (!respuesta.ok) {
-                throw new Error('No se pudo eliminar la cuenta.');
+                throw new Error('No se pudo eliminar la cuenta.')
             }
 
-            localStorage.removeItem('usuario');
-            alert('Tu cuenta fue eliminada correctamente.');
-            navegar('/');
+            localStorage.removeItem('usuario')
+
+            MostrarNotificacion('Tu cuenta fue eliminada correctamente')
+
+            setTimeout(() => {
+                navegar('/')
+            }, 1500)
 
         } catch (error) {
-            console.error('Error al eliminar la cuenta:', error);
-            alert('Ocurrió un error al eliminar la cuenta.');
+            console.error('Error al eliminar la cuenta:', error)
+            MostrarNotificacion('Ocurrió un error al eliminar la cuenta.', 'error')
+        }
+    }
+
+    function ConfirmarAccion() {
+        const accion = confirmacion?.onConfirmar
+
+        setConfirmacion(null)
+
+        if (accion) {
+            accion()
         }
     }
 
     return (
         <section className="pantallaConfiguracion">
+            <Notificacion
+                mensaje={notificacion?.mensaje}
+                tipo={notificacion?.tipo}
+                onCerrar={CerrarNotificacion}
+            />
+
+            <Confirmacion
+                mensaje={confirmacion?.mensaje}
+                onConfirmar={ConfirmarAccion}
+                onCancelar={() => setConfirmacion(null)}
+            />
+
             <MenuLateral />
 
             <main className="contenidoConfiguracion">
@@ -119,7 +161,7 @@ function Configuracion() {
                     <h4>ZONA DE PELIGRO</h4>
 
                     <div className="opcionesConfiguracion">
-                        <button className="opcionConfiguracion opcionEliminar" onClick={EliminarCuenta}>
+                        <button className="opcionConfiguracion opcionEliminar" onClick={SolicitarEliminarCuenta}>
                             <div className="iconoConfiguracion iconoEliminar">
                                 <Trash2 />
                             </div>
@@ -135,7 +177,7 @@ function Configuracion() {
                 </div>
             </main>
         </section>
-    );
+    )
 }
 
-export default Configuracion;
+export default Configuracion

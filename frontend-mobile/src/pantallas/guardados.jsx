@@ -1,11 +1,6 @@
 import { useEffect, useState } from 'react';
-import {
-    View,
-    Text,
-    TextInput,
-    StyleSheet,
-    Alert
-} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { View, Text, TextInput, StyleSheet, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Search } from 'lucide-react-native';
 
@@ -76,28 +71,31 @@ export default function Guardados() {
 
 
     return (
-        <View style={estilos.pantalla}>
-            <View style={estilos.encabezado}>
-                <Text style={estilos.titulo}>Mis guardados</Text>
+        <SafeAreaView style={{ flex: 1 }}>
+            <View style={estilos.pantalla}>
+                <View style={estilos.encabezado}>
+                    <Text style={estilos.titulo}>Mis guardados</Text>
 
-                <View style={estilos.buscador}>
-                    <Search size={20} color="#777" />
+                    <View style={estilos.buscador}>
+                        <Search size={20} color="#777" />
 
-                    <TextInput
-                        style={estilos.input}
-                        placeholder="Buscar recetas o ingredientes"
-                        value={busqueda}
-                        onChangeText={setBusqueda}
-                    />
+                        <TextInput
+                            style={estilos.input}
+                            placeholder="Buscar recetas o ingredientes"
+                            value={busqueda}
+                            onChangeText={setBusqueda}
+                        />
+                    </View>
                 </View>
-            </View>
 
-            <View style={estilos.lista}>
-                <ListaRecetas recetas={recetasFiltradas} />
-            </View>
+                <View style={estilos.lista}>
+                    {recetasFiltradas.length === 0 ? <Text>Todavía no haz guardado ninguna receta</Text>
+                    : <ListaRecetas recetas={recetasFiltradas} />}
+                </View>
 
+            </View>
             <MenuInferior />
-        </View>
+        </SafeAreaView>
     );
 }
 

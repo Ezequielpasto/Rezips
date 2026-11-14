@@ -1,6 +1,6 @@
 
 .superior {
-    background-color: #ffffff;
+    background-color: #e8e2e2;
     position: fixed;
     top: 0;
     right: 0;
@@ -20,7 +20,7 @@
     max-width: 550px;
     height: 42px;
     box-sizing: border-box;
-    padding: 0 15px;
+    padding: 0 25px;
     border: 1px solid #dddddd;
     border-radius: 8px;
     background-color: #f9f9f9;
@@ -31,6 +31,14 @@
 .superior input:focus {
     border-color: #bc6c16;
     background-color: #ffffff;
+}
+
+.iconoBuscador {
+  position: absolute;
+  left: 35px;
+  color: #888;
+  width: 18px;
+  height: 18px;
 }
 
 /* Tablets */

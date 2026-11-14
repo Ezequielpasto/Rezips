@@ -49,6 +49,11 @@
     font-size: 15px;
 }
 
+.guardarCambiarContrasenia:hover,
+.cancelarCambiarContrasenia:hover{
+    background-color: #777;
+}
+
 .guardarCambiarContrasenia {
     background-color: #222;
     color: white;

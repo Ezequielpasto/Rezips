@@ -1,63 +1,78 @@
+import { useRouter, useFocusEffect } from 'expo-router'
+import { useCallback, useState } from 'react'
+import { View, Text, StyleSheet, Pressable, Image } from 'react-native'
+import { Settings } from 'lucide-react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { useRouter, useFocusEffect } from 'expo-router';
-import { useCallback, useState } from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
-import { Settings } from 'lucide-react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-import ListaRecetas from '../componentes/listaRecetas';
-import MenuInferior from '../componentes/menuInferior';
-import API from '../config/api';
+import ListaRecetas from '../componentes/listaRecetas'
+import MenuInferior from '../componentes/menuInferior'
+import API from '../config/api'
 
 export default function Perfil() {
-    const router = useRouter();
+    const router = useRouter()
 
-    const [usuario, setUsuario] = useState(null);
-    const [recetas, setRecetas] = useState([]);
+    const [usuario, setUsuario] = useState(null)
+    const [recetas, setRecetas] = useState([])
 
     useFocusEffect(
         useCallback(() => {
-            let activo = true;
+            let activo = true
 
             async function ObtenerDatos() {
                 try {
-                    const usuarioJSON = await AsyncStorage.getItem('usuario');
+                    const usuarioJSON = await AsyncStorage.getItem('usuario')
 
-                    if (!usuarioJSON || !activo) return;
+                    if (!usuarioJSON || !activo) return
 
-                    const usuarioActual = JSON.parse(usuarioJSON);
-                    setUsuario(usuarioActual);
+                    const usuarioActual = JSON.parse(usuarioJSON)
+
+                    const respuestaUsuario = await fetch(
+                        `${API}/usuarios/${usuarioActual.id_usuario}`
+                    )
+
+                    if (!respuestaUsuario.ok) {
+                        throw new Error('Error al obtener los datos del usuario')
+                    }
+
+                    const datosUsuario = await respuestaUsuario.json()
+
+                    if (activo) {
+                        setUsuario(datosUsuario)
+                    }
 
                     const respuesta = await fetch(
                         `${API}/recetas?id_usuario=${usuarioActual.id_usuario}`
-                    );
+                    )
 
                     if (!respuesta.ok) {
-                        throw new Error('Error al obtener las recetas');
+                        throw new Error('Error al obtener las recetas')
                     }
 
-                    const datos = await respuesta.json();
+                    const datos = await respuesta.json()
 
                     if (activo) {
-                        setRecetas(datos);
+                        setRecetas(datos)
                     }
 
+                    await AsyncStorage.setItem('usuario', JSON.stringify(datosUsuario))
+
                 } catch (error) {
-                    console.error('Error al actualizar el perfil:', error);
+                    console.error('Error al actualizar el perfil:', error)
                 }
             }
 
-            ObtenerDatos();
+            ObtenerDatos()
 
             return () => {
-                activo = false;
-            };
+                activo = false
+            }
         }, [])
-    );
+    )
 
     const iniciales = usuario
         ? `${usuario.nombre?.[0] || ''}${usuario.apellido?.[0] || ''}`
-        : '';
+        : ''
 
     const encabezado = (
         <View style={estilos.datos}>
@@ -73,11 +88,18 @@ export default function Perfil() {
             </View>
 
             <View style={estilos.nombreCirculo}>
-                <View style={estilos.circuloPerfil}>
-                    <Text style={estilos.iniciales}>
-                        {iniciales}
-                    </Text>
-                </View>
+                {usuario?.imagen_perfil ? (
+                    <Image
+                        source={{ uri: usuario.imagen_perfil }}
+                        style={estilos.circuloPerfil}
+                    />
+                ) : (
+                    <View style={estilos.circuloPerfil}>
+                        <Text style={estilos.iniciales}>
+                            {iniciales}
+                        </Text>
+                    </View>
+                )}
 
                 <Text style={estilos.nombre}>
                     {usuario
@@ -106,111 +128,100 @@ export default function Perfil() {
                 </Pressable>
             </View>
         </View>
-    );
+    )
 
     return (
-        <View style={estilos.pantalla}>
-            <View style={estilos.contenidoRecetas}>
-                <ListaRecetas
-                    recetas={recetas}
-                    encabezado={encabezado}
-                />
+        <SafeAreaView style={{ flex: 1 }}>
+            <View style={estilos.pantalla}>
+                <View style={estilos.contenidoRecetas}>
+                    <ListaRecetas
+                        recetas={recetas}
+                        encabezado={encabezado}
+                    />
+                </View>
             </View>
 
             <MenuInferior />
-        </View>
-    );
+        </SafeAreaView>
+    )
 }
 
 const estilos = StyleSheet.create({
     pantalla: {
         flex: 1,
-        backgroundColor: '#ffffff',
+        backgroundColor: '#ffffff'
     },
-
     contenidoRecetas: {
         flex: 1,
-        width: '100%',
+        width: '100%'
     },
-
     datos: {
         width: '100%',
         gap: 15,
-        paddingVertical: 25,
+        paddingVertical: 15,
     },
-
     filaSuperior: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingHorizontal: 20,
+        paddingHorizontal: 20
     },
-
     titulo: {
         fontSize: 25,
         fontWeight: 'bold',
-        color: '#222222',
+        color: '#222222'
     },
-
     botonConfiguracion: {
         width: 42,
         height: 42,
         borderRadius: 10,
         backgroundColor: '#f2f2f2',
         justifyContent: 'center',
-        alignItems: 'center',
+        alignItems: 'center'
     },
-
     nombreCirculo: {
         alignItems: 'center',
-        gap: 12,
+        gap: 12
     },
-
     circuloPerfil: {
         width: 95,
         height: 95,
         borderRadius: 50,
         backgroundColor: '#eeeeee',
         justifyContent: 'center',
-        alignItems: 'center',
+        alignItems: 'center'
     },
-
     iniciales: {
         fontSize: 30,
         fontWeight: 'bold',
-        color: '#333333',
+        color: '#333333'
     },
-
     nombre: {
         fontSize: 22,
         fontWeight: 'bold',
-        color: '#222222',
+        color: '#222222'
     },
-
     cantidad: {
         fontSize: 15,
         color: '#666666',
-        textAlign: 'center',
+        textAlign: 'center'
     },
-
     botones: {
         flexDirection: 'row',
         width: '100%',
         paddingHorizontal: 15,
-        gap: 12,
+        gap: 12
     },
-
     boton: {
         flex: 1,
         paddingVertical: 13,
         borderRadius: 10,
         backgroundColor: '#eeeeee',
-        alignItems: 'center',
+        alignItems: 'center'
     },
-
     textoBoton: {
         fontSize: 15,
         fontWeight: '600',
-        color: '#222222',
-    },
-});
+        color: '#222222'
+    }
+})

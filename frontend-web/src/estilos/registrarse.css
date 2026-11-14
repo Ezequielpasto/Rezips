@@ -99,6 +99,29 @@
     text-decoration: underline;
 }
 
+.vistaPreviaRegistro {
+    display: flex;
+    justify-content: center;
+    margin: 12px 0;
+}
+
+.vistaPreviaRegistro img,
+.imagenRegistroVacia {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ddd;
+}
+
+.imagenRegistroVacia {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #eee;
+    color: #666;
+}
+
 /* Tablets */
 @media (max-width: 768px) {
     .registro {

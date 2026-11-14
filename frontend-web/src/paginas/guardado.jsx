@@ -68,6 +68,7 @@ function Guardado(){
             <main className='principal'>
                 <Filtros categoriaSeleccionada={categoriaSeleccionada} setCategoriaSeleccionada={setCategoriaSeleccionada}
                 calificacionSeleccionada={calificacionSeleccionada} setCalificacionSeleccionada={setCalificacionSeleccionada}></Filtros>
+                <p className='cantidadRecetas'>{recetasFiltradas.length} recetas encontradas</p>
                 <ListaRecetas recetas={recetasFiltradas}></ListaRecetas>
             </main>
         </div> 

@@ -1,0 +1,115 @@
+
+.fondoConfirmacion {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.45);
+}
+
+.confirmacion {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    padding: 30px;
+    background-color: white;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+    animation: aparecerConfirmacion 0.2s ease;
+}
+
+.cerrarConfirmacion {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    border: none;
+    background: none;
+    color: #777;
+    cursor: pointer;
+}
+
+.iconoConfirmacion {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 55px;
+    height: 55px;
+    margin: 0 auto 15px;
+    border-radius: 50%;
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.confirmacion h3 {
+    margin: 0 0 10px;
+    font-size: 20px;
+    color: #222;
+}
+
+.confirmacion p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #666;
+}
+
+.accionesConfirmacion {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.accionesConfirmacion button {
+    flex: 1;
+    padding: 11px 15px;
+    border: none;
+    border-radius: 7px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.botonCancelar {
+    background-color: #f1f1f1;
+    color: #333;
+}
+
+.botonCancelar:hover {
+    background-color: #e5e5e5;
+}
+
+.botonConfirmar {
+    background-color: #dc2626;
+    color: white;
+}
+
+.botonConfirmar:hover {
+    background-color: #b91c1c;
+}
+
+@keyframes aparecerConfirmacion {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@media (max-width: 400px) {
+    .confirmacion {
+        padding: 25px 20px;
+    }
+}

@@ -139,7 +139,8 @@ const estilos = StyleSheet.create({
         backgroundColor: '#fff'
     },
     contenido: {
-        padding: 22
+        padding: 22,
+        paddingTop: 50,
     },
     titulo: {
         fontSize: 24,

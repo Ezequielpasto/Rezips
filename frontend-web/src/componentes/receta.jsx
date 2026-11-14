@@ -1,15 +1,25 @@
 import '../estilos/receta.css'
+import Notificacion from '../componentes/notificacion'
 import { useNavigate } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Star, Heart, Bookmark, Carrot, Timer, Utensils } from 'lucide-react'
 
 function Receta({ id, imagen, nombre, categoria, creador, cantIngredientes, duracion, porciones, meGusta = [], guardados = [], calificaciones = []
 }){
     const [listaMeGusta, setListaMeGusta] = useState(meGusta)
     const [listaGuardados, setListaGuardados] = useState(guardados)
+    const [notificacion, setNotificacion] = useState(null)
 
     const usuario = JSON.parse(localStorage.getItem('usuario'))
     const navegar = useNavigate()
+
+    function MostrarNotificacion(mensaje, tipo = 'exito'){
+        setNotificacion({ mensaje, tipo })
+    }
+
+    const CerrarNotificacion = useCallback(() => {
+        setNotificacion(null)
+    }, [])
 
     useEffect(() => {
         setListaMeGusta(meGusta)
@@ -23,7 +33,7 @@ function Receta({ id, imagen, nombre, categoria, creador, cantIngredientes, dura
 
     async function AlternarMeGusta(){
         if(!usuario){
-            alert("Debes iniciar sesión")
+            MostrarNotificacion("Debes iniciar sesión", 'advertencia')
             return
         }
 
@@ -48,13 +58,13 @@ function Receta({ id, imagen, nombre, categoria, creador, cantIngredientes, dura
 
         } catch(error) {
             console.error(error)
-            alert('No se pudo actualizar el me gusta')
+            MostrarNotificacion('No se pudo actualizar el me gusta', 'error')
         }
     }
 
     async function AlternarGuardados(){
         if(!usuario){
-            alert("Debes iniciar sesión")
+            MostrarNotificacion("Debes iniciar sesión", 'advertencia')
             return
         }
 
@@ -82,12 +92,18 @@ function Receta({ id, imagen, nombre, categoria, creador, cantIngredientes, dura
 
         } catch(error) {
             console.error(error)
-            alert('No se pudo actualizar el guardado')
+            MostrarNotificacion('No se pudo actualizar el guardado', 'error')
         }
     }
 
     return (
         <article className='receta' onClick={() => navegar(`/receta/${id}`)}>
+            <Notificacion
+                mensaje={notificacion?.mensaje}
+                tipo={notificacion?.tipo}
+                onCerrar={CerrarNotificacion}
+            />
+
             <div className='imagen'>
                 <div className='encabezadoReceta'>
                     <h2>{nombre}</h2>

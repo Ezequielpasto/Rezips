@@ -1,47 +1,57 @@
 
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import MenuLateral from '../componentes/menuLateral';
-import '../estilos/cambiarContrasenia.css';
+import { useState, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
+import MenuLateral from '../componentes/menuLateral'
+import Notificacion from '../componentes/notificacion'
+import '../estilos/cambiarContrasenia.css'
 
 function CambiarContrasenia() {
-    const navegar = useNavigate();
+    const navegar = useNavigate()
 
-    const [contraseniaActual, setContraseniaActual] = useState('');
-    const [contraseniaNueva, setContraseniaNueva] = useState('');
-    const [repetirContrasenia, setRepetirContrasenia] = useState('');
-    const [cargando, setCargando] = useState(false);
+    const [contraseniaActual, setContraseniaActual] = useState('')
+    const [contraseniaNueva, setContraseniaNueva] = useState('')
+    const [repetirContrasenia, setRepetirContrasenia] = useState('')
+    const [cargando, setCargando] = useState(false)
+    const [notificacion, setNotificacion] = useState(null)
 
-    async function GuardarCambios(e) {
-        e.preventDefault();
+    const MostrarNotificacion = (mensaje, tipo = 'exito') => {
+        setNotificacion({ mensaje, tipo })
+    }
+
+    const CerrarNotificacion = useCallback(() => {
+        setNotificacion(null)
+    }, [])
+
+    async function GuardarCambios(event) {
+        event.preventDefault()
 
         if (!contraseniaActual || !contraseniaNueva || !repetirContrasenia) {
-            alert('Completá todos los campos');
-            return;
+            MostrarNotificacion('Completá todos los campos', 'advertencia')
+            return
         }
 
         if (contraseniaNueva.length < 6) {
-            alert('La nueva contraseña debe tener al menos 6 caracteres');
-            return;
+            MostrarNotificacion('La nueva contraseña debe tener al menos 6 caracteres', 'advertencia')
+            return
         }
 
         if (contraseniaNueva !== repetirContrasenia) {
-            alert('Las contraseñas nuevas no coinciden');
-            return;
+            MostrarNotificacion('Las contraseñas nuevas no coinciden', 'advertencia')
+            return
         }
 
         if (contraseniaActual === contraseniaNueva) {
-            alert('La nueva contraseña debe ser diferente a la actual');
-            return;
+            MostrarNotificacion('La nueva contraseña debe ser diferente a la actual', 'advertencia')
+            return
         }
 
         try {
-            setCargando(true);
+            setCargando(true)
 
-            const usuario = JSON.parse(localStorage.getItem('usuario'));
+            const usuario = JSON.parse(localStorage.getItem('usuario'))
 
             if (!usuario) {
-                throw new Error('No se encontró el usuario');
+                throw new Error('No se encontró el usuario')
             }
 
             const respuesta = await fetch(
@@ -56,27 +66,36 @@ function CambiarContrasenia() {
                         contrasenaNueva: contraseniaNueva
                     })
                 }
-            );
+            )
 
-            const datos = await respuesta.json();
+            const datos = await respuesta.json()
 
             if (!respuesta.ok) {
-                throw new Error(datos.mensaje || 'No se pudo cambiar la contraseña');
+                throw new Error(datos.mensaje || 'No se pudo cambiar la contraseña')
             }
 
-            alert('Tu contraseña se actualizó correctamente');
-            navegar('/configuracion');
+            MostrarNotificacion('Tu contraseña se actualizó correctamente')
+
+            setTimeout(() => {
+                navegar('/configuracion')
+            }, 1500)
 
         } catch (error) {
-            console.error(error);
-            alert(error.message);
+            console.error(error)
+            MostrarNotificacion(error.message, 'error')
         } finally {
-            setCargando(false);
+            setCargando(false)
         }
     }
 
     return (
         <section className="pantallaCambiarContrasenia">
+            <Notificacion
+                mensaje={notificacion?.mensaje}
+                tipo={notificacion?.tipo}
+                onCerrar={CerrarNotificacion}
+            />
+
             <MenuLateral />
 
             <main className="contenidoCambiarContrasenia">
@@ -132,7 +151,7 @@ function CambiarContrasenia() {
                 </form>
             </main>
         </section>
-    );
+    )
 }
 
-export default CambiarContrasenia;
+export default CambiarContrasenia

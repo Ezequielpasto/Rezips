@@ -198,7 +198,7 @@ const estilos = StyleSheet.create({
     contenido: {
         flex: 1,
         paddingHorizontal: 20,
-        paddingTop: 30
+        paddingTop: 50,
     },
 
     titulo: {
