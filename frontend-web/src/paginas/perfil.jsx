@@ -1,4 +1,4 @@
-
+import API_URL from '../config/api';
 import '../estilos/perfil.css'
 import MenuLateral from '../componentes/menuLateral'
 import ListaRecetas from '../componentes/listaRecetas'
@@ -18,7 +18,7 @@ function Perfil(){
                 const usuarioActual = JSON.parse(usuarioJSON)
                 setUsuario(usuarioActual)
 
-                const respuesta = await fetch(`http://localhost:3000/recetas`)
+                const respuesta = await fetch(`${API_URL}/recetas`)
 
                 if (!respuesta.ok) {
                     throw new Error('No se pudieron obtener las recetas')

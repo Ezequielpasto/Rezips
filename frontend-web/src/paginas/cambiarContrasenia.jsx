@@ -1,4 +1,4 @@
-
+import API_URL from '../config/api';
 import { useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import MenuLateral from '../componentes/menuLateral'
@@ -55,7 +55,7 @@ function CambiarContrasenia() {
             }
 
             const respuesta = await fetch(
-                `http://localhost:3000/usuarios/${usuario.id_usuario}/contrasenia`,
+                `${API_URL}/${usuario.id_usuario}/contrasenia`,
                 {
                     method: 'PUT',
                     headers: {

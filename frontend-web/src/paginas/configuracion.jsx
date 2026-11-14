@@ -1,4 +1,4 @@
-
+import API_URL from '../config/api';
 import { useState, useCallback } from 'react'
 import '../estilos/configuracion.css'
 import MenuLateral from '../componentes/menuLateral'
@@ -42,7 +42,7 @@ function Configuracion() {
         }
 
         try {
-            const respuesta = await fetch(`http://localhost:3000/usuarios/${usuario.id_usuario}`, {
+            const respuesta = await fetch(`${API_URL}/usuarios/${usuario.id_usuario}`, {
                 method: 'DELETE'
             })
 

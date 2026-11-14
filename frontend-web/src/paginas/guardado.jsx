@@ -3,6 +3,7 @@ import MenuLateral from "../componentes/menuLateral"
 import Filtros from '../componentes/filtros'
 import ListaRecetas from '../componentes/listaRecetas'
 import { useState, useEffect } from "react"
+import API_URL from '../config/api';
 
 function Guardado(){
     const [recetas, setRecetas] = useState([])
@@ -16,7 +17,7 @@ function Guardado(){
 
             if (!usuario) return
             try {
-                const respuesta = await fetch(`http://localhost:3000/recetas/usuario/${usuario.id_usuario}/guardadas`)
+                const respuesta = await fetch(`${API_URL}/recetas/usuario/${usuario.id_usuario}/guardadas`)
                 if (!respuesta.ok) {
                     throw new Error('Error al obtener las recetas guardadas')
                 }

@@ -5,6 +5,7 @@ import { useState, useEffect, useCallback } from 'react'
 import unidades from '../datos/unidades'
 import { useNavigate } from 'react-router-dom'
 import { Trash, Plus } from 'lucide-react'
+import API_URL from '../config/api';
 
 function CrearReceta() {
     const [nombre, setNombre] = useState("")
@@ -34,7 +35,7 @@ function CrearReceta() {
     useEffect(() => {
         async function ObtenerCategorias() {
             try {
-                const respuesta = await fetch('http://localhost:3000/categorias')
+                const respuesta = await fetch(`${API_URL}/categorias`)
 
                 if (!respuesta.ok) {
                     throw new Error('No se pudieron obtener las categorías')
@@ -155,7 +156,7 @@ function CrearReceta() {
             const imagenBase64 = imagen ? await ConvertirImagen(imagen) : null
 
             // Crear receta
-            const respuesta = await fetch('http://localhost:3000/recetas', {
+            const respuesta = await fetch(`${API_URL}/recetas`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -183,7 +184,7 @@ function CrearReceta() {
             for (const ingrediente of ingredientes) {
                 const unidadSeleccionada = unidades.find(u => u.valor == ingrediente.unidad)
 
-                const respuestaIngrediente = await fetch('http://localhost:3000/ingredientes', {
+                const respuestaIngrediente = await fetch(`${API_URL}/ingredientes`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -203,7 +204,7 @@ function CrearReceta() {
 
             // Guardar pasos
             for (const paso of pasos) {
-                const respuestaPaso = await fetch(`http://localhost:3000/recetas/${idReceta}/pasos`, {
+                const respuestaPaso = await fetch(`${API_URL}/recetas/${idReceta}/pasos`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

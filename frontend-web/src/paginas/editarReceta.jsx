@@ -5,6 +5,7 @@ import { useState, useEffect, useCallback } from 'react'
 import unidades from '../datos/unidades'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Trash, Plus } from 'lucide-react'
+import API_URL from '../config/api';
 
 function EditarReceta() {
     const { id } = useParams()
@@ -33,10 +34,10 @@ function EditarReceta() {
     useEffect(() => {
         async function ObtenerReceta() {
             try {
-                const respuestaReceta = await fetch(`http://localhost:3000/recetas/${id}`)
-                const respuestaCategorias = await fetch('http://localhost:3000/categorias')
-                const respuestaIngredientes = await fetch(`http://localhost:3000/recetas/${id}/ingredientes`)
-                const respuestaPasos = await fetch(`http://localhost:3000/recetas/${id}/pasos`)
+                const respuestaReceta = await fetch(`${API_URL}/recetas/${id}`)
+                const respuestaCategorias = await fetch('${API_URL}/categorias')
+                const respuestaIngredientes = await fetch(`${API_URL}/recetas/${id}/ingredientes`)
+                const respuestaPasos = await fetch(`${API_URL}/recetas/${id}/pasos`)
 
                 if (!respuestaReceta.ok || !respuestaCategorias.ok || !respuestaIngredientes.ok || !respuestaPasos.ok) {
                     throw new Error('Error al obtener los datos')
@@ -164,7 +165,7 @@ function EditarReceta() {
                 descripcion: paso.descripcion.trim()
             }))
 
-            const respuesta = await fetch(`http://localhost:3000/recetas/${id}`, {
+            const respuesta = await fetch(`${API_URL}/recetas/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'

@@ -1,4 +1,4 @@
-
+import API_URL from '../config/api';
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import MenuLateral from '../componentes/menuLateral'
@@ -35,9 +35,7 @@ function EditarDatos() {
 
                 const usuarioActual = JSON.parse(datos)
 
-                const respuesta = await fetch(
-                    `http://localhost:3000/usuarios/${usuarioActual.id_usuario}`
-                )
+                const respuesta = await fetch(`${API_URL}/usuarios/${usuarioActual.id_usuario}`)
 
                 const texto = await respuesta.text()
 
@@ -120,8 +118,7 @@ function EditarDatos() {
             setCargando(true)
 
             // Actualizar nombre, apellido y fecha de nacimiento
-            const respuesta = await fetch(
-                `http://localhost:3000/usuarios/${usuario.id_usuario}`,
+            const respuesta = await fetch(`${API_URL}/usuarios/${usuario.id_usuario}`,
                 {
                     method: 'PUT',
                     headers: {
@@ -148,8 +145,7 @@ function EditarDatos() {
 
             // Actualizar la imagen solamente si se seleccionó una nueva
             if (imagenSeleccionada) {
-                const respuestaImagen = await fetch(
-                    `http://localhost:3000/usuarios/${usuario.id_usuario}/imagen`,
+                const respuestaImagen = await fetch(`${API_URL}/usuarios/${usuario.id_usuario}/imagen`,
                     {
                         method: 'PUT',
                         headers: {

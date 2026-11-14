@@ -7,7 +7,8 @@ import Notificacion from '../componentes/notificacion'
 import Confirmacion from '../componentes/confirmacion'
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Star, Heart, Bookmark, Timer, Utensils, MessageCircle, Trash } from 'lucide-react'
+import { Star, Heart, Bookmark, Timer, Utensils, MessageCircle, Trash, Aperture } from 'lucide-react'
+import API_URL from '../config/api';
 
 function DetallesReceta() {
 
@@ -94,7 +95,7 @@ function DetallesReceta() {
             try {
 
                 // Obtenemos los datos principales de la receta
-                const respuesta = await fetch(`http://localhost:3000/recetas/${id}`)
+                const respuesta = await fetch(`${API_URL}/recetas/${id}`)
 
                 if (!respuesta.ok) throw new Error('Error al obtener receta')
 
@@ -102,28 +103,28 @@ function DetallesReceta() {
                 setReceta(datos)
 
                 // Obtenemos los pasos de preparación
-                const respuestaPasos = await fetch(`http://localhost:3000/recetas/${id}/pasos`)
+                const respuestaPasos = await fetch(`${API_URL}/recetas/${id}/pasos`)
 
                 if (!respuestaPasos.ok) throw new Error('Error al obtener pasos')
 
                 setPasos(await respuestaPasos.json())
 
                 // Obtenemos los comentarios de la receta
-                const respuestaComentarios = await fetch(`http://localhost:3000/recetas/${id}/comentarios`)
+                const respuestaComentarios = await fetch(`${API_URL}/recetas/${id}/comentarios`)
 
                 if (!respuestaComentarios.ok) throw new Error('Error al obtener comentarios')
 
                 setComentarios(await respuestaComentarios.json())
 
                 // Obtenemos los ingredientes de la receta
-                const respuestaIngredientes = await fetch(`http://localhost:3000/recetas/${id}/ingredientes`)
+                const respuestaIngredientes = await fetch(`${API_URL}/recetas/${id}/ingredientes`)
 
                 if (!respuestaIngredientes.ok) throw new Error('Error al obtener ingredientes')
 
                 setIngredientes(await respuestaIngredientes.json())
 
                 // Obtenemos los usuarios que dieron me gusta
-                const respuestaMeGusta = await fetch(`http://localhost:3000/recetas/${id}/me-gusta`)
+                const respuestaMeGusta = await fetch(`${API_URL}/recetas/${id}/me-gusta`)
 
                 if (!respuestaMeGusta.ok) {
                     throw new Error('Error al obtener me gusta')
@@ -132,7 +133,7 @@ function DetallesReceta() {
                 setListaMeGusta(await respuestaMeGusta.json())
 
                 // Obtenemos los usuarios que guardaron la receta
-                const respuestaGuardados = await fetch(`http://localhost:3000/recetas/${id}/guardar`)
+                const respuestaGuardados = await fetch(`${API_URL}/recetas/${id}/guardar`)
 
                 if (!respuestaGuardados.ok) {
                     throw new Error('Error al obtener los guardados')
@@ -141,7 +142,7 @@ function DetallesReceta() {
                 setListaGuardados(await respuestaGuardados.json())
 
                 // Obtenemos las calificaciones de la receta
-                const respuestaCalificaciones = await fetch(`http://localhost:3000/recetas/${id}/calificacion`)
+                const respuestaCalificaciones = await fetch(`${API_URL}/recetas/${id}/calificacion`)
 
                 if (!respuestaCalificaciones.ok) {
                     throw new Error('Error al obtener las calificaciones')
@@ -231,7 +232,7 @@ function DetallesReceta() {
 
             // Si ya dio me gusta, lo eliminamos; de lo contrario, lo agregamos
             const respuesta = await fetch(
-                `http://localhost:3000/recetas/${id}/me-gusta`,
+                `${API_URL}/recetas/${id}/me-gusta`,
                 {
                     method: usuarioDioMeGusta ? 'DELETE' : 'POST',
                     headers: {
@@ -249,7 +250,7 @@ function DetallesReceta() {
 
             // Volvemos a obtener la lista actualizada
             const respuestaMeGusta = await fetch(
-                `http://localhost:3000/recetas/${id}/me-gusta`
+                `${API_URL}/recetas/${id}/me-gusta`
             )
 
             if (!respuestaMeGusta.ok) {
@@ -275,7 +276,7 @@ function DetallesReceta() {
         try {
 
             // Comprobamos si debemos guardar o quitar la receta
-            const respuesta = await fetch(`http://localhost:3000/recetas/${id}/guardar`, {
+            const respuesta = await fetch(`${API_URL}/recetas/${id}/guardar`, {
                 method: usuarioGuardo ? 'DELETE' : 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -291,7 +292,7 @@ function DetallesReceta() {
 
             // Actualizamos la lista de recetas guardadas
             const respuestaGuardados = await fetch(
-                `http://localhost:3000/recetas/${id}/guardar`
+                `${API_URL}/recetas/${id}/guardar`
             )
 
             if (!respuestaGuardados.ok) {
@@ -324,7 +325,7 @@ function DetallesReceta() {
         try {
 
             // Enviamos el comentario al backend
-            const respuesta = await fetch(`http://localhost:3000/recetas/${id}/comentarios`, {
+            const respuesta = await fetch(`${API_URL}/recetas/${id}/comentarios`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -342,7 +343,7 @@ function DetallesReceta() {
             await respuesta.json()
 
             // Volvemos a obtener los comentarios actualizados
-            const respuestaComentarios = await fetch(`http://localhost:3000/recetas/${id}/comentarios`)
+            const respuestaComentarios = await fetch(`${API_URL}/recetas/${id}/comentarios`)
 
             if (!respuestaComentarios.ok) {
                 throw new Error('Error al actualizar los comentarios')
@@ -373,7 +374,7 @@ function DetallesReceta() {
     async function EliminarComentario(idComentario) {
         try {
 
-            const respuesta = await fetch(`http://localhost:3000/comentarios/${idComentario}`, {
+            const respuesta = await fetch(`${API_URL}/comentarios/${idComentario}`, {
                 method: 'DELETE'
             })
 
@@ -404,7 +405,7 @@ function DetallesReceta() {
 
         try {
 
-            const respuesta = await fetch(`http://localhost:3000/recetas/${id}/calificacion`,
+            const respuesta = await fetch(`${API_URL}/recetas/${id}/calificacion`,
                 {
                     method: 'POST',
                     headers: {
@@ -422,7 +423,7 @@ function DetallesReceta() {
             }
 
             // Actualizamos las calificaciones después de guardar
-            const respuestaCalificaciones = await fetch(`http://localhost:3000/recetas/${id}/calificacion`)
+            const respuestaCalificaciones = await fetch(`${API_URL}/recetas/${id}/calificacion`)
 
             if (!respuestaCalificaciones.ok) {
                 throw new Error('Error al actualizar las calificaciones')
@@ -448,7 +449,7 @@ function DetallesReceta() {
     async function EliminarReceta() {
         try {
 
-            const respuesta = await fetch(`http://localhost:3000/recetas/${id}`, {
+            const respuesta = await fetch(`${API_URL}/recetas/${id}`, {
                 method: 'DELETE'
             })
 

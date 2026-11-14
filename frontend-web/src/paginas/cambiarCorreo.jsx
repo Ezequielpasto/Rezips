@@ -1,4 +1,4 @@
-
+import API_URL from '../config/api';
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import MenuLateral from '../componentes/menuLateral'
@@ -31,7 +31,7 @@ function CambiarCorreo() {
                 const usuario = JSON.parse(datos)
 
                 const respuesta = await fetch(
-                    `http://localhost:3000/usuarios/${usuario.id_usuario}`
+                    `${API_URL}/usuarios/${usuario.id_usuario}`
                 )
 
                 if (!respuesta.ok) {
@@ -76,7 +76,7 @@ function CambiarCorreo() {
             const datos = JSON.parse(localStorage.getItem('usuario'))
 
             const respuesta = await fetch(
-                `http://localhost:3000/usuarios/${datos.id_usuario}/correo`,
+                `${API_URL}/${datos.id_usuario}/correo`,
                 {
                     method: 'PUT',
                     headers: {

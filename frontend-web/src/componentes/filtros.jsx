@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import '../estilos/filtros.css'
+import API_URL from '../config/api';
 
 function Filtros({categoriaSeleccionada, setCategoriaSeleccionada, calificacionSeleccionada, setCalificacionSeleccionada}){
     const [categorias, setCategorias] = useState([])
@@ -7,7 +8,7 @@ function Filtros({categoriaSeleccionada, setCategoriaSeleccionada, calificacionS
     useEffect(() => {
         async function ObtenerCategorias() {
             try{
-                const respuestaCategorias = await fetch('http://localhost:3000/categorias')
+                const respuestaCategorias = await fetch(`${API_URL}/categorias`)
 
                 if(!respuestaCategorias.ok){
                     throw new Error('Error al obtener los datos')

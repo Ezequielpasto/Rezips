@@ -2,6 +2,7 @@ import '../estilos/iniciarSesion.css'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState, useCallback } from 'react'
 import Notificacion from '../componentes/notificacion'
+import API_URL from '../config/api';
 
 function IniciarSesion() {
     const [correo, setCorreo] = useState("")
@@ -32,7 +33,7 @@ function IniciarSesion() {
 
         if (ValidarInicioSesion()) {
             try {
-                const respuesta = await fetch('http://localhost:3000/auth/login', {
+                const respuesta = await fetch(`${API_URL}/auth/login`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

@@ -3,6 +3,7 @@ import Notificacion from '../componentes/notificacion'
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect, useCallback } from 'react'
 import { Star, Heart, Bookmark, Carrot, Timer, Utensils } from 'lucide-react'
+import API_URL from '../config/api';
 
 function Receta({ id, imagen, nombre, categoria, creador, cantIngredientes, duracion, porciones, meGusta = [], guardados = [], calificaciones = []
 }){
@@ -38,7 +39,7 @@ function Receta({ id, imagen, nombre, categoria, creador, cantIngredientes, dura
         }
 
         try {
-            const respuesta = await fetch(`http://localhost:3000/recetas/${id}/me-gusta`,{
+            const respuesta = await fetch(`${API_URL}/recetas/${id}/me-gusta`,{
                     method: usuarioDioMeGusta ? 'DELETE' : 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -69,7 +70,7 @@ function Receta({ id, imagen, nombre, categoria, creador, cantIngredientes, dura
         }
 
         try {
-            const respuesta = await fetch(`http://localhost:3000/recetas/${id}/guardar`, {
+            const respuesta = await fetch(`${API_URL}/recetas/${id}/guardar`, {
                     method: usuarioGuardo ? 'DELETE' : 'POST',
                     headers: {
                         'Content-Type': 'application/json'

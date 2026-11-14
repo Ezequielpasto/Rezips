@@ -5,6 +5,7 @@ import Filtros from '../componentes/filtros'
 import ListaRecetas from '../componentes/listaRecetas'
 import Notificacion from '../componentes/notificacion'
 import { useEffect, useState, useCallback } from 'react'
+import API_URL from '../config/api';
 
 function Principal() {
     const [recetas, setRecetas] = useState([])
@@ -24,7 +25,7 @@ function Principal() {
     useEffect(() => {
         async function ObtenerRecetas() {
             try {
-                const respuesta = await fetch('http://localhost:3000/recetas')
+                const respuesta = await fetch(`${API_URL}/recetas`)
                 const datos = await respuesta.json()
 
                 if (!respuesta.ok) {

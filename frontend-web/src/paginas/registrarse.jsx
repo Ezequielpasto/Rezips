@@ -1,4 +1,4 @@
-
+import API_URL from '../config/api';
 import '../estilos/registrarse.css'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState, useCallback } from 'react'
@@ -93,7 +93,7 @@ function Registrarse(){
 
         if(ValidarRegistro()){
             try{
-                const respuesta = await fetch('http://localhost:3000/auth/registro', {
+                const respuesta = await fetch(`${API_URL}/auth/registro`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
