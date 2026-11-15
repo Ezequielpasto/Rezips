@@ -1,11 +1,11 @@
 
 import { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
+import { FlatList, StyleSheet, View, Text } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import Receta from './receta';
 
-export default function ListaRecetas({ recetas = [], encabezado = null }) {
+export default function ListaRecetas({ recetas = [], encabezado = null, cargando = false }) {
     const [usuario, setUsuario] = useState(null);
     const router = useRouter();
 
@@ -27,9 +27,16 @@ export default function ListaRecetas({ recetas = [], encabezado = null }) {
 
     return (
         <FlatList
-            data={recetas}
+            data={cargando ? [] : recetas}
             keyExtractor={(receta) => receta.id_receta.toString()}
             ListHeaderComponent={encabezado}
+            ListEmptyComponent={
+                cargando ? (
+                    <View style={estilos.contenedorCargando}>
+                        <Text style={estilos.textoCargando}>Cargando recetas...</Text>
+                    </View>
+                ) : null
+            }
             renderItem={({ item: receta }) => {
                 const promedio = receta.calificaciones?.length
                     ? receta.calificaciones.reduce(
@@ -75,15 +82,30 @@ const estilos = StyleSheet.create({
         paddingHorizontal: 15,
         paddingTop: 15,
         paddingBottom: 110,
+        flexGrow: 1,
     },
 
     listaConEncabezado: {
         paddingTop: 0,
         paddingBottom: 110,
+        flexGrow: 1,
     },
 
     recetaConEncabezado: {
         marginHorizontal: 15,
         marginBottom: 15,
+    },
+
+    contenedorCargando: {
+        flex: 1,
+        minHeight: 250,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
+    textoCargando: {
+        fontSize: 16,
+        color: '#777777',
+        fontWeight: '500',
     },
 });

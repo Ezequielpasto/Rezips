@@ -1,4 +1,3 @@
-
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useState, useEffect } from 'react'
 import { View, Text, TextInput, ScrollView, Pressable, Image, StyleSheet, Alert } from 'react-native'
@@ -24,6 +23,7 @@ export default function CrearReceta() {
     ])
 
     const [categorias, setCategorias] = useState([])
+    const [creando, setCreando] = useState(false)
 
     // Obtener categorías
     useEffect(() => {
@@ -230,9 +230,13 @@ export default function CrearReceta() {
 
     // Crear receta
     async function CrearReceta() {
+        if (creando) return
+
         if (!ValidarReceta()) return
 
         try {
+            setCreando(true)
+
             const usuarioGuardado = await import('@react-native-async-storage/async-storage')
             const usuarioJSON = await usuarioGuardado.default.getItem('usuario')
 
@@ -327,6 +331,7 @@ export default function CrearReceta() {
                     text: 'Aceptar'
                 }
             ])
+
         } catch (error) {
             console.error('Error al crear receta:', error)
             Alert.alert(
@@ -335,6 +340,8 @@ export default function CrearReceta() {
                     ? error.message
                     : 'Ocurrió un error al crear la receta'
             )
+        } finally {
+            setCreando(false)
         }
     }
 
@@ -408,6 +415,7 @@ export default function CrearReceta() {
                         <Pressable
                             style={estilos.botonSecundario}
                             onPress={ElegirImagen}
+                            disabled={creando}
                         >
                             <Text style={estilos.textoBotonSecundario}>
                                 Agregar imagen
@@ -435,6 +443,7 @@ export default function CrearReceta() {
                                     style={estilos.input}
                                     placeholder="Ingrediente"
                                     value={ingrediente.nombre}
+                                    editable={!creando}
                                     onChangeText={valor =>
                                         ActualizarIngrediente(indice, 'nombre', valor)
                                     }
@@ -445,6 +454,7 @@ export default function CrearReceta() {
                                     placeholder="Cantidad"
                                     keyboardType="decimal-pad"
                                     value={ingrediente.cantidad}
+                                    editable={!creando}
                                     onChangeText={valor =>
                                         ActualizarIngrediente(indice, 'cantidad', valor)
                                     }
@@ -453,6 +463,7 @@ export default function CrearReceta() {
                                 <View style={estilos.selector}>
                                     <Picker
                                         selectedValue={ingrediente.unidad}
+                                        enabled={!creando}
                                         onValueChange={valor =>
                                             ActualizarIngrediente(indice, 'unidad', valor)
                                         }
@@ -473,7 +484,7 @@ export default function CrearReceta() {
                                         estilos.botonEliminar,
                                         ingredientes.length === 1 && estilos.deshabilitado
                                     ]}
-                                    disabled={ingredientes.length === 1}
+                                    disabled={ingredientes.length === 1 || creando}
                                     onPress={() => EliminarIngrediente(indice)}
                                 >
                                     <Text style={estilos.textoEliminar}>
@@ -485,6 +496,7 @@ export default function CrearReceta() {
 
                         <Pressable
                             style={estilos.botonSecundario}
+                            disabled={creando}
                             onPress={() =>
                                 setIngredientes([
                                     ...ingredientes,
@@ -514,6 +526,7 @@ export default function CrearReceta() {
                                     placeholder="Nuevo paso"
                                     multiline
                                     value={paso.descripcion}
+                                    editable={!creando}
                                     onChangeText={valor => ActualizarPaso(indice, valor)}
                                 />
 
@@ -522,7 +535,7 @@ export default function CrearReceta() {
                                         estilos.botonEliminar,
                                         pasos.length === 1 && estilos.deshabilitado
                                     ]}
-                                    disabled={pasos.length === 1}
+                                    disabled={pasos.length === 1 || creando}
                                     onPress={() => EliminarPaso(indice)}
                                 >
                                     <Text style={estilos.textoEliminar}>
@@ -534,6 +547,7 @@ export default function CrearReceta() {
 
                         <Pressable
                             style={estilos.botonSecundario}
+                            disabled={creando}
                             onPress={() =>
                                 setPasos([
                                     ...pasos,
@@ -548,11 +562,15 @@ export default function CrearReceta() {
                     </View>
 
                     <Pressable
-                        style={estilos.botonCrear}
+                        style={[
+                            estilos.botonCrear,
+                            creando && estilos.botonCreando
+                        ]}
                         onPress={CrearReceta}
+                        disabled={creando}
                     >
                         <Text style={estilos.textoCrear}>
-                            Crear y publicar receta
+                            {creando ? 'Publicando receta...' : 'Crear y publicar receta'}
                         </Text>
                     </Pressable>
 
@@ -659,6 +677,10 @@ const estilos = StyleSheet.create({
         borderRadius: 10,
         backgroundColor: '#222222',
         alignItems: 'center'
+    },
+    botonCreando: {
+        backgroundColor: '#777777',
+        opacity: 0.8
     },
     textoCrear: {
         color: '#ffffff',

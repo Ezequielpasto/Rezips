@@ -1,15 +1,5 @@
-
 import { useState, useEffect } from 'react';
-import {
-    View,
-    Text,
-    TextInput,
-    ScrollView,
-    Pressable,
-    Image,
-    StyleSheet,
-    Alert
-} from 'react-native';
+import { View, Text, TextInput, ScrollView, Pressable, Image, StyleSheet, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -493,7 +483,7 @@ export default function EditarReceta() {
             </View>
 
             <Pressable
-                style={estilos.botonGuardar}
+                style={[estilos.botonGuardar, guardando && estilos.botonGuardando]}
                 onPress={GuardarCambios}
                 disabled={guardando}
             >
@@ -594,6 +584,10 @@ const estilos = StyleSheet.create({
         backgroundColor: '#222222',
         borderRadius: 10,
         alignItems: 'center'
+    },
+    botonGuardando: {
+        backgroundColor: '#777777',
+        opacity: 0.8
     },
     textoGuardar: {
         color: '#ffffff',

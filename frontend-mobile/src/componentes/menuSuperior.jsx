@@ -1,7 +1,7 @@
-
 import { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Pressable } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Pressable, Image } from 'react-native';
 import { Search, SlidersHorizontal, ChevronDown } from 'lucide-react-native';
+import Logo from '../../assets/logo.png';
 
 export default function MenuSuperior({
     busqueda = '',
@@ -16,7 +16,11 @@ export default function MenuSuperior({
 
     return (
         <View style={estilos.superior}>
-            <Text style={estilos.logo}>Rezips</Text>
+            <Image
+                source={Logo}
+                style={estilos.logo}
+                resizeMode="contain"
+            />
 
             <View style={estilos.filaBuscador}>
                 <View style={estilos.buscador}>
@@ -61,12 +65,9 @@ export default function MenuSuperior({
                                 key={categoria.id_categoria}
                                 style={[
                                     estilos.opcion,
-                                    categoriaSeleccionada === categoria.nombre &&
-                                    estilos.opcionActiva
+                                    categoriaSeleccionada === categoria.nombre && estilos.opcionActiva
                                 ]}
-                                onPress={() =>
-                                    onCategoriaChange?.(categoria.nombre)
-                                }
+                                onPress={() => onCategoriaChange?.(categoria.nombre)}
                             >
                                 <Text style={estilos.textoOpcion}>
                                     {categoria.nombre}
@@ -75,9 +76,7 @@ export default function MenuSuperior({
                         ))}
                     </View>
 
-                    <Text style={estilos.tituloFiltro}>
-                        Calificación mínima
-                    </Text>
+                    <Text style={estilos.tituloFiltro}>Calificación mínima</Text>
 
                     <View style={estilos.opciones}>
                         {[0, 5, 4, 3, 2, 1].map((valor) => (
@@ -85,8 +84,7 @@ export default function MenuSuperior({
                                 key={valor}
                                 style={[
                                     estilos.opcion,
-                                    Number(calificacionMinima) === valor &&
-                                    estilos.opcionActiva
+                                    Number(calificacionMinima) === valor && estilos.opcionActiva
                                 ]}
                                 onPress={() => onCalificacionChange?.(valor)}
                             >
@@ -109,8 +107,8 @@ const estilos = StyleSheet.create({
         gap: 15
     },
     logo: {
-        fontSize: 26,
-        fontWeight: 'bold'
+        width: 130,
+        height: 45
     },
     filaBuscador: {
         flexDirection: 'row',
