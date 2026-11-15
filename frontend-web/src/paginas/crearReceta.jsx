@@ -1,3 +1,4 @@
+
 import '../estilos/crearReceta.css'
 import MenuLateral from '../componentes/menuLateral'
 import Notificacion from '../componentes/notificacion'
@@ -16,11 +17,11 @@ function CrearReceta() {
     const [vistaPrevia, setVistaPrevia] = useState("")
     const [ingredientes, setIngredientes] = useState([{ nombre: '', cantidad: '', unidad: '' }])
     const [pasos, setPasos] = useState([{ numero: 1, descripcion: '' }])
-
-    const usuario = JSON.parse(localStorage.getItem('usuario'))
-
     const [categorias, setCategorias] = useState([])
     const [notificacion, setNotificacion] = useState(null)
+    const [cargando, setCargando] = useState(false)
+
+    const usuario = JSON.parse(localStorage.getItem('usuario'))
 
     const navegar = useNavigate()
 
@@ -43,6 +44,7 @@ function CrearReceta() {
 
                 const datos = await respuesta.json()
                 setCategorias(datos)
+
             } catch (error) {
                 console.error('Error al obtener las categorías:', error)
                 MostrarNotificacion('No se pudieron cargar las categorías', 'error')
@@ -153,6 +155,8 @@ function CrearReceta() {
         }
 
         try {
+            setCargando(true)
+
             const imagenBase64 = imagen ? await ConvertirImagen(imagen) : null
 
             // Crear receta
@@ -229,6 +233,8 @@ function CrearReceta() {
         } catch (error) {
             console.error('Error:', error)
             MostrarNotificacion(error.message || 'Ocurrió un error al crear la receta', 'error')
+        } finally {
+            setCargando(false)
         }
     }
 
@@ -253,6 +259,7 @@ function CrearReceta() {
                             placeholder='Nombre de la receta'
                             value={nombre}
                             onChange={(event) => setNombre(event.target.value)}
+                            disabled={cargando}
                         />
                     </div>
 
@@ -261,6 +268,7 @@ function CrearReceta() {
                         <select
                             value={categoria}
                             onChange={(event) => setCategoria(event.target.value)}
+                            disabled={cargando}
                         >
                             <option value="">Seleccionar categoria</option>
                             {categorias.map((categoria) => (
@@ -278,6 +286,7 @@ function CrearReceta() {
                             placeholder='Duración'
                             value={duracion}
                             onChange={(event) => setDuracion(event.target.value)}
+                            disabled={cargando}
                         />
                     </div>
 
@@ -288,6 +297,7 @@ function CrearReceta() {
                             placeholder='Cantidad de porciones'
                             value={cantidadPorciones}
                             onChange={(event) => setCantidadPorciones(event.target.value)}
+                            disabled={cargando}
                         />
                     </div>
 
@@ -309,6 +319,7 @@ function CrearReceta() {
                             id='imagen'
                             accept='image/*'
                             onChange={SeleccionarImagen}
+                            disabled={cargando}
                         />
                     </div>
 
@@ -330,6 +341,7 @@ function CrearReceta() {
                                         }
                                         setIngredientes(nuevosIngredientes)
                                     }}
+                                    disabled={cargando}
                                 />
 
                                 <input
@@ -345,6 +357,7 @@ function CrearReceta() {
                                         }
                                         setIngredientes(nuevosIngredientes)
                                     }}
+                                    disabled={cargando}
                                 />
 
                                 <select
@@ -357,6 +370,7 @@ function CrearReceta() {
                                         }
                                         setIngredientes(nuevosIngredientes)
                                     }}
+                                    disabled={cargando}
                                 >
                                     <option value="">Seleccionar unidad</option>
                                     {unidades.map((unidad) => (
@@ -369,7 +383,7 @@ function CrearReceta() {
                                 <button
                                     type='button'
                                     onClick={() => EliminarIngrediente(indice)}
-                                    disabled={ingredientes.length === 1}
+                                    disabled={cargando || ingredientes.length === 1}
                                 >
                                     <Trash/>
                                 </button>
@@ -379,6 +393,7 @@ function CrearReceta() {
                         <button
                             type='button'
                             onClick={() => setIngredientes([...ingredientes, { nombre: '', cantidad: '', unidad: '' }])}
+                            disabled={cargando}
                         >
                             + Agregar ingrediente
                         </button>
@@ -405,12 +420,13 @@ function CrearReceta() {
                                             }
                                             setPasos(nuevosPasos)
                                         }}
+                                        disabled={cargando}
                                     />
 
                                     <button
                                         type='button'
                                         onClick={() => EliminarPaso(indice)}
-                                        disabled={pasos.length === 1}
+                                        disabled={cargando || pasos.length === 1}
                                     >
                                         <Trash color='red'/>
                                     </button>
@@ -421,13 +437,14 @@ function CrearReceta() {
                         <button
                             type='button'
                             onClick={() => setPasos([...pasos, { numero: pasos.length + 1, descripcion: '' }])}
+                            disabled={cargando}
                         >
                             + Agregar paso
                         </button>
                     </div>
 
-                    <button type='submit' className='btnCrearReceta'>
-                        <Plus /> Crear y publicar receta
+                    <button type='submit' className='btnCrearReceta' disabled={cargando}>
+                        {cargando ? 'Publicando receta...' : <><Plus /> Crear y publicar receta</>}
                     </button>
                 </form>
             </section>

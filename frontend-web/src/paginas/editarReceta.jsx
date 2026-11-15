@@ -1,3 +1,4 @@
+
 import '../estilos/crearReceta.css'
 import MenuLateral from '../componentes/menuLateral'
 import Notificacion from '../componentes/notificacion'
@@ -16,10 +17,10 @@ function EditarReceta() {
     const [cantidadPorciones, setCantidadPorciones] = useState("")
     const [imagen, setImagen] = useState("")
     const [archivoImagen, setArchivoImagen] = useState(null)
-
     const [ingredientes, setIngredientes] = useState([])
     const [pasos, setPasos] = useState([])
     const [notificacion, setNotificacion] = useState(null)
+    const [cargando, setCargando] = useState(false)
 
     const navegar = useNavigate()
 
@@ -35,7 +36,7 @@ function EditarReceta() {
         async function ObtenerReceta() {
             try {
                 const respuestaReceta = await fetch(`${API_URL}/recetas/${id}`)
-                const respuestaCategorias = await fetch('${API_URL}/categorias')
+                const respuestaCategorias = await fetch(`${API_URL}/categorias`)
                 const respuestaIngredientes = await fetch(`${API_URL}/recetas/${id}/ingredientes`)
                 const respuestaPasos = await fetch(`${API_URL}/recetas/${id}/pasos`)
 
@@ -121,7 +122,9 @@ function EditarReceta() {
             )
 
             if (
-                ingrediente.nombre.trim() === '' || !unidad || (!unidad.sinCantidad && ingrediente.cantidad.trim() === '')
+                ingrediente.nombre.trim() === '' ||
+                !unidad ||
+                (!unidad.sinCantidad && ingrediente.cantidad.trim() === '')
             ) {
                 MostrarNotificacion('Debes completar todos los datos de los ingredientes', 'advertencia')
                 return
@@ -140,14 +143,16 @@ function EditarReceta() {
             }
         }
 
-        // Determinar qué imagen utilizar
-        let imagenActualizada = imagen
-
-        if (archivoImagen) {
-            imagenActualizada = await ConvertirImagen(archivoImagen)
-        }
-
         try {
+            setCargando(true)
+
+            // Determinar qué imagen utilizar
+            let imagenActualizada = imagen
+
+            if (archivoImagen) {
+                imagenActualizada = await ConvertirImagen(archivoImagen)
+            }
+
             const ingredientesActualizados = ingredientes.map(ingrediente => {
                 const unidad = unidades.find(
                     u => u.valor === ingrediente.unidad
@@ -197,6 +202,8 @@ function EditarReceta() {
         } catch (error) {
             console.error(error)
             MostrarNotificacion(error.message || 'Error al modificar la receta', 'error')
+        } finally {
+            setCargando(false)
         }
     }
 
@@ -222,15 +229,16 @@ function EditarReceta() {
 
             <section className='nuevaReceta'>
                 <h1>Editar receta</h1>
+
                 <form onSubmit={GuardarCambios} className='formNuevaReceta'>
                     <div className='nombReceta'>
                         <p>Ingresa el nombre de la receta</p>
-                        <input type='text' placeholder='Nombre de la receta' value={nombre} onChange={(event) => setNombre(event.target.value)} />
+                        <input type='text' placeholder='Nombre de la receta' value={nombre} onChange={(event) => setNombre(event.target.value)} disabled={cargando} />
                     </div>
 
                     <div className="catReceta">
                         <p>Seleccione una categoría</p>
-                        <select value={categoria} onChange={(event) => setCategoria(event.target.value)}>
+                        <select value={categoria} onChange={(event) => setCategoria(event.target.value)} disabled={cargando}>
                             <option value="">Seleccionar categoria</option>
                             {categorias.map((categoria) => (
                                 <option key={categoria.id_categoria} value={categoria.id_categoria}> {categoria.nombre}</option>
@@ -240,12 +248,12 @@ function EditarReceta() {
 
                     <div className='durReceta'>
                         <p>Ingresa una duración aproximada (en minutos)</p>
-                        <input type='number' placeholder='Duración' value={duracion} onChange={(event) => setDuracion(event.target.value)} />
+                        <input type='number' placeholder='Duración' value={duracion} onChange={(event) => setDuracion(event.target.value)} disabled={cargando} />
                     </div>
 
                     <div className='cantReceta'>
                         <p>Ingresa la cantidad de porciones que rinde</p>
-                        <input type='number' placeholder='Cantidad de porciones' value={cantidadPorciones} onChange={(event) => setCantidadPorciones(event.target.value)} />
+                        <input type='number' placeholder='Cantidad de porciones' value={cantidadPorciones} onChange={(event) => setCantidadPorciones(event.target.value)} disabled={cargando} />
                     </div>
 
                     <div className='imgReceta'>
@@ -255,12 +263,14 @@ function EditarReceta() {
                             type="file"
                             accept="image/*"
                             onChange={(event) => setArchivoImagen(event.target.files[0])}
+                            disabled={cargando}
                         />
                     </div>
 
                     <div className='agregarIngredientes'>
                         <h5>Ingredientes</h5>
                         <p>Ingresa el nombre, la cantidad y la unidad por cada ingrediente</p>
+
                         {ingredientes.map((ingrediente, indice) => (
                             <div className="ingrediente" key={indice}>
                                 <input
@@ -274,6 +284,7 @@ function EditarReceta() {
                                         }
                                         setIngredientes(nuevosIngredientes)
                                     }}
+                                    disabled={cargando}
                                 />
 
                                 <input
@@ -288,6 +299,7 @@ function EditarReceta() {
                                         }
                                         setIngredientes(nuevosIngredientes)
                                     }}
+                                    disabled={cargando}
                                 />
 
                                 <select
@@ -298,7 +310,9 @@ function EditarReceta() {
                                             ...ingrediente, unidad: event.target.value
                                         }
                                         setIngredientes(nuevosIngredientes)
-                                    }}>
+                                    }}
+                                    disabled={cargando}
+                                >
                                     <option value="">Seleccionar unidad</option>
                                     {unidades.map((unidad) => (
                                         <option key={unidad.valor} value={unidad.valor}>{unidad.singular} / {unidad.plural}</option>
@@ -308,22 +322,30 @@ function EditarReceta() {
                                 <button
                                     type='button'
                                     onClick={() => EliminarIngrediente(indice)}
-                                    disabled={ingredientes.length === 1}
+                                    disabled={cargando || ingredientes.length === 1}
                                 >
-                                    <Trash/>
+                                    <Trash />
                                 </button>
                             </div>
                         ))}
 
-                        <button type='button' onClick={() => setIngredientes([...ingredientes, { nombre: '', cantidad: '', unidad: '' }])}>+ Agregar ingrediente</button>
+                        <button
+                            type='button'
+                            onClick={() => setIngredientes([...ingredientes, { nombre: '', cantidad: '', unidad: '' }])}
+                            disabled={cargando}
+                        >
+                            + Agregar ingrediente
+                        </button>
                     </div>
 
                     <div className="agregarPasos">
                         <h5>Pasos</h5>
                         <p>Ingresa la descripcion de cada paso</p>
+
                         {pasos.map((paso, indice) => (
                             <div className='paso' key={indice}>
                                 <p>Paso {paso.numero}</p>
+
                                 <div className="interaccion">
                                     <textarea
                                         type='text'
@@ -334,23 +356,32 @@ function EditarReceta() {
                                             nuevosPasos[indice] = { ...paso, descripcion: event.target.value }
                                             setPasos(nuevosPasos)
                                         }}
+                                        disabled={cargando}
                                     />
 
                                     <button
                                         type='button'
                                         onClick={() => EliminarPaso(indice)}
-                                        disabled={pasos.length === 1}
+                                        disabled={cargando || pasos.length === 1}
                                     >
-                                        <Trash color='red'/>
+                                        <Trash color='red' />
                                     </button>
                                 </div>
                             </div>
                         ))}
 
-                        <button type='button' onClick={() => setPasos([...pasos, { numero: pasos.length + 1, descripcion: '' }])}>+ Agregar paso</button>
+                        <button
+                            type='button'
+                            onClick={() => setPasos([...pasos, { numero: pasos.length + 1, descripcion: '' }])}
+                            disabled={cargando}
+                        >
+                            + Agregar paso
+                        </button>
                     </div>
 
-                    <button type='submit' className='btnCrearReceta'><Plus/>Guardar cambios</button>
+                    <button type='submit' className='btnCrearReceta' disabled={cargando}>
+                        {cargando ? 'Guardando cambios...' : <><Plus />Guardar cambios</>}
+                    </button>
                 </form>
             </section>
         </div>

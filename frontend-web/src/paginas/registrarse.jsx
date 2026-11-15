@@ -1,3 +1,4 @@
+
 import API_URL from '../config/api';
 import '../estilos/registrarse.css'
 import { Link, useNavigate } from 'react-router-dom'
@@ -12,6 +13,7 @@ function Registrarse(){
     const [contraseña, setContraseña] = useState("")
     const [imagenPerfil, setImagenPerfil] = useState("")
     const [notificacion, setNotificacion] = useState(null)
+    const [cargando, setCargando] = useState(false)
 
     const navegar = useNavigate()
 
@@ -91,40 +93,44 @@ function Registrarse(){
     async function EnviarRegistro(event){
         event.preventDefault()
 
-        if(ValidarRegistro()){
-            try{
-                const respuesta = await fetch(`${API_URL}/auth/registro`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        nombre,
-                        apellido,
-                        fecha_nacimiento: fechaNacimiento,
-                        correo,
-                        contrasena: contraseña,
-                        imagen_perfil: imagenPerfil || null
-                    })
+        if(!ValidarRegistro()) return
+
+        try{
+            setCargando(true)
+
+            const respuesta = await fetch(`${API_URL}/auth/registro`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    nombre,
+                    apellido,
+                    fecha_nacimiento: fechaNacimiento,
+                    correo,
+                    contrasena: contraseña,
+                    imagen_perfil: imagenPerfil || null
                 })
+            })
 
-                const datos = await respuesta.json()
+            const datos = await respuesta.json()
 
-                if(!respuesta.ok){
-                    MostrarNotificacion(datos.mensaje || 'Error al registrar el usuario', 'error')
-                    return
-                }
-
-                MostrarNotificacion('Cuenta creada correctamente', 'exito')
-
-                setTimeout(() => {
-                    navegar('/')
-                }, 1500)
-
-            } catch(error){
-                console.error('Error:', error)
-                MostrarNotificacion('No se pudo conectar con el servidor', 'error')
+            if(!respuesta.ok){
+                MostrarNotificacion(datos.mensaje || 'Error al registrar el usuario', 'error')
+                return
             }
+
+            MostrarNotificacion('Cuenta creada correctamente', 'exito')
+
+            setTimeout(() => {
+                navegar('/')
+            }, 1500)
+
+        } catch(error){
+            console.error('Error:', error)
+            MostrarNotificacion('No se pudo conectar con el servidor', 'error')
+        } finally {
+            setCargando(false)
         }
     }
 
@@ -142,8 +148,8 @@ function Registrarse(){
                 <div className="nombreApellido">
                     <p>Ingresa tu nombre y tu apellido</p>
                     <div>
-                        <input type="text" placeholder="Nombre" value={nombre} onChange={(event) => setNombre(event.target.value)}/>
-                        <input type="text" placeholder="Apellido" value={apellido} onChange={(event) => setApellido(event.target.value)}/>
+                        <input type="text" placeholder="Nombre" value={nombre} onChange={(event) => setNombre(event.target.value)} disabled={cargando}/>
+                        <input type="text" placeholder="Apellido" value={apellido} onChange={(event) => setApellido(event.target.value)} disabled={cargando}/>
                     </div>
                 </div>
 
@@ -164,25 +170,28 @@ function Registrarse(){
                         type="file"
                         accept="image/*"
                         onChange={SeleccionarImagen}
+                        disabled={cargando}
                     />
                 </div>
 
                 <div className="cumpleaños">
                     <p>Ingresa tu fecha de nacimiento</p>
-                    <input type="date" value={fechaNacimiento} onChange={(event) => setFechaNacimiento(event.target.value)}/>
+                    <input type="date" value={fechaNacimiento} onChange={(event) => setFechaNacimiento(event.target.value)} disabled={cargando}/>
                 </div>
 
                 <div className="correo">
                     <p>Ingresa tu correo electrónico</p>
-                    <input type="email" placeholder="Correo electrónico" value={correo} onChange={(event) => setCorreo(event.target.value)}/>
+                    <input type="email" placeholder="Correo electrónico" value={correo} onChange={(event) => setCorreo(event.target.value)} disabled={cargando}/>
                 </div>
 
                 <div className="contraseña">
                     <p>Crea una contraseña segura</p>
-                    <input type="password" placeholder="Contraseña" value={contraseña} onChange={(event) => setContraseña(event.target.value)}/>
+                    <input type="password" placeholder="Contraseña" value={contraseña} onChange={(event) => setContraseña(event.target.value)} disabled={cargando}/>
                 </div>
 
-                <button type='submit'>Crear cuenta</button>
+                <button type='submit' disabled={cargando}>
+                    {cargando ? 'Creando cuenta...' : 'Crear cuenta'}
+                </button>
             </form>
 
             <p>¿Ya tienes una cuenta? <Link to="/">Iniciá sesión</Link></p>

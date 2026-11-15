@@ -1,3 +1,4 @@
+
 import MenuSuperior from "../componentes/menuSuperior"
 import MenuLateral from "../componentes/menuLateral"
 import Filtros from '../componentes/filtros'
@@ -10,14 +11,17 @@ function Guardado(){
     const [busqueda, setBusqueda] = useState("")
     const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("")
     const [calificacionSeleccionada, setCalificacionSeleccionada] = useState("")
+    const [cargando, setCargando] = useState(true)
     
     useEffect(() => {
         async function ObtenerDatos() {
-            const usuario = JSON.parse(localStorage.getItem('usuario'))
-
-            if (!usuario) return
             try {
+                const usuario = JSON.parse(localStorage.getItem('usuario'))
+
+                if (!usuario) return
+
                 const respuesta = await fetch(`${API_URL}/recetas/usuario/${usuario.id_usuario}/guardadas`)
+
                 if (!respuesta.ok) {
                     throw new Error('Error al obtener las recetas guardadas')
                 }
@@ -27,6 +31,8 @@ function Guardado(){
 
             } catch (error) {
                 console.error(error)
+            } finally {
+                setCargando(false)
             }
         }
 
@@ -57,6 +63,7 @@ function Guardado(){
                 (total, calificacion) => total + calificacion.valor, 0
             ) / receta.calificaciones.length
             : 0
+
         const coincideCalificacion = calificacionSeleccionada === "" || Math.round(promedio) === Number(calificacionSeleccionada)
             
         return (coincideNombre || coincideIngredientes) && coincideCategoria && coincideCalificacion
@@ -70,7 +77,7 @@ function Guardado(){
                 <Filtros categoriaSeleccionada={categoriaSeleccionada} setCategoriaSeleccionada={setCategoriaSeleccionada}
                 calificacionSeleccionada={calificacionSeleccionada} setCalificacionSeleccionada={setCalificacionSeleccionada}></Filtros>
                 <p className='cantidadRecetas'>{recetasFiltradas.length} recetas encontradas</p>
-                <ListaRecetas recetas={recetasFiltradas}></ListaRecetas>
+                <ListaRecetas recetas={recetasFiltradas} cargando={cargando}></ListaRecetas>
             </main>
         </div> 
     )

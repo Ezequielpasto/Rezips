@@ -52,6 +52,18 @@
     border-color: #888888;
 }
 
+.formEditarDatos input[type="file"] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 10px;
+}
+
+.formEditarDatos input[type="file"]::file-selector-button {
+    margin-right: 8px;
+}
+
 .guardarEditarDatos {
     background-color: #222222;
     color: #ffffff;
