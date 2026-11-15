@@ -13,6 +13,7 @@ function Principal() {
     const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("")
     const [calificacionSeleccionada, setCalificacionSeleccionada] = useState("")
     const [notificacion, setNotificacion] = useState(null)
+    const [cargando, setCargando] = useState(true)
 
     const CerrarNotificacion = useCallback(() => {
         setNotificacion(null)
@@ -38,6 +39,8 @@ function Principal() {
             } catch (error) {
                 console.error('Error:', error)
                 MostrarNotificacion('No se pudieron cargar las recetas', 'error')
+            } finally {
+                setCargando(false)
             }
         }
 
@@ -102,8 +105,13 @@ function Principal() {
                     calificacionSeleccionada={calificacionSeleccionada}
                     setCalificacionSeleccionada={setCalificacionSeleccionada}
                 />
+
                 <p className='cantidadRecetas'>{recetasFiltradas.length} recetas encontradas</p>
-                <ListaRecetas recetas={recetasFiltradas} />
+
+                <ListaRecetas
+                    recetas={recetasFiltradas}
+                    cargando={cargando}
+                />
             </main>
         </div>
     )

@@ -33,13 +33,9 @@ Entre las pantallas se encuentran:
 - Recetas guardadas.
 - Me gusta.
 
-### components/
+### componentes/
 
 Contiene los componentes reutilizables de la aplicación.
-
-### assets/
-
-Contiene los recursos gráficos utilizados en la aplicación, como imágenes e iconos.
 
 ### config/
 

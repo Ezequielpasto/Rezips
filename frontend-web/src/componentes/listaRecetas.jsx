@@ -1,8 +1,18 @@
 import '../estilos/listaRecetas.css'
 import Receta from './receta'
 
-function ListaRecetas({ recetas = [] }){
-    return(
+function ListaRecetas({ recetas = [], cargando = false }) {
+    if (cargando) {
+        return (
+            <section className='lista'>
+                <div className='cargando-recetas'>
+                    <p>Cargando recetas...</p>
+                </div>
+            </section>
+        )
+    }
+    
+    return (
         <section className='lista'>
             {recetas.map((receta) => (
                 <Receta

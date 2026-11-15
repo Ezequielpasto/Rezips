@@ -1,4 +1,3 @@
-// Importamos los estilos y componentes que utiliza la pantalla
 import '../estilos/detallesReceta.css'
 import MenuLateral from '../componentes/menuLateral'
 import ListaIngredientes from '../componentes/listaIngredientes'
@@ -7,7 +6,7 @@ import Notificacion from '../componentes/notificacion'
 import Confirmacion from '../componentes/confirmacion'
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Star, Heart, Bookmark, Timer, Utensils, MessageCircle, Trash, Aperture } from 'lucide-react'
+import { Star, Heart, Bookmark, Timer, Utensils, MessageCircle, Trash } from 'lucide-react'
 import API_URL from '../config/api';
 
 function DetallesReceta() {
@@ -37,6 +36,7 @@ function DetallesReceta() {
 
     // Estados para controlar la carga y los mensajes de la pantalla
     const [cargando, setCargando] = useState(true)
+    const [enviandoComentario, setEnviandoComentario] = useState(false)
     const [notificacion, setNotificacion] = useState(null)
     const [confirmacion, setConfirmacion] = useState(null)
 
@@ -323,6 +323,7 @@ function DetallesReceta() {
         }
 
         try {
+            setEnviandoComentario(true)
 
             // Enviamos el comentario al backend
             const respuesta = await fetch(`${API_URL}/recetas/${id}/comentarios`, {
@@ -359,6 +360,8 @@ function DetallesReceta() {
         } catch (error) {
             console.error(error)
             MostrarNotificacion("No se pudo enviar el comentario", 'error')
+        } finally {
+            setEnviandoComentario(false)
         }
     }
 
@@ -615,60 +618,70 @@ function DetallesReceta() {
                 {/* Sección de comentarios */}
                 <section className='comentarios'>
                     <h4><MessageCircle />Comentarios</h4>
+
                     {/* Formulario para escribir un comentario */}
                     <div className='crearComentario'>
                         <textarea
                             placeholder='Escribe un comentario'
                             value={comentDescripcion}
                             onChange={(event) => setComentDescripcion(event.target.value)}
+                            disabled={enviandoComentario}
                         />
-                        <button className='botonEnviar' onClick={NuevoComentario}>
-                            Enviar
+
+                        <button
+                            className='botonEnviar'
+                            onClick={NuevoComentario}
+                            disabled={enviandoComentario}
+                        >
+                            {enviandoComentario ? 'Enviando...' : 'Enviar'}
                         </button>
                     </div>
+
                     {/* Mostramos todos los comentarios de la receta */}
                     <div className='todosLosComentarios'>
                         {comentarios.length === 0 ?
                             <p>Todavía no hay comentarios</p>
-                        :
-                        comentarios.map((comentario) => (
-                            <div key={comentario.id_comentario}>
-                                <div className='usuarioComentario'>
-                                    {/* Iniciales y nombre del usuario que comentó */}
-                                    {comentario.imagen_perfil ? (
-                                        <img
-                                            className="fotoComentario"
-                                            src={comentario.imagen_perfil}
-                                            alt="Foto de perfil"
-                                        />
-                                    ) : (
-                                        <p className='circulo'>
-                                            {comentario.nombre?.[0]}{comentario.apellido?.[0]}
-                                        </p>
-                                    )}
+                            :
+                            comentarios.map((comentario) => (
+                                <div key={comentario.id_comentario}>
+                                    <div className='usuarioComentario'>
+                                        {/* Iniciales y nombre del usuario que comentó */}
+                                        {comentario.imagen_perfil ? (
+                                            <img
+                                                className="fotoComentario"
+                                                src={comentario.imagen_perfil}
+                                                alt="Foto de perfil"
+                                            />
+                                        ) : (
+                                            <p className='circulo'>
+                                                {comentario.nombre?.[0]}{comentario.apellido?.[0]}
+                                            </p>
+                                        )}
 
-                                    <h5>
-                                        {comentario.nombre} {comentario.apellido}
-                                    </h5>
-                                    {/* Cada usuario puede eliminar sus propios comentarios */}
-                                    {usuario && usuario.id_usuario === comentario.id_usuario && (
-                                        <button
-                                            type="button"
-                                            onClick={() => SolicitarEliminarComentario(comentario.id_comentario)}
-                                        >
-                                            <Trash size={20}/>
-                                        </button>
-                                    )}
+                                        <h5>
+                                            {comentario.nombre} {comentario.apellido}
+                                        </h5>
+
+                                        {/* Cada usuario puede eliminar sus propios comentarios */}
+                                        {usuario && usuario.id_usuario === comentario.id_usuario && (
+                                            <button
+                                                type="button"
+                                                onClick={() => SolicitarEliminarComentario(comentario.id_comentario)}
+                                            >
+                                                <Trash size={20}/>
+                                            </button>
+                                        )}
+                                    </div>
+
+                                    {/* Texto y fecha del comentario */}
+                                    <div className='comentarioFecha'>
+                                        <p className='comentario'>
+                                            {comentario.descripcion}
+                                        </p>
+                                        <small>{FormatearFecha(comentario.fecha)}</small>
+                                    </div>
                                 </div>
-                                {/* Texto y fecha del comentario */}
-                                <div className='comentarioFecha'>
-                                    <p className='comentario'>
-                                        {comentario.descripcion}
-                                    </p>
-                                    <small>{FormatearFecha(comentario.fecha)}</small>
-                                </div>
-                            </div>
-                        ))}
+                            ))}
 
                     </div>
                 </section>

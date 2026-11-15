@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react'
 function Perfil(){
     const [usuario, setUsuario] = useState(null)
     const [recetas, setRecetas] = useState([])
+    const [cargando, setCargando] = useState(true)
 
     useEffect(() => {
         async function ObtenerDatos() {
@@ -34,6 +35,8 @@ function Perfil(){
 
             } catch (error) {
                 console.error('Error al actualizar el perfil:', error)
+            } finally {
+                setCargando(false)
             }
         }
 
@@ -63,11 +66,14 @@ function Perfil(){
                         <h4>{usuario?.nombre} {usuario?.apellido}</h4>
                     </div>
 
-                    <p>{recetas.length} recetas creadas</p>
+                    <p className='cantidadRecetas'>{recetas.length} recetas encontradas</p>
                 </div>
 
                 <div className='contenido'>
-                    <ListaRecetas recetas={recetas}></ListaRecetas>
+                    <ListaRecetas
+                        recetas={recetas}
+                        cargando={cargando}
+                    />
                 </div>
             </main>
         </section>

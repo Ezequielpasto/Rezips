@@ -3,11 +3,13 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useState, useCallback } from 'react'
 import Notificacion from '../componentes/notificacion'
 import API_URL from '../config/api';
+import logo from '../../public/logo.png'
 
 function IniciarSesion() {
     const [correo, setCorreo] = useState("")
     const [contraseña, setContraseña] = useState("")
     const [notificacion, setNotificacion] = useState(null)
+    const [cargando, setCargando] = useState(false)
 
     const navegar = useNavigate()
 
@@ -31,38 +33,42 @@ function IniciarSesion() {
     async function IniciarSesionUsuario(event) {
         event.preventDefault()
 
-        if (ValidarInicioSesion()) {
-            try {
-                const respuesta = await fetch(`${API_URL}/auth/login`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        correo,
-                        contrasena: contraseña
-                    })
+        if (!ValidarInicioSesion()) return
+
+        try {
+            setCargando(true)
+
+            const respuesta = await fetch(`${API_URL}/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    correo,
+                    contrasena: contraseña
                 })
+            })
 
-                const datos = await respuesta.json()
+            const datos = await respuesta.json()
 
-                if (!respuesta.ok) {
-                    MostrarNotificacion(datos.mensaje || 'Correo y/o contraseña incorrectos', 'error')
-                    return
-                }
-
-                localStorage.setItem('usuario', JSON.stringify(datos.usuario))
-
-                MostrarNotificacion('Inicio de sesión exitoso', 'exito')
-
-                setTimeout(() => {
-                    navegar('/principal')
-                }, 1500)
-
-            } catch (error) {
-                console.error('Error:', error)
-                MostrarNotificacion('No se pudo conectar con el servidor', 'error')
+            if (!respuesta.ok) {
+                MostrarNotificacion(datos.mensaje || 'Correo y/o contraseña incorrectos', 'error')
+                return
             }
+
+            localStorage.setItem('usuario', JSON.stringify(datos.usuario))
+
+            MostrarNotificacion('Inicio de sesión exitoso', 'exito')
+
+            setTimeout(() => {
+                navegar('/principal')
+            }, 1500)
+
+        } catch (error) {
+            console.error('Error:', error)
+            MostrarNotificacion('No se pudo conectar con el servidor', 'error')
+        } finally {
+            setCargando(false)
         }
     }
 
@@ -74,13 +80,17 @@ function IniciarSesion() {
                 onCerrar={CerrarNotificacion}
             />
 
+            <img src={logo} alt="Logo de Rezips" className="logoInicio" />
+
             <h1>Bienvenido a Rezips</h1>
+
             <form className='formulario' onSubmit={IniciarSesionUsuario}>
                 <input
                     type="text"
                     placeholder="Correo electrónico"
                     value={correo}
                     onChange={(event) => setCorreo(event.target.value)}
+                    disabled={cargando}
                 />
 
                 <input
@@ -88,9 +98,12 @@ function IniciarSesion() {
                     placeholder="Contraseña"
                     value={contraseña}
                     onChange={(event) => setContraseña(event.target.value)}
+                    disabled={cargando}
                 />
 
-                <button type='submit'>Iniciar sesión</button>
+                <button type='submit' disabled={cargando}>
+                    {cargando ? 'Iniciando sesión...' : 'Iniciar sesión'}
+                </button>
             </form>
 
             <p>¿No tienes una cuenta? <Link to="/registro">Create una cuenta</Link></p>
