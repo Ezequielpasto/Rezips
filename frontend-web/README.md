@@ -1,16 +1,109 @@
-# React + Vite
+# Frontend Web - Rezips
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Descripción
 
-Currently, two official plugins are available:
+El frontend web de Rezips es la interfaz que permite a los usuarios interactuar con la aplicación desde un navegador.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Está desarrollado utilizando React y Vite.
 
-## React Compiler
+Se comunica con el backend mediante solicitudes HTTP utilizando fetch.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tecnologías utilizadas
 
-## Expanding the ESLint configuration
+- React
+- JavaScript
+- HTML
+- CSS
+- Vite
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Organización del proyecto
+
+### src/
+
+Contiene el código principal de la aplicación.
+
+Dentro de esta carpeta se encuentran los componentes, las pantallas, los estilos y la lógica de interacción.
+
+### Componentes
+
+Los componentes permiten dividir la interfaz en partes reutilizables.
+
+Entre ellos se encuentran:
+
+- Menú superior.
+- Menú lateral.
+- Listas de recetas.
+- Detalles de recetas.
+- Ingredientes.
+- Pasos de preparación.
+
+### Pantallas
+
+La aplicación cuenta con diferentes pantallas para las funcionalidades principales:
+
+- Inicio de sesión.
+- Registro.
+- Página principal.
+- Perfil.
+- Crear receta.
+- Detalles de receta.
+- Me gusta.
+- Recetas guardadas.
+- Búsqueda.
+- Configuración.
+
+### Estilos CSS
+
+Los archivos CSS se encargan de definir la apariencia visual de los componentes y las pantallas.
+
+### public/
+
+Contiene los recursos estáticos públicos de la aplicación.
+
+### package.json
+
+Contiene las dependencias y los comandos disponibles para ejecutar y construir el proyecto.
+
+## Comunicación con el backend
+
+La aplicación utiliza fetch para comunicarse con la API de Rezips.
+
+La URL del backend se configura mediante la variable de entorno:
+
+`VITE_API_URL`
+
+En desarrollo puede utilizarse:
+
+`http://localhost:3000`
+
+En producción se utiliza:
+
+`https://rezips-backend.onrender.com`
+
+## Instalación y ejecución
+
+Instalar dependencias:
+
+\```bash
+npm install
+\```
+
+Ejecutar el servidor de desarrollo:
+
+\```bash
+npm run dev
+\```
+
+Construir la aplicación:
+
+\```bash
+npm run build
+\```
+
+## Despliegue
+
+La aplicación web se encuentra desplegada en Vercel:
+
+https://rezips.vercel.app
+
+Los cambios subidos a la rama principal de GitHub generan un nuevo despliegue automático.
