@@ -1,5 +1,6 @@
 
-import { View, Text, TextInput, Pressable, StyleSheet, ScrollView, Alert, Image } from 'react-native'
+import { View, Text, TextInput, Pressable, StyleSheet, ScrollView, Alert, Image, KeyboardAvoidingView, Platform, StatusBar } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
 import { useState } from 'react'
 import * as ImagePicker from 'expo-image-picker'
@@ -216,99 +217,127 @@ export default function Registrarse() {
     }
 
     return (
-        <ScrollView contentContainerStyle={estilos.contenedor}>
-            <Text style={estilos.titulo}>Crea una cuenta de Rezips</Text>
+        <SafeAreaView style={estilos.areaSegura} edges={['top', 'left', 'right']}>
+            <StatusBar backgroundColor="#ffffff" barStyle="dark-content" />
 
-            <View style={estilos.formulario}>
-                <Pressable style={estilos.contenedorFoto} onPress={ElegirImagen}>
-                    {imagenPerfil ? (
-                        <Image source={{ uri: imagenPerfil }} style={estilos.foto} />
-                    ) : (
-                        <View style={estilos.fotoVacia}>
-                            <Text style={estilos.textoFotoVacia}>+</Text>
+            <KeyboardAvoidingView style={estilos.teclado} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+                <ScrollView contentContainerStyle={estilos.contenedor} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+                    <Text style={estilos.titulo}>Crea una cuenta de Rezips</Text>
+
+                    <View style={estilos.formulario}>
+                        <Pressable
+                            style={estilos.contenedorFoto}
+                            onPress={ElegirImagen}
+                            disabled={cargando}
+                        >
+                            {imagenPerfil ? (
+                                <Image source={{ uri: imagenPerfil }} style={estilos.foto} />
+                            ) : (
+                                <View style={estilos.fotoVacia}>
+                                    <Text style={estilos.textoFotoVacia}>+</Text>
+                                </View>
+                            )}
+
+                            <Text style={estilos.textoCambiarFoto}>Agregar foto de perfil (opcional)</Text>
+                        </Pressable>
+
+                        <View style={estilos.nombreApellido}>
+                            <Text style={estilos.descripcion}>
+                                Ingresa tu nombre y tu apellido
+                            </Text>
+
+                            <View style={estilos.fila}>
+                                <TextInput style={estilos.input} placeholder="Nombre" placeholderTextColor="#777777" value={nombre} onChangeText={setNombre} editable={!cargando} />
+                                <TextInput style={estilos.input} placeholder="Apellido" value={apellido} onChangeText={setApellido} editable={!cargando} />
+                            </View>
                         </View>
-                    )}
 
-                    <Text style={estilos.textoCambiarFoto}>Agregar foto de perfil (opcional)</Text>
-                </Pressable>
+                        <View style={estilos.campo}>
+                            <Text style={estilos.descripcion}>
+                                Ingresa tu fecha de nacimiento (AAAA-MM-DD)
+                            </Text>
 
-                <View style={estilos.nombreApellido}>
-                    <Text style={estilos.descripcion}>
-                        Ingresa tu nombre y tu apellido
-                    </Text>
+                            <TextInput
+                                style={estilos.input}
+                                placeholder="AAAA-MM-DD"
+                                value={fechaNacimiento}
+                                onChangeText={setFechaNacimiento}
+                                editable={!cargando}
+                            />
+                        </View>
 
-                    <View style={estilos.fila}>
-                        <TextInput style={estilos.input} placeholder="Nombre" placeholderTextColor="#777777" value={nombre} onChangeText={setNombre} />
-                        <TextInput style={estilos.input} placeholder="Apellido" value={apellido} onChangeText={setApellido} />
+                        <View style={estilos.campo}>
+                            <Text style={estilos.descripcion}>
+                                Ingresa tu correo electrónico
+                            </Text>
+
+                            <TextInput
+                                style={estilos.input}
+                                placeholder="Correo electrónico"
+                                keyboardType="email-address"
+                                autoCapitalize="none"
+                                value={correo}
+                                onChangeText={setCorreo}
+                                editable={!cargando}
+                            />
+                        </View>
+
+                        <View style={estilos.campo}>
+                            <Text style={estilos.descripcion}>
+                                Crea una contraseña segura
+                            </Text>
+
+                            <TextInput
+                                style={estilos.input}
+                                placeholder="Contraseña"
+                                secureTextEntry
+                                value={contraseña}
+                                onChangeText={setContraseña}
+                                editable={!cargando}
+                            />
+                        </View>
+
+                        <Pressable
+                            onPress={EnviarRegistro}
+                            style={[estilos.boton, cargando && estilos.botonCargando]}
+                            disabled={cargando}
+                        >
+                            <Text style={estilos.textoBoton}>
+                                {cargando ? 'Creando cuenta...' : 'Crear cuenta'}
+                            </Text>
+                        </Pressable>
                     </View>
-                </View>
 
-                <View style={estilos.campo}>
-                    <Text style={estilos.descripcion}>
-                        Ingresa tu fecha de nacimiento (AAAA-MM-DD)
-                    </Text>
+                    <View style={estilos.iniciarSesion}>
+                        <Text>¿Ya tienes una cuenta? </Text>
 
-                    <TextInput
-                        style={estilos.input}
-                        placeholder="AAAA-MM-DD"
-                        value={fechaNacimiento}
-                        onChangeText={setFechaNacimiento}
-                    />
-                </View>
-
-                <View style={estilos.campo}>
-                    <Text style={estilos.descripcion}>
-                        Ingresa tu correo electrónico
-                    </Text>
-
-                    <TextInput
-                        style={estilos.input}
-                        placeholder="Correo electrónico"
-                        keyboardType="email-address"
-                        autoCapitalize="none"
-                        value={correo}
-                        onChangeText={setCorreo}
-                    />
-                </View>
-
-                <View style={estilos.campo}>
-                    <Text style={estilos.descripcion}>
-                        Crea una contraseña segura
-                    </Text>
-
-                    <TextInput
-                        style={estilos.input}
-                        placeholder="Contraseña"
-                        secureTextEntry
-                        value={contraseña}
-                        onChangeText={setContraseña}
-                    />
-                </View>
-
-                <Pressable onPress={EnviarRegistro} style={estilos.boton} disabled={cargando}>
-                    <Text style={estilos.textoBoton}>
-                        {cargando ? 'Creando cuenta...' : 'Crear cuenta'}
-                    </Text>
-                </Pressable>
-            </View>
-
-            <View style={estilos.iniciarSesion}>
-                <Text>¿Ya tienes una cuenta? </Text>
-
-                <Pressable onPress={() => router.push('/')}>
-                    <Text style={estilos.enlace}>Iniciá sesión</Text>
-                </Pressable>
-            </View>
-        </ScrollView>
+                        <Pressable
+                            onPress={() => router.push('/')}
+                            disabled={cargando}
+                        >
+                            <Text style={estilos.enlace}>Iniciá sesión</Text>
+                        </Pressable>
+                    </View>
+                </ScrollView>
+            </KeyboardAvoidingView>
+        </SafeAreaView>
     )
 }
 
 const estilos = StyleSheet.create({
+    areaSegura: {
+        flex: 1,
+        backgroundColor: '#ffffff'
+    },
+    teclado: {
+        flex: 1
+    },
     contenedor: {
         flexGrow: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 25
+        padding: 10,
+        paddingBottom: 40,
     },
     titulo: {
         fontSize: 25,
@@ -373,6 +402,10 @@ const estilos = StyleSheet.create({
         padding: 14,
         borderRadius: 8,
         alignItems: 'center'
+    },
+    botonCargando: {
+        backgroundColor: '#d69a5b',
+        opacity: 0.8
     },
     textoBoton: {
         color: '#ffffff',

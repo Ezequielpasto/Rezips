@@ -1,8 +1,9 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { View, Text, Image, ScrollView, Pressable, StyleSheet, Alert, TextInput } from 'react-native'
+import { StatusBar } from 'expo-status-bar'
 import { Star, Timer, Utensils, Heart, Bookmark, MessageCircle } from 'lucide-react-native'
-import { useRouter, useLocalSearchParams } from 'expo-router'
+import { Stack, useRouter, useLocalSearchParams } from 'expo-router'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import API from '../config/api'
 import ListaIngredientes from '../componentes/listaIngredientes'
@@ -25,6 +26,7 @@ export default function DetallesReceta() {
     const [listaGuardados, setListaGuardados] = useState([])
     const [comentDescripcion, setComentDescripcion] = useState('')
     const [cargando, setCargando] = useState(true)
+    const [enviandoComentario, setEnviandoComentario] = useState(false)
 
     // Formatea la fecha sin problemas de zona horaria
     function FormatearFecha(fecha) {
@@ -223,6 +225,8 @@ export default function DetallesReceta() {
     }
 
     async function NuevoComentario() {
+        if (enviandoComentario) return
+
         if (!usuario) {
             Alert.alert('Atención', 'Debes iniciar sesión')
             return
@@ -234,6 +238,8 @@ export default function DetallesReceta() {
         }
 
         try {
+            setEnviandoComentario(true)
+
             const respuesta = await fetch(`${API}/recetas/${idReceta}/comentarios`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -255,6 +261,8 @@ export default function DetallesReceta() {
         } catch (error) {
             console.error(error)
             Alert.alert('Error', 'No se pudo enviar el comentario')
+        } finally {
+            setEnviandoComentario(false)
         }
     }
 
@@ -321,201 +329,221 @@ export default function DetallesReceta() {
 
     if (cargando) {
         return (
-            <View style={estilos.pantalla}>
-                <Text>Cargando receta...</Text>
-            </View>
+            <>
+                <StatusBar hidden />
+                <Stack.Screen options={{ headerShown: false }} />
+                <View style={[estilos.pantalla, estilos.contenedorCargando]}>
+                    <Text style={estilos.textoCargando}>Cargando receta...</Text>
+                </View>
+            </>
         )
     }
 
     if (!receta) {
         return (
-            <View style={estilos.pantalla}>
-                <Text>No se pudo encontrar la receta</Text>
-            </View>
+            <>
+                <StatusBar hidden />
+                <Stack.Screen options={{ headerShown: false }} />
+                <View style={[estilos.pantalla, estilos.contenedorCargando]}>
+                    <Text>No se pudo encontrar la receta</Text>
+                </View>
+            </>
         )
     }
 
     return (
-        <ScrollView
-            ref={scrollRef}
-            style={estilos.pantalla}
-            showsVerticalScrollIndicator={false}
-        >
-            <Image source={{ uri: receta.imagen }} style={estilos.imagen} />
+        <>
+            <StatusBar hidden />
+            <Stack.Screen options={{ headerShown: false }} />
 
-            <View style={estilos.contenido}>
-                <View style={estilos.tituloEstrellas}>
-                    <View style={estilos.tituloCategoria}>
-                        <Text style={estilos.titulo}>{receta.nombre}</Text>
-                        <Text style={estilos.categoria}>{receta.categoria}</Text>
-                    </View>
+            <ScrollView
+                ref={scrollRef}
+                style={estilos.pantalla}
+                showsVerticalScrollIndicator={false}
+            >
+                <Image source={{ uri: receta.imagen }} style={estilos.imagen} />
 
-                    <View style={estilos.promedio}>
-                        {promedio === 0 ? (
-                            <Text>Sin calificar</Text>
-                        ) : (
-                            [1, 2, 3, 4, 5].map(estrella => (
-                                <Star
-                                    key={estrella}
-                                    size={22}
-                                    color={estrella <= Math.round(promedio) ? 'gold' : 'gray'}
-                                    fill={estrella <= Math.round(promedio) ? 'gold' : 'none'}
-                                />
-                            ))
-                        )}
-                    </View>
-                </View>
+                <View style={estilos.contenido}>
+                    <View style={estilos.tituloEstrellas}>
+                        <View style={estilos.tituloCategoria}>
+                            <Text style={estilos.titulo}>{receta.nombre}</Text>
+                            <Text style={estilos.categoria}>{receta.categoria}</Text>
+                        </View>
 
-                <View style={estilos.duracionPorciones}>
-                    <View style={estilos.dato}>
-                        <Timer size={28} />
-                        <Text style={estilos.textoDato}>{receta.duracion}</Text>
-                    </View>
-
-                    <View style={estilos.dato}>
-                        <Utensils size={28} />
-                        <Text style={estilos.textoDato}>{receta.cantidad_porciones}</Text>
-                    </View>
-                </View>
-
-                <View style={estilos.interaccion}>
-                    <View style={estilos.iconosInteraccion}>
-                        <Pressable style={estilos.botonInteraccion} onPress={AlternarMeGusta}>
-                            <Heart
-                                size={25}
-                                color={usuarioDioMeGusta ? 'red' : 'black'}
-                                fill={usuarioDioMeGusta ? 'red' : 'none'}
-                            />
-                            <Text>{listaMeGusta.length}</Text>
-                        </Pressable>
-
-                        <Pressable style={estilos.botonInteraccion} onPress={AlternarGuardados}>
-                            <Bookmark
-                                size={25}
-                                color={usuarioGuardo ? 'orange' : 'black'}
-                                fill={usuarioGuardo ? 'orange' : 'none'}
-                            />
-                            <Text>{listaGuardados.length}</Text>
-                        </Pressable>
-
-                        <View style={estilos.estrellas}>
-                            {[1, 2, 3, 4, 5].map(estrella => (
-                                <Pressable
-                                    key={estrella}
-                                    onPress={() => CalificarReceta(estrella)}
-                                >
+                        <View style={estilos.promedio}>
+                            {promedio === 0 ? (
+                                <Text>Sin calificar</Text>
+                            ) : (
+                                [1, 2, 3, 4, 5].map(estrella => (
                                     <Star
+                                        key={estrella}
                                         size={22}
-                                        color={estrella <= miCalificacion ? 'black' : 'gray'}
-                                        fill={estrella <= miCalificacion ? 'black' : 'none'}
+                                        color={estrella <= Math.round(promedio) ? 'gold' : 'gray'}
+                                        fill={estrella <= Math.round(promedio) ? 'gold' : 'none'}
                                     />
-                                </Pressable>
-                            ))}
+                                ))
+                            )}
                         </View>
                     </View>
 
-                    <Pressable
-                        style={estilos.botonComentarios}
-                        onPress={() => comentariosRef.current?.measureLayout(
-                            scrollRef.current,
-                            (x, y) => scrollRef.current?.scrollTo({ y, animated: true })
-                        )}
-                    >
-                        <MessageCircle size={20} />
-                        <Text style={estilos.textoComentarios}>
-                            Comentarios ({comentarios.length})
-                        </Text>
-                    </Pressable>
-                </View>
+                    <View style={estilos.duracionPorciones}>
+                        <View style={estilos.dato}>
+                            <Timer size={28} />
+                            <Text style={estilos.textoDato}>{receta.duracion}</Text>
+                        </View>
 
-                <View style={estilos.seccion}>
-                    <Text style={estilos.subtitulo}>Ingredientes</Text>
-                    <ListaIngredientes
-                        ingredientes={ingredientes.map(ingrediente => ({
-                            ...ingrediente,
-                            cantidad: FormatearCantidad(ingrediente.cantidad)
-                        }))}
-                    />
-                </View>
+                        <View style={estilos.dato}>
+                            <Utensils size={28} />
+                            <Text style={estilos.textoDato}>{receta.cantidad_porciones}</Text>
+                        </View>
+                    </View>
 
-                <View style={estilos.seccion}>
-                    <Text style={estilos.subtitulo}>Pasos</Text>
-                    <ListaPasos pasos={pasos} />
-                </View>
+                    <View style={estilos.interaccion}>
+                        <View style={estilos.iconosInteraccion}>
+                            <Pressable style={estilos.botonInteraccion} onPress={AlternarMeGusta}>
+                                <Heart
+                                    size={25}
+                                    color={usuarioDioMeGusta ? 'red' : 'black'}
+                                    fill={usuarioDioMeGusta ? 'red' : 'none'}
+                                />
+                                <Text>{listaMeGusta.length}</Text>
+                            </Pressable>
 
-                <View ref={comentariosRef} style={estilos.seccion}>
-                    <Text style={estilos.subtitulo}>Comentarios</Text>
+                            <Pressable style={estilos.botonInteraccion} onPress={AlternarGuardados}>
+                                <Bookmark
+                                    size={25}
+                                    color={usuarioGuardo ? 'orange' : 'black'}
+                                    fill={usuarioGuardo ? 'orange' : 'none'}
+                                />
+                                <Text>{listaGuardados.length}</Text>
+                            </Pressable>
 
-                    <TextInput
-                        style={estilos.entradaComentario}
-                        placeholder="Escribe un comentario..."
-                        value={comentDescripcion}
-                        onChangeText={setComentDescripcion}
-                        multiline
-                    />
-
-                    <Pressable
-                        style={estilos.botonEnviarComentario}
-                        onPress={NuevoComentario}
-                    >
-                        <Text style={estilos.textoBoton}>Enviar comentario</Text>
-                    </Pressable>
-
-                    {comentarios.map(comentario => (
-                        <View key={comentario.id_comentario} style={estilos.comentario}>
-                            <View style={estilos.encabezadoComentario}>
-                                <View style={estilos.datosUsuarioComentario}>
-                                    {comentario.imagen_perfil && (
-                                        <Image
-                                            source={{ uri: comentario.imagen_perfil }}
-                                            style={estilos.fotoComentario}
+                            <View style={estilos.estrellas}>
+                                {[1, 2, 3, 4, 5].map(estrella => (
+                                    <Pressable
+                                        key={estrella}
+                                        onPress={() => CalificarReceta(estrella)}
+                                    >
+                                        <Star
+                                            size={22}
+                                            color={estrella <= miCalificacion ? 'black' : 'gray'}
+                                            fill={estrella <= miCalificacion ? 'black' : 'none'}
                                         />
-                                    )}
+                                    </Pressable>
+                                ))}
+                            </View>
+                        </View>
 
-                                    <Text style={estilos.nombreComentario}>
-                                        {comentario.nombre} {comentario.apellido}
-                                    </Text>
+                        <Pressable
+                            style={estilos.botonComentarios}
+                            onPress={() => comentariosRef.current?.measureLayout(
+                                scrollRef.current,
+                                (x, y) => scrollRef.current?.scrollTo({ y, animated: true })
+                            )}
+                        >
+                            <MessageCircle size={20} />
+                            <Text style={estilos.textoComentarios}>
+                                Comentarios ({comentarios.length})
+                            </Text>
+                        </Pressable>
+                    </View>
+
+                    <View style={estilos.seccion}>
+                        <Text style={estilos.subtitulo}>Ingredientes</Text>
+                        <ListaIngredientes
+                            ingredientes={ingredientes.map(ingrediente => ({
+                                ...ingrediente,
+                                cantidad: FormatearCantidad(ingrediente.cantidad)
+                            }))}
+                        />
+                    </View>
+
+                    <View style={estilos.seccion}>
+                        <Text style={estilos.subtitulo}>Pasos</Text>
+                        <ListaPasos pasos={pasos} />
+                    </View>
+
+                    <View ref={comentariosRef} style={estilos.seccion}>
+                        <Text style={estilos.subtitulo}>Comentarios</Text>
+
+                        <TextInput
+                            style={estilos.entradaComentario}
+                            placeholder="Escribe un comentario..."
+                            value={comentDescripcion}
+                            onChangeText={setComentDescripcion}
+                            multiline
+                            editable={!enviandoComentario}
+                        />
+
+                        <Pressable
+                            style={[
+                                estilos.botonEnviarComentario,
+                                enviandoComentario && estilos.botonComentarioCargando
+                            ]}
+                            onPress={NuevoComentario}
+                            disabled={enviandoComentario}
+                        >
+                            <Text style={estilos.textoBoton}>
+                                {enviandoComentario ? 'Enviando comentario...' : 'Enviar comentario'}
+                            </Text>
+                        </Pressable>
+
+                        {comentarios.map(comentario => (
+                            <View key={comentario.id_comentario} style={estilos.comentario}>
+                                <View style={estilos.encabezadoComentario}>
+                                    <View style={estilos.datosUsuarioComentario}>
+                                        {comentario.imagen_perfil && (
+                                            <Image
+                                                source={{ uri: comentario.imagen_perfil }}
+                                                style={estilos.fotoComentario}
+                                            />
+                                        )}
+
+                                        <Text style={estilos.nombreComentario}>
+                                            {comentario.nombre} {comentario.apellido}
+                                        </Text>
+                                    </View>
+
+                                    {usuario?.id_usuario === comentario.id_usuario && (
+                                        <Pressable
+                                            onPress={() => EliminarComentario(comentario.id_comentario)}
+                                        >
+                                            <Text style={estilos.eliminarComentario}>Eliminar</Text>
+                                        </Pressable>
+                                    )}
                                 </View>
 
-                                {usuario?.id_usuario === comentario.id_usuario && (
-                                    <Pressable
-                                        onPress={() => EliminarComentario(comentario.id_comentario)}
-                                    >
-                                        <Text style={estilos.eliminarComentario}>Eliminar</Text>
-                                    </Pressable>
-                                )}
+                                <Text style={estilos.textoComentario}>
+                                    {comentario.descripcion}
+                                </Text>
+
+                                <Text style={estilos.fechaComentario}>
+                                    {FormatearFecha(comentario.fecha)}
+                                </Text>
                             </View>
-
-                            <Text style={estilos.textoComentario}>
-                                {comentario.descripcion}
-                            </Text>
-
-                            <Text style={estilos.fechaComentario}>
-                                {FormatearFecha(comentario.fecha)}
-                            </Text>
-                        </View>
-                    ))}
-                </View>
-
-                {esPropietario && (
-                    <View style={estilos.propietario}>
-                        <Pressable
-                            style={estilos.botonPropietario}
-                            onPress={() => router.push(`/editarReceta?id=${idReceta}`)}
-                        >
-                            <Text style={estilos.textoBoton}>Editar receta</Text>
-                        </Pressable>
-
-                        <Pressable
-                            style={estilos.botonEliminar}
-                            onPress={EliminarReceta}
-                        >
-                            <Text style={estilos.textoBoton}>Eliminar receta</Text>
-                        </Pressable>
+                        ))}
                     </View>
-                )}
-            </View>
-        </ScrollView>
+
+                    {esPropietario && (
+                        <View style={estilos.propietario}>
+                            <Pressable
+                                style={estilos.botonPropietario}
+                                onPress={() => router.push(`/editarReceta?id=${idReceta}`)}
+                            >
+                                <Text style={estilos.textoBoton}>Editar receta</Text>
+                            </Pressable>
+
+                            <Pressable
+                                style={estilos.botonEliminar}
+                                onPress={EliminarReceta}
+                            >
+                                <Text style={estilos.textoBoton}>Eliminar receta</Text>
+                            </Pressable>
+                        </View>
+                    )}
+                </View>
+            </ScrollView>
+        </>
     )
 }
 
@@ -524,6 +552,15 @@ const estilos = StyleSheet.create({
         flex: 1,
         backgroundColor: '#ffffff'
     },
+    contenedorCargando: {
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    textoCargando: {
+        fontSize: 16,
+        color: '#777777',
+        fontWeight: '500'
+    },
     imagen: {
         width: '100%',
         height: 280,
@@ -531,6 +568,7 @@ const estilos = StyleSheet.create({
     },
     contenido: {
         padding: 20,
+        paddingBottom: 30,
         gap: 20
     },
     tituloEstrellas: {
@@ -644,6 +682,10 @@ const estilos = StyleSheet.create({
         padding: 14,
         borderRadius: 10,
         alignItems: 'center'
+    },
+    botonComentarioCargando: {
+        backgroundColor: '#aaaaaa',
+        opacity: 0.8
     },
     comentario: {
         paddingVertical: 12,

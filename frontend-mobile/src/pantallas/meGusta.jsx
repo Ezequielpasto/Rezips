@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -11,6 +12,7 @@ import MenuInferior from '../componentes/menuInferior';
 export default function MeGusta() {
     const [recetas, setRecetas] = useState([]);
     const [busqueda, setBusqueda] = useState('');
+    const [cargando, setCargando] = useState(true);
 
     useEffect(() => {
         async function ObtenerRecetas() {
@@ -38,13 +40,14 @@ export default function MeGusta() {
             } catch (error) {
                 console.error(error);
                 Alert.alert('Error', 'No se pudieron cargar tus recetas');
+            } finally {
+                setCargando(false);
             }
         }
 
         ObtenerRecetas();
     }, []);
 
-    
     const recetasFiltradas = recetas.filter((receta) => {
         const texto = busqueda.toLowerCase().trim();
 
@@ -69,7 +72,6 @@ export default function MeGusta() {
         return coincideNombre || coincideIngredientes;
     });
 
-
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <View style={estilos.pantalla}>
@@ -89,12 +91,22 @@ export default function MeGusta() {
                 </View>
 
                 <View style={estilos.lista}>
-                    {recetasFiltradas.length === 0? <Text>Todavía no le haz dado me gusta a una receta</Text>
-                    : <ListaRecetas recetas={recetasFiltradas} />}
+                    {cargando ? (
+                        <View style={estilos.contenedorCargando}>
+                            <Text style={estilos.textoCargando}>
+                                Cargando recetas...
+                            </Text>
+                        </View>
+                    ) : recetasFiltradas.length === 0 ? (
+                        <Text style={estilos.sinRecetas}>
+                            Todavía no le has dado me gusta a una receta
+                        </Text>
+                    ) : (
+                        <ListaRecetas recetas={recetasFiltradas} />
+                    )}
                 </View>
-
-                
             </View>
+
             <MenuInferior />
         </SafeAreaView>
     );
@@ -135,5 +147,23 @@ const estilos = StyleSheet.create({
     lista: {
         flex: 1,
         paddingHorizontal: 20
+    },
+
+    contenedorCargando: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+
+    textoCargando: {
+        fontSize: 16,
+        color: '#777777',
+        fontWeight: '500'
+    },
+
+    sinRecetas: {
+        textAlign: 'center',
+        color: '#777777',
+        marginTop: 20
     }
 });

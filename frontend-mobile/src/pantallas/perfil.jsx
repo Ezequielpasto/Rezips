@@ -14,12 +14,15 @@ export default function Perfil() {
 
     const [usuario, setUsuario] = useState(null)
     const [recetas, setRecetas] = useState([])
+    const [cargando, setCargando] = useState(true)
 
     useFocusEffect(
         useCallback(() => {
             let activo = true
 
             async function ObtenerDatos() {
+                setCargando(true)
+
                 try {
                     const usuarioJSON = await AsyncStorage.getItem('usuario')
 
@@ -53,12 +56,15 @@ export default function Perfil() {
 
                     if (activo) {
                         setRecetas(datos)
+                        await AsyncStorage.setItem('usuario', JSON.stringify(datosUsuario))
                     }
-
-                    await AsyncStorage.setItem('usuario', JSON.stringify(datosUsuario))
 
                 } catch (error) {
                     console.error('Error al actualizar el perfil:', error)
+                } finally {
+                    if (activo) {
+                        setCargando(false)
+                    }
                 }
             }
 
@@ -108,9 +114,11 @@ export default function Perfil() {
                 </Text>
             </View>
 
-            <Text style={estilos.cantidad}>
-                {recetas.length} recetas creadas
-            </Text>
+            {!cargando && (
+                <Text style={estilos.cantidad}>
+                    {recetas.length} recetas creadas
+                </Text>
+            )}
 
             <View style={estilos.botones}>
                 <Pressable
@@ -137,6 +145,7 @@ export default function Perfil() {
                     <ListaRecetas
                         recetas={recetas}
                         encabezado={encabezado}
+                        cargando={cargando}
                     />
                 </View>
             </View>

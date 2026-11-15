@@ -1,14 +1,17 @@
-import { View, Text, TextInput, Pressable, StyleSheet, Alert } from 'react-native';
+
+import { View, Text, TextInput, Pressable, StyleSheet, Alert, Image, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import API from '../config/api';
+import Logo from '../../assets/logo.png';
 
 export default function IniciarSesion() {
     const router = useRouter();
 
     const [correo, setCorreo] = useState('');
     const [contraseña, setContraseña] = useState('');
+    const [cargando, setCargando] = useState(false);
 
     function ValidarInicioSesion() {
         if (correo.trim() === '' || contraseña === '') {
@@ -24,9 +27,9 @@ export default function IniciarSesion() {
             return;
         }
 
-        console.log('Intentando conectar con el servidor');
-
         try {
+            setCargando(true);
+
             const respuesta = await fetch(`${API}/auth/login`, {
                 method: 'POST',
                 headers: {
@@ -38,10 +41,7 @@ export default function IniciarSesion() {
                 }),
             });
 
-            console.log('Respuesta del servidor:', respuesta.status);
-
             const datos = await respuesta.json();
-            console.log('Datos recibidos:', datos);
 
             if (!respuesta.ok) {
                 Alert.alert('Error', datos.mensaje || 'Correo y/o contraseña incorrectos');
@@ -57,57 +57,91 @@ export default function IniciarSesion() {
         } catch (error) {
             console.error('Error:', error);
             Alert.alert('Error', 'No se pudo conectar con el servidor');
+        } finally {
+            setCargando(false);
         }
     }
 
     return (
-        <View style={estilos.contenedor}>
-            <Text style={estilos.titulo}>
-                Bienvenido a Rezips
-            </Text>
-
-            <View style={estilos.formulario}>
-                <TextInput
-                    style={estilos.input}
-                    placeholder="Correo electrónico"
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    value={correo}
-                    onChangeText={setCorreo}
+        <KeyboardAvoidingView
+            style={estilos.contenedor}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+            <ScrollView
+                contentContainerStyle={estilos.contenido}
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={false}
+            >
+                <Image
+                    source={Logo}
+                    style={estilos.logo}
+                    resizeMode="contain"
                 />
 
-                <TextInput
-                    style={estilos.input}
-                    placeholder="Contraseña"
-                    secureTextEntry
-                    value={contraseña}
-                    onChangeText={setContraseña}
-                />
+                <Text style={estilos.titulo}>
+                    Bienvenido a Rezips
+                </Text>
 
-                <Pressable style={estilos.boton} onPress={IniciarSesionUsuario}>
-                    <Text style={estilos.textoBoton}>
-                        Iniciar sesión
-                    </Text>
-                </Pressable>
-            </View>
+                <View style={estilos.formulario}>
+                    <TextInput
+                        style={estilos.input}
+                        placeholder="Correo electrónico"
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                        value={correo}
+                        onChangeText={setCorreo}
+                        editable={!cargando}
+                    />
 
-            <View style={estilos.registro}>
-                <Text>¿No tienes una cuenta? </Text>
+                    <TextInput
+                        style={estilos.input}
+                        placeholder="Contraseña"
+                        secureTextEntry
+                        value={contraseña}
+                        onChangeText={setContraseña}
+                        editable={!cargando}
+                    />
 
-                <Pressable onPress={() => router.push('/registrarse')}>
-                    <Text style={estilos.enlace}>Registrarse</Text>
-                </Pressable>
-            </View>
-        </View>
+                    <Pressable
+                        style={[estilos.boton, cargando && estilos.botonCargando]}
+                        onPress={IniciarSesionUsuario}
+                        disabled={cargando}
+                    >
+                        <Text style={estilos.textoBoton}>
+                            {cargando ? 'Iniciando sesión...' : 'Iniciar sesión'}
+                        </Text>
+                    </Pressable>
+                </View>
+
+                <View style={estilos.registro}>
+                    <Text>¿No tienes una cuenta? </Text>
+
+                    <Pressable
+                        onPress={() => router.push('/registrarse')}
+                        disabled={cargando}
+                    >
+                        <Text style={estilos.enlace}>Registrarse</Text>
+                    </Pressable>
+                </View>
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 }
 
 const estilos = StyleSheet.create({
     contenedor: {
         flex: 1,
+    },
+    contenido: {
+        flexGrow: 1,
         justifyContent: 'center',
         alignItems: 'center',
         padding: 25,
+    },
+    logo: {
+        width: 200,
+        height: 100,
+        marginBottom: 15,
     },
     titulo: {
         fontSize: 25,
@@ -130,6 +164,16 @@ const estilos = StyleSheet.create({
         padding: 14,
         borderRadius: 8,
         alignItems: 'center',
+    },
+    botonCargando: {
+        backgroundColor: '#d69a5b',
+        opacity: 0.8,
+    },
+    contenidoBoton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 10,
     },
     textoBoton: {
         color: '#ffffff',

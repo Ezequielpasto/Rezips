@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, Alert } from 'react-native';
 import { useFocusEffect } from 'expo-router';
@@ -15,12 +14,15 @@ export default function Principal() {
     const [busqueda, setBusqueda] = useState('');
     const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('');
     const [calificacionMinima, setCalificacionMinima] = useState(0);
+    const [cargando, setCargando] = useState(true);
 
     useFocusEffect(
         useCallback(() => {
             let activo = true;
 
             async function ObtenerDatos() {
+                setCargando(true);
+
                 try {
                     const [respuestaRecetas, respuestaCategorias] =
                         await Promise.all([
@@ -46,6 +48,10 @@ export default function Principal() {
                 } catch (error) {
                     console.error('Error al obtener los datos:', error);
                     Alert.alert('Error', 'No se pudieron cargar las recetas o categorías');
+                } finally {
+                    if (activo) {
+                        setCargando(false);
+                    }
                 }
             }
 
@@ -121,12 +127,18 @@ export default function Principal() {
                     onCalificacionChange={setCalificacionMinima}
                 />
 
-                <Text style={estilos.cantidad}>
-                    {recetasFiltradas.length} recetas encontradas
-                </Text>
+                {!cargando && (
+                    <Text style={estilos.cantidad}>
+                        {recetasFiltradas.length} recetas encontradas
+                    </Text>
+                )}
 
-                <ListaRecetas recetas={recetasFiltradas} />
+                <ListaRecetas
+                    recetas={recetasFiltradas}
+                    cargando={cargando}
+                />
             </View>
+
             <MenuInferior />
         </View>
     );
