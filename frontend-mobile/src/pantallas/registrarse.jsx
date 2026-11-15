@@ -238,7 +238,7 @@ export default function Registrarse() {
                     </Text>
 
                     <View style={estilos.fila}>
-                        <TextInput style={estilos.input} placeholder="Nombre" value={nombre} onChangeText={setNombre} />
+                        <TextInput style={estilos.input} placeholder="Nombre" placeholderTextColor="#777777" value={nombre} onChangeText={setNombre} />
                         <TextInput style={estilos.input} placeholder="Apellido" value={apellido} onChangeText={setApellido} />
                     </View>
                 </View>
